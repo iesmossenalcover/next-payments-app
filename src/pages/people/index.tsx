@@ -73,6 +73,8 @@ const People = () => {
             <main>
                 <div className='flex justify-start items-center mb-4'>
                     <SelectorComponent
+                        id='course'
+                        name='course'
                         onSelect={onCourseSelected}
                         selector={selector as Selector} />
                     

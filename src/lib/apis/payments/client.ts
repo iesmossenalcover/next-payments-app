@@ -34,12 +34,20 @@ export const getPeopleByCourse = async (courseId?: number): Promise<GetPeopleVie
     return undefined;
 }
 
-export const getCoursesSelector = async (courseId?: number): Promise<Selector | undefined> => {
+export const getCoursesSelector = async (): Promise<Selector | undefined> => {
 
-    let query = `${API_BASE_URL}/api/courses/selector`;
-    if (courseId) {
-        query += `?courseId=${courseId}`;
+    const query = `${API_BASE_URL}/api/courses/selector`;
+    const response = await get(query)
+    if (response.ok) {
+        return await response.json() as Selector
     }
+    
+    return undefined;
+}
+
+export const getGroupsSelector = async (): Promise<Selector | undefined> => {
+
+    const query = `${API_BASE_URL}/api/groups/selector`;
     const response = await get(query)
     if (response.ok) {
         return await response.json() as Selector

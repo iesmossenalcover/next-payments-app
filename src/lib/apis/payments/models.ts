@@ -28,3 +28,22 @@ export interface GetPeopleView {
     ],
     selectedCourseId: number,
 }
+
+export interface PersonGroupCourse {
+    id?: number,
+    personId: number,
+    groupId: number,
+    courseId: number,
+}
+
+export interface Person {
+    id: number,
+    name: string,
+    documentId: string,
+    surname1: string,
+    surname2?: string,
+    groupId: number,
+    academicRecordNumber?: number,
+    amipa: boolean,   
+    preEnrollment: boolean,
+}
