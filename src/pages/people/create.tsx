@@ -61,6 +61,7 @@ const PersonComponent = ({ person, onSubmit }: PersonComponentProps) => {
                     <input
                         className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
                         id="academicRecordNumber" name="academicRecordNumber" defaultValue={person.academicRecordNumber} />
+                        {/* <p key={idx} className="text-red-500 text-xs italic">{x}</p> */}
                 </div>
 
                 <div className="mt-3">
@@ -121,7 +122,7 @@ const PersonComponent = ({ person, onSubmit }: PersonComponentProps) => {
                     className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                     htmlFor="documentId"
                 >
-                    Document d'identitat</label>
+                    Document d&apos;identitat</label>
                 <input
                     id="documentId"
                     name="documentId"
