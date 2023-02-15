@@ -1,7 +1,7 @@
 import Head from 'next/head'
-import useUser from '@/lib/hooks/useUser'
 import { useEffect, useState } from 'react'
 import { getCoursesSelector, GetPeopleView, getPeopleView } from '@/lib/apis/payments'
+import useUser from '@/lib/hooks/useUser'
 import Table, { Row } from '@/components/Table'
 import { Selector, SelectorComponent } from '@/components/Selector'
 import { Spinner } from '@/components/Loading'
@@ -30,7 +30,7 @@ const People = () => {
 
     const mapToRow = (): Row[] => {
         return people.map(x => {
-            return { key: x.id, values: [x.documentId, x.firstName, x.lastName, x.academicRecordNumber, x.group.name] }
+            return { key: x.id, values: [x.documentId, x.firstName, x.lastName, x.academicRecordNumber, x.groupName] }
         });
     }
 

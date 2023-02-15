@@ -21,10 +21,8 @@ export interface GetPeopleView {
             documentId: string,
             firstName: string,
             lastName: string,
-            group: {
-                id: number,
-                name: string
-            },
+            groupId: number,
+            groupName: string
             academicRecordNumber: number
         }
     ],
