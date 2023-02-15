@@ -15,12 +15,6 @@ export interface Identity {
 }
 
 export interface GetPeopleView {
-    courses: [
-        {
-            id: number,
-            name: string,
-        }
-    ],
     people: [
         {
             id: number,

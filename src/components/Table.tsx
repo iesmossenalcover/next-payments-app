@@ -33,7 +33,7 @@ const Table = (props: TableProps) => {
     const { headers, rows, paging } = props;
 
     const [page, _setPage] = useState(0)
-    const [itemspPerPage, _setItempsPerPage] = useState(paging? 50 : rows.length)
+    const [itemspPerPage, _setItempsPerPage] = useState(rows.length)
 
     const getVisibleRows = (): Row[] => {
         const skip = page * itemspPerPage;

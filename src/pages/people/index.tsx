@@ -1,8 +1,10 @@
 import Head from 'next/head'
 import useUser from '@/lib/hooks/useUser'
 import { useEffect, useState } from 'react'
-import { GetPeopleView, getPeopleView } from '@/lib/apis/payments'
+import { getCoursesSelector, GetPeopleView, getPeopleView } from '@/lib/apis/payments'
 import Table, { Row } from '@/components/Table'
+import { Selector, SelectorComponent } from '@/components/Selector'
+import { Spinner } from '@/components/Loading'
 
 const tableHeaders: string[] = ["Identitat", "Nom", "Llinatges", "Número expedient", "Grup"];
 
@@ -10,16 +12,20 @@ const People = () => {
 
     const { user } = useUser()
 
-    const [loading, setLoading] = useState(true)
-    const [courses, setCourses] = useState<any[]>([])
+    const [loadingCourses, setLoadingCourses] = useState(true)
+    const [loadingPeople, setLoadingPeople] = useState(false)
+    const [selector, setSelector] = useState<Selector | undefined>(undefined)
     const [people, setPeople] = useState<any[]>([])
     const [currentCourseId, setCurrentCourseId] = useState<number | undefined>()
 
     const setPeopleView = (pv: GetPeopleView | undefined) => {
         if (pv == undefined) return;
-        setCourses(pv.courses);
         setPeople(pv.people);
-        setCurrentCourseId(pv.selectedCourseId);
+    }
+
+    const onCourseSelected = (value: string) => {
+        setLoadingPeople(true);
+        setCurrentCourseId(parseInt(value))
     }
 
     const mapToRow = (): Row[] => {
@@ -28,18 +34,32 @@ const People = () => {
         });
     }
 
-    const onCourseSelected = (courseId: number) => {
-        setCurrentCourseId(courseId)
-    }
+    useEffect(() => {
+        getCoursesSelector()
+            .then(x => setSelector(x))
+            .finally(() => setLoadingCourses(false))
+    }, []);
 
     useEffect(() => {
+        setLoadingPeople(true);
         getPeopleView(currentCourseId)
             .then(x => setPeopleView(x))
-            .finally(() => setLoading(false))
+            .finally(() => setLoadingPeople(false));
     }, [currentCourseId]);
 
-    if (loading || !user) {
+    if (loadingCourses || !user) {
         return null
+    }
+
+    const listPeople = () => {
+        if (loadingPeople) return null;
+        return (
+            <Table
+                paging={false}
+                headers={tableHeaders}
+                rows={mapToRow()}
+            />
+        )
     }
 
     return (
@@ -51,40 +71,19 @@ const People = () => {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <main>
-                <CourseSelector
-                    courses={courses}
-                    currentCourseId={currentCourseId || 0}
-                    onSelectCourse={onCourseSelected}
-                    />
-                <Table
-                    paging={false}
-                    headers={tableHeaders}
-                    rows={mapToRow()}
-                />
+                <div className='flex justify-start items-center mb-4'>
+                    <SelectorComponent
+                        onSelect={onCourseSelected}
+                        selector={selector as Selector} />
+                    
+                    {loadingPeople ? <Spinner /> : null }
+                </div>
+
+                {listPeople()}
             </main>
         </>
     )
 }
 
+
 export default People
-
-interface CourseSelectorProps {
-    courses: any[],
-    currentCourseId: number,
-    onSelectCourse: (courseId: number) => void,
-}
-
-const CourseSelector = ({ courses, currentCourseId, onSelectCourse }: CourseSelectorProps) => {
-    return (
-        <>
-            <label htmlFor="course" className="block mt-3 mb-2 text-sm font-medium text-gray-900 dark:text-white">Selecciona el curs escolar</label>
-            <select 
-                id='course'
-                value={currentCourseId}
-                onChange={e => onSelectCourse(parseInt(e.target.value))}
-                className="mb-4 max-w-xs bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                {courses.map(x => <option key={x.id} value={x.id}>{x.name}</option>)}
-            </select>
-        </>
-    )
-}
