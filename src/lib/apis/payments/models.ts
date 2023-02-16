@@ -3,6 +3,12 @@ export enum SigninStatus {
     Error = 2,
 }
 
+export interface Result<T> {
+    error: boolean,
+    errors: Map<string, string[]>,
+    data?: T,
+}
+
 export interface SigninResponse {
     status: SigninStatus,
     errorMessage: string | undefined
@@ -27,13 +33,6 @@ export interface GetPeopleView {
         }
     ],
     selectedCourseId: number,
-}
-
-export interface PersonGroupCourse {
-    id?: number,
-    personId: number,
-    groupId: number,
-    courseId: number,
 }
 
 export interface Person {

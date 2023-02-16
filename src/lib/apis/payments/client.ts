@@ -1,4 +1,4 @@
-import { GetPeopleView, Identity, SigninResponse } from "./models"
+import { GetPeopleView, Identity, Person, Result, SigninResponse } from "./models"
 import { get, postJson } from "./baseclient"
 import { Selector } from "@/components/Selector"
 
@@ -54,4 +54,13 @@ export const getGroupsSelector = async (): Promise<Selector | undefined> => {
     }
     
     return undefined;
+}
+
+export const createPerson = async (person: Person): Promise<Result<number>> => {
+    const response = await postJson(`${API_BASE_URL}/api/people`, person);
+    const data = await response.json() as Result<number>;
+    if (data.error) {
+        data.errors = new Map(Object.entries(data.errors));
+    }
+    return data;
 }
