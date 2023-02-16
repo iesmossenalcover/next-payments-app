@@ -1,3 +1,4 @@
+import { SuccessAlert } from "@/components/Alerts";
 import { Selector, SelectorComponent } from "@/components/Selector";
 import Toggle from "@/components/Toggle";
 import { createPerson, getGroupsSelector } from "@/lib/apis/payments/client";
@@ -15,21 +16,36 @@ const defaultPerson: Person = {
 };
 
 const Create = () => {
+    const [loading, setLoading] = useState(false)
+    const [created, setCreated] = useState(false)
     const [errors, setErrors] = useState<Map<string, string[]>>()
+
     const onSubmit = async (p: Person) => {
+        setLoading(true);
         const data = await createPerson(p);
         if (data.error) {
             setErrors(data.errors);
+            setLoading(false);
+        }
+        else {
+            const id = data.data as number;
+            setCreated(true);
         }
     }
+
+    const formDisabled = () => loading;
 
     return (
         <div className="max-w-lg m-auto">
             <div className="m-5">
-                <PersonComponent
-                    errors={errors}
-                    onSubmit={onSubmit}
-                    person={defaultPerson} />
+                {created ?
+                    <SuccessAlert text="Persona afegida correctament" /> :
+                    <PersonComponent
+                        disabled={formDisabled()}
+                        errors={errors}
+                        onSubmit={onSubmit}
+                        person={defaultPerson} />
+                }
             </div>
         </div>
     )
@@ -39,10 +55,11 @@ const Create = () => {
 interface PersonComponentProps {
     errors?: Map<string, string[]>
     person: Person,
+    disabled: boolean,
     onSubmit: (p: Person) => void,
 }
 
-const PersonComponent = ({ person, onSubmit, errors }: PersonComponentProps) => {
+const PersonComponent = ({ person, onSubmit, errors, disabled }: PersonComponentProps) => {
     const [isStudent, setIsStudent] = useState(true)
     const [groups, setGroups] = useState<Selector | undefined>();
 
@@ -75,7 +92,7 @@ const PersonComponent = ({ person, onSubmit, errors }: PersonComponentProps) => 
         const list = errors.get(key) as string[];
         return (
             <>
-                {list.map((x, idx) => <p key={idx} className="text-red-500 text-xs italic">{x}</p>)}
+                {list.map((x, idx) => <p key={idx} className="text-red-500 italic">{x}</p>)}
             </>
         )
     }
@@ -92,7 +109,7 @@ const PersonComponent = ({ person, onSubmit, errors }: PersonComponentProps) => 
                     <input
                         className="px-4 appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 leading-tight focus:outline-none focus:bg-white"
                         id="academicRecordNumber" name="academicRecordNumber" defaultValue={person.academicRecordNumber} />
-                        {displayErrors("academicRecordNumber")}
+                    {displayErrors("academicRecordNumber")}
                 </div>
 
                 <div className="mt-3">
@@ -128,7 +145,7 @@ const PersonComponent = ({ person, onSubmit, errors }: PersonComponentProps) => 
                 <input
                     className="px-4 appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 leading-tight focus:outline-none focus:bg-white"
                     id="name" name="name" defaultValue={person.name} />
-                    {displayErrors("name")}
+                {displayErrors("name")}
             </div>
 
             <div className="mb-6">
@@ -148,7 +165,7 @@ const PersonComponent = ({ person, onSubmit, errors }: PersonComponentProps) => 
                 <input
                     className="px-4 appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 leading-tight focus:outline-none focus:bg-white"
                     id="surname2" name="surname2" defaultValue={person.surname2} />
-                    {displayErrors("surname2")}
+                {displayErrors("surname2")}
             </div>
 
             <div className="mb-6">
@@ -162,7 +179,7 @@ const PersonComponent = ({ person, onSubmit, errors }: PersonComponentProps) => 
                     name="documentId"
                     className="px-4 appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 leading-tight focus:outline-none focus:bg-white"
                     defaultValue={person.documentId} />
-                    {displayErrors("documentId")}
+                {displayErrors("documentId")}
             </div>
             <div className="mb-6">
                 <label
@@ -188,7 +205,11 @@ const PersonComponent = ({ person, onSubmit, errors }: PersonComponentProps) => 
             </div>
             {displayStudentFields()}
             <div>
-                <input type="submit" />
+                <input
+                    disabled={disabled}
+                    className="w-full mt-6 bg-blue-500 hover:cursor-pointer hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed"
+                    value="Afegir persona"
+                    type="submit" />
             </div>
 
         </form>
