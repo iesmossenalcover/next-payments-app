@@ -18,7 +18,7 @@ export const get = (url: string, headers: any = {}): Promise<Response> => {
 }
 
 
-const apiFetch = (
+export const apiFetch = (
     url: string,
     method: string,
     data: any = null,

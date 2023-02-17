@@ -1,4 +1,4 @@
-import { GetPeopleView, Identity, Person, Result, SigninResponse } from "./models"
+import { BatchUploadSummary, GetPeopleView, Identity, Person, Result, SigninResponse } from "./models"
 import { get, postJson } from "./baseclient"
 import { Selector } from "@/components/Selector"
 
@@ -16,11 +16,11 @@ export const getIdentity = async (): Promise<Identity | undefined> => {
     if (response.ok) {
         return await response.json() as Identity
     }
-    
+
     return undefined;
 }
 
-export const getPeopleByCourse = async (courseId?: number): Promise<GetPeopleView | undefined> => {
+export const getPeopleView = async (courseId?: number): Promise<GetPeopleView | undefined> => {
 
     let query = `${API_BASE_URL}/api/people`;
     if (courseId) {
@@ -30,7 +30,7 @@ export const getPeopleByCourse = async (courseId?: number): Promise<GetPeopleVie
     if (response.ok) {
         return await response.json() as GetPeopleView
     }
-    
+
     return undefined;
 }
 
@@ -41,7 +41,7 @@ export const getCoursesSelector = async (): Promise<Selector | undefined> => {
     if (response.ok) {
         return await response.json() as Selector
     }
-    
+
     return undefined;
 }
 
@@ -52,13 +52,30 @@ export const getGroupsSelector = async (): Promise<Selector | undefined> => {
     if (response.ok) {
         return await response.json() as Selector
     }
-    
+
     return undefined;
 }
 
 export const createPerson = async (person: Person): Promise<Result<number>> => {
     const response = await postJson(`${API_BASE_URL}/api/people`, person);
     const data = await response.json() as Result<number>;
+    if (data.error) {
+        data.errors = new Map(Object.entries(data.errors));
+    }
+    return data;
+}
+
+export const batchUpload = async (formData: FormData): Promise<Result<BatchUploadSummary>> => {
+
+    const request: RequestInit = {
+        method: "POST",
+        credentials: 'include',
+        body: formData,
+    };
+
+    const response = await fetch(`${API_BASE_URL}/api/tasks/people`, request);
+    const data = await response.json() as Result<BatchUploadSummary>;
+    console.log(data)
     if (data.error) {
         data.errors = new Map(Object.entries(data.errors));
     }

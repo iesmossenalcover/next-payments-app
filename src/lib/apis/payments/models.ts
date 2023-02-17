@@ -46,3 +46,9 @@ export interface Person {
     amipa: boolean,   
     preEnrollment: boolean,
 }
+
+export interface BatchUploadSummary {
+    groupsCreated: number,
+    peopleCreated: number,
+    peopleUpdated: number,
+}
