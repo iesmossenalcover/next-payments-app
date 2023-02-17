@@ -136,7 +136,7 @@ const PersonComponent = ({ person, onSubmit, errors, disabled }: PersonComponent
     if (!groups || !groups) return null;
 
     return (
-        <form action="#" method="post" onSubmit={onFormSubmit}>
+        <form action="#" method="post" onSubmit={onFormSubmit} autoComplete="off">
 
             <div className="mb-6">
                 <label
