@@ -45,7 +45,7 @@ export const getCoursesSelector = async (): Promise<Selector | undefined> => {
     return undefined;
 }
 
-export const getGroupsSelector = async (): Promise<Selector | undefined> => {
+export const getGroupsSelector = async (): Promise<Selector> => {
 
     const query = `${API_BASE_URL}/api/groups/selector`;
     const response = await get(query)
@@ -53,7 +53,12 @@ export const getGroupsSelector = async (): Promise<Selector | undefined> => {
         return await response.json() as Selector
     }
 
-    return undefined;
+    throw new Error();
+}
+
+export const getPersonById = async (id: number): Promise<Person> => {
+    const response = await get(`${API_BASE_URL}/api/people/${id}`);
+    return await response.json() as Person;
 }
 
 export const createPerson = async (person: Person): Promise<Result<number>> => {

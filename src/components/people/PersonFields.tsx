@@ -15,7 +15,10 @@ const PersonFields = ({ person, errors }: PersonComponentProps) => {
 
     useEffect(() => {
         getGroupsSelector()
-            .then(x => setGroups(x));
+            .then(x => {
+                x.selected = person.groupId.toString();
+                setGroups(x);
+            });
     }, [])
 
     const displayErrors = (key: string) => {
