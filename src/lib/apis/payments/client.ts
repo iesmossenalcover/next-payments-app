@@ -1,4 +1,4 @@
-import { BatchUploadSummary, Identity, Person, PersonRow, Response, ResponseCode, SigninResponse } from "./models"
+import { BatchUploadSummary, EventSummary, Identity, PeopleActiveEventsVm, Person, PersonRow, Response, ResponseCode, SigninResponse } from "./models"
 import { get, postJson } from "./baseclient"
 import { Selector } from "@/components/Selector"
 
@@ -86,6 +86,16 @@ export const batchUpload = async (formData: FormData): Promise<Response<BatchUpl
 
     const response = await fetch(`${API_BASE_URL}/api/tasks/people`, request);
     const data = await response.json() as Response<BatchUploadSummary>;
+
+    if (data.errors) {
+        data.errors = new Map(Object.entries(data.errors));
+    }
+    return data;
+}
+
+export const getPersonActiveEvents = async (documentId: string): Promise<Response<PeopleActiveEventsVm>> => {
+    const response = await postJson(`${API_BASE_URL}/api/events/active`, { documentId });
+    const data = await response.json() as Response<PeopleActiveEventsVm>;
 
     if (data.errors) {
         data.errors = new Map(Object.entries(data.errors));

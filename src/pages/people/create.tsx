@@ -32,7 +32,7 @@ const Create = () => {
         }
     }
 
-    const onFormSubmit = (e: React.SyntheticEvent<HTMLFormElement>) => {
+    const onFormSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         const form = e.currentTarget;
@@ -49,7 +49,7 @@ const Create = () => {
             preEnrollment: formData.get("preEnrollment") === "on" ? true : false,
             amipa: formData.get("amipa") === "on" ? true : false,
         };
-        onSubmit(p);
+        await onSubmit(p);
     }
 
     const formDisabled = () => loading;

@@ -27,8 +27,7 @@ export interface Identity {
     givenName: string,
 }
 
-export interface PersonRow
-{
+export interface PersonRow {
     id: number,
     documentId: string,
     firstName: string,
@@ -36,6 +35,21 @@ export interface PersonRow
     groupId: number,
     groupName: string
     academicRecordNumber: number
+}
+
+export interface PeopleActiveEventsVm {
+    events: [
+        {
+            code: string,
+            name: string,
+            price: number,
+            selectable: boolean,
+        }
+    ],
+    person: {
+        documentId: string,
+        fullName: string,
+    }
 }
 
 export interface Person {
