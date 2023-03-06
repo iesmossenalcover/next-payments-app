@@ -18,7 +18,6 @@ const BatchUpload = () => {
 
         batchUpload(formData)
             .then(x => {
-                console.log(x.data.data)
                 if (x.errors) {
                     setErorrs(x.errors.get("") as string[])
                 } else {
