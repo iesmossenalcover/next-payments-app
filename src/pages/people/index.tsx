@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import { useEffect, useState } from 'react'
-import { getCoursesSelector, GetPeopleView, getPeopleView } from '@/lib/apis/payments'
+import { getCoursesSelector, getPeopleView, PersonRow } from '@/lib/apis/payments'
 import useUser from '@/lib/hooks/useUser'
 import Table, { Row } from '@/components/Table'
 import { Selector, SelectorComponent } from '@/components/Selector'
@@ -15,13 +15,8 @@ const People = () => {
     const [loadingCourses, setLoadingCourses] = useState(true)
     const [loadingPeople, setLoadingPeople] = useState(false)
     const [selector, setSelector] = useState<Selector | undefined>(undefined)
-    const [people, setPeople] = useState<any[]>([])
+    const [people, setPeople] = useState<PersonRow[]>([])
     const [currentCourseId, setCurrentCourseId] = useState<number | undefined>()
-
-    const setPeopleView = (pv: GetPeopleView | undefined) => {
-        if (pv == undefined) return;
-        setPeople(pv.people);
-    }
 
     const onCourseSelected = (value: string) => {
         setLoadingPeople(true);
@@ -30,7 +25,7 @@ const People = () => {
 
     const mapToRow = (): Row[] => {
         return people.map(x => {
-            return { key: x.id, values: [x.documentId, x.firstName, x.lastName, x.academicRecordNumber, x.groupName] }
+            return { key: x.id, values: [ x.documentId, x.firstName, x.lastName, `${x.academicRecordNumber}`, x.groupName ] };
         });
     }
 
@@ -43,7 +38,7 @@ const People = () => {
     useEffect(() => {
         setLoadingPeople(true);
         getPeopleView(currentCourseId)
-            .then(x => setPeopleView(x))
+            .then(x => setPeople(x))
             .finally(() => setLoadingPeople(false));
     }, [currentCourseId]);
 

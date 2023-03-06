@@ -1,8 +1,8 @@
-import { BatchUploadSummary, GetPeopleView, Identity, Person, Result, SigninResponse } from "./models"
+import { BatchUploadSummary, Identity, Person, PersonRow, Response, ResponseCode, SigninResponse } from "./models"
 import { get, postJson } from "./baseclient"
 import { Selector } from "@/components/Selector"
 
-const API_BASE_URL = "http://localhost:5206"
+const API_BASE_URL = process.env.API_BASE_URL
 
 export const signin = async (username: string, password: string): Promise<SigninResponse> => {
     const body = { username, password }
@@ -20,7 +20,7 @@ export const getIdentity = async (): Promise<Identity | undefined> => {
     return undefined;
 }
 
-export const getPeopleView = async (courseId?: number): Promise<GetPeopleView | undefined> => {
+export const getPeopleView = async (courseId?: number): Promise<PersonRow[]> => {
 
     let query = `${API_BASE_URL}/api/people`;
     if (courseId) {
@@ -28,10 +28,10 @@ export const getPeopleView = async (courseId?: number): Promise<GetPeopleView | 
     }
     const response = await get(query)
     if (response.ok) {
-        return await response.json() as GetPeopleView
+        return await response.json() as PersonRow[]
     }
 
-    return undefined;
+    return [];
 }
 
 export const getCoursesSelector = async (): Promise<Selector | undefined> => {
@@ -56,21 +56,27 @@ export const getGroupsSelector = async (): Promise<Selector> => {
     throw new Error();
 }
 
-export const getPersonById = async (id: number): Promise<Person> => {
+export const getPersonById = async (id: number): Promise<Response<Person>> => {
     const response = await get(`${API_BASE_URL}/api/people/${id}`);
-    return await response.json() as Person;
-}
+    const data = await response.json() as Response<Person>;
 
-export const createPerson = async (person: Person): Promise<Result<number>> => {
-    const response = await postJson(`${API_BASE_URL}/api/people`, person);
-    const data = await response.json() as Result<number>;
-    if (data.error) {
+    if (data.errors) {
         data.errors = new Map(Object.entries(data.errors));
     }
     return data;
 }
 
-export const batchUpload = async (formData: FormData): Promise<Result<BatchUploadSummary>> => {
+export const createPerson = async (person: Person): Promise<Response<number>> => {
+    const response = await postJson(`${API_BASE_URL}/api/people`, person);
+    const data = await response.json() as Response<number>;
+
+    if (data.errors) {
+        data.errors = new Map(Object.entries(data.errors));
+    }
+    return data;
+}
+
+export const batchUpload = async (formData: FormData): Promise<Response<BatchUploadSummary>> => {
 
     const request: RequestInit = {
         method: "POST",
@@ -79,9 +85,9 @@ export const batchUpload = async (formData: FormData): Promise<Result<BatchUploa
     };
 
     const response = await fetch(`${API_BASE_URL}/api/tasks/people`, request);
-    const data = await response.json() as Result<BatchUploadSummary>;
-    console.log(data)
-    if (data.error) {
+    const data = await response.json() as Response<BatchUploadSummary>;
+
+    if (data.errors) {
         data.errors = new Map(Object.entries(data.errors));
     }
     return data;

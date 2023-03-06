@@ -22,7 +22,7 @@ const Create = () => {
     const onSubmit = async (p: Person) => {
         setLoading(true);
         const data = await createPerson(p);
-        if (data.error) {
+        if (data.errors) {
             setErrors(data.errors);
             setLoading(false);
         }
@@ -61,6 +61,7 @@ const Create = () => {
                     <SuccessAlert text="Persona afegida correctament" /> :
                     <form action="#" method="post" onSubmit={onFormSubmit} autoComplete="off">
                         <PersonFields
+                            allowSetStudent={true}
                             errors={errors}
                             person={defaultPerson} />
                         <div>

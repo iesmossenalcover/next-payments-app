@@ -3,15 +3,22 @@ export enum SigninStatus {
     Error = 2,
 }
 
-export interface Result<T> {
-    error: boolean,
-    errors: Map<string, string[]>,
-    data?: T,
-}
-
 export interface SigninResponse {
     status: SigninStatus,
     errorMessage: string | undefined
+}
+
+export enum ResponseCode {
+    Success = 0,
+    BadRequest = 1,
+    NotFound = 2,
+    InternalError = 3
+}
+
+export interface Response<T> {
+    code: ResponseCode,
+    errors?: Map<string, string[]>,
+    data?: T,
 }
 
 export interface Identity {
@@ -20,19 +27,15 @@ export interface Identity {
     givenName: string,
 }
 
-export interface GetPeopleView {
-    people: [
-        {
-            id: number,
-            documentId: string,
-            firstName: string,
-            lastName: string,
-            groupId: number,
-            groupName: string
-            academicRecordNumber: number
-        }
-    ],
-    selectedCourseId: number,
+export interface PersonRow
+{
+    id: number,
+    documentId: string,
+    firstName: string,
+    lastName: string,
+    groupId: number,
+    groupName: string
+    academicRecordNumber: number
 }
 
 export interface Person {
@@ -43,7 +46,7 @@ export interface Person {
     surname2?: string,
     groupId: number,
     academicRecordNumber?: number,
-    amipa: boolean,   
+    amipa: boolean,
     preEnrollment: boolean,
 }
 

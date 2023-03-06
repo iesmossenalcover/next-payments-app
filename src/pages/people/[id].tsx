@@ -13,19 +13,17 @@ const Update = () => {
     const [errors, setErrors] = useState<Map<string, string[]>>()
     const [person, setPerson] = useState<Person | undefined>(undefined)
 
-    console.log(person)
-
     useEffect(() => {
         if (!id) return;
         
         getPersonById(parseInt(id as string))
-            .then(x => setPerson(x));
+            .then(x => setPerson(x.data));
     }, [id])
 
     const onSubmit = async (p: Person) => {
         setLoading(true);
         const data = await createPerson(p);
-        if (data.error) {
+        if (data.errors) {
             setErrors(data.errors);
             setLoading(false);
         }
@@ -66,6 +64,7 @@ const Update = () => {
                     <SuccessAlert text="Persona afegida correctament" /> :
                     <form action="#" method="post" onSubmit={onFormSubmit} autoComplete="off">
                         <PersonFields
+                            allowSetStudent={false}
                             errors={errors}
                             person={person} />
                         <div>

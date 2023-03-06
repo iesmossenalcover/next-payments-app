@@ -4,14 +4,16 @@ export interface ToggleProps {
     text: string,
     id: string,
     name: string,
+    enabled: boolean,
 }
 
-const Toggle = ({ id, name, text, onToggled, value }: ToggleProps) => {
+const Toggle = ({ id, name, text, onToggled, value, enabled = true }: ToggleProps) => {
 
     return (
         <>
             <label className="relative inline-flex items-center cursor-pointer">
                 <input
+                    disabled={!enabled}
                     id={id}
                     name={name}
                     type="checkbox"

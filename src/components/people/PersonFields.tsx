@@ -7,9 +7,10 @@ import Toggle from "../Toggle";
 interface PersonComponentProps {
     errors?: Map<string, string[]>
     person: Person,
+    allowSetStudent: boolean
 }
 
-const PersonFields = ({ person, errors }: PersonComponentProps) => {
+const PersonFields = ({ person, errors, allowSetStudent = true }: PersonComponentProps) => {
     const [isStudent, setIsStudent] = useState(true)
     const [groups, setGroups] = useState<Selector | undefined>();
 
@@ -53,6 +54,7 @@ const PersonFields = ({ person, errors }: PersonComponentProps) => {
                         id="amipa"
                         value={person.amipa}
                         text="Amipa"
+                        enabled={true}
                     />
                 </div>
 
@@ -62,6 +64,7 @@ const PersonFields = ({ person, errors }: PersonComponentProps) => {
                         id="preEnrollment"
                         value={person.preEnrollment}
                         text="Prematrícula"
+                        enabled={true}
                     />
                 </div>
             </>
@@ -134,6 +137,7 @@ const PersonFields = ({ person, errors }: PersonComponentProps) => {
                     id="isStudent"
                     value={isStudent}
                     text="És estudiant?"
+                    enabled={allowSetStudent}
                     onToggled={x => setIsStudent(x)}
                 />
             </div>
