@@ -20,7 +20,7 @@ const PersonFields = ({ person, errors, allowSetStudent = true }: PersonComponen
                 x.selected = person.groupId.toString();
                 setGroups(x);
             });
-    }, [])
+    }, [person.groupId])
 
     const displayErrors = (key: string) => {
         if (!errors || !errors.has(key)) return null;

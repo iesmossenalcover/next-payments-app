@@ -82,7 +82,7 @@ const FirstStep = ({ onLoaded }: FirstStepProps) => {
                         text-md
                         font-bold
                         mb-2"
-                    htmlFor="documentId">Document d'identitat</label>
+                    htmlFor="documentId">Document d&apos;identitat</label>
                 <input
                     required={true}
                     className="

@@ -39,7 +39,7 @@ const BatchUpload = () => {
                 <form id="upload" action="#" onSubmit={onSubmit}>
                     <div className="flex justify-center">
                         <div className="m-0 mb-3 w-full">
-                            <label htmlFor="formFile" className="form-label inline-block mb-2 text-gray-700">Càrrega d'usuaris</label>
+                            <label htmlFor="formFile" className="form-label inline-block mb-2 text-gray-700">Càrrega d&apos;usuaris</label>
                             <input
                                 name="file"
                                 className="
