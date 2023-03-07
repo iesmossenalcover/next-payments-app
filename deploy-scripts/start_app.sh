@@ -2,4 +2,4 @@
 cd /var/www/paymentsapp
 rm -rf node_modules
 npm install
-npm run start
+pm2 start npm --name "PaymentsWeb" -- start
