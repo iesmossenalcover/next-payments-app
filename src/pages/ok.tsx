@@ -2,14 +2,18 @@ import Head from "next/head";
 import { Noto_Sans } from '@next/font/google';
 import { SuccessAlert } from "@/components/Alerts";
 import { useEffect } from "react";
+import { useRouter } from "next/router";
 
 const font = Noto_Sans({ weight: '400', subsets: ['devanagari'] })
 
 const Ok = () => {
 
+    const router = useRouter()
+
     useEffect(() => {
         console.log("todo: load summary")
-    }, [])
+        console.log(router.query);
+    }, [router])
 
     return (<>
         <Head>
