@@ -3,8 +3,6 @@ os: linux
 files:
   - source: /
     destination: /var/www/paymentsapp
-  - source: deploy-scripts/paymentsapp.service
-    destination: /etc/systemd/system
 hooks:
   BeforeInstall:
     - location: deploy-scripts/before_install.sh
