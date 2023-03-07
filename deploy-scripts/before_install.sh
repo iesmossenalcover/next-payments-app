@@ -1,2 +1,2 @@
 #!/bin/bash
-rm -r /var/www/paymentsapp
+rm -rf /var/www/paymentsapp
