@@ -1,0 +1,13 @@
+[Unit]
+Description=NextJS Payments APP
+
+[Service]
+WorkingDirectory=/var/www/paymentsapp
+ExecStart=npm start
+Restart=always
+RestartSec=10
+KillSignal=SIGINT
+SyslogIdentifier=paymentsapp
+
+[Install]
+WantedBy=multi-user.target

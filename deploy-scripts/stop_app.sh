@@ -1,0 +1,2 @@
+systemctl stop paymentsapp.service
+systemctl disable paymentsapp.service
