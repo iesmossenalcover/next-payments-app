@@ -1,1 +1,1 @@
-pm2 stop npm --name "next" -- start
+#!/bin/bash
