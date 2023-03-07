@@ -18,3 +18,11 @@ jobs:
         uses: actions/setup-node@v3.6.0
       - run: npm ci
       - run: npm run export
+      - name: Configure AWS Client
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_S3_ACCESSKEYID }}
+          aws-secret-access-key: ${{ secrets.AWS_S3_SECRETACCESSKEY}}
+          aws-region: ${{ secrets.AWS_S3_REGION }}
+      - name: Copy to S3
+        run: aws s3 cp net-payments-webserver.zip s3://${{ secrets.AWS_S3_AWSBUCKET }}
