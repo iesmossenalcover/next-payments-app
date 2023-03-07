@@ -24,5 +24,18 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_S3_ACCESSKEYID }}
           aws-secret-access-key: ${{ secrets.AWS_S3_SECRETACCESSKEY}}
           aws-region: ${{ secrets.AWS_S3_REGION }}
+      - name: Create Zip
+        uses: vimtor/action-zip@v1
+        with:
+          files: ./
+          dest: next-payments-app.zip
+      - name: Configure AWS Client
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_S3_ACCESSKEYID }}
+          aws-secret-access-key: ${{ secrets.AWS_S3_SECRETACCESSKEY}}
+          aws-region: ${{ secrets.AWS_S3_REGION }}
       - name: Copy to S3
-        run: aws s3 cp out s3://${{ secrets.AWS_S3_AWSBUCKET }} --recursive
+        run: aws s3 cp next-payments-app.zip s3://${{ secrets.AWS_S3_AWSBUCKET }}
+      - name: Create AWS Deploy
+        run: aws deploy create-deployment --application-name PaymentsApp --deployment-group-name ${{ secrets.AWS_DEPLOYMENT_GROUP }} --s3-location bucket=${{ secrets.AWS_S3_AWSBUCKET }},key=next-payments-app.zip,bundleType=zip
