@@ -2,5 +2,4 @@
 cd /var/www/paymentsapp
 npm install
 npm run build
-systemctl enable paymentsapp.service
-systemctl start paymentsapp.service
+pm2 start npm --name "next" -- start

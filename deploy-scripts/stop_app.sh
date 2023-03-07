@@ -1,2 +1,1 @@
-systemctl stop paymentsapp.service
-systemctl disable paymentsapp.service
+pm2 stop npm --name "next" -- start
