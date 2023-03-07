@@ -1,4 +1,4 @@
-import { BatchUploadSummary, EventSummary, Identity, PeopleActiveEventsVm, Person, PersonRow, Response, ResponseCode, SigninResponse } from "./models"
+import { BatchUploadSummary, Identity, PersonActiveEventsVm, Person, PersonRow, Response, ResponseCode, SigninResponse, CreateOrderResponse } from "./models"
 import { get, postJson } from "./baseclient"
 import { Selector } from "@/components/Selector"
 
@@ -93,12 +93,23 @@ export const batchUpload = async (formData: FormData): Promise<Response<BatchUpl
     return data;
 }
 
-export const getPersonActiveEvents = async (documentId: string): Promise<Response<PeopleActiveEventsVm>> => {
+export const getPersonActiveEvents = async (documentId: string): Promise<Response<PersonActiveEventsVm>> => {
     const response = await postJson(`${API_BASE_URL}/api/events/active`, { documentId });
-    const data = await response.json() as Response<PeopleActiveEventsVm>;
+    const data = await response.json() as Response<PersonActiveEventsVm>;
 
     if (data.errors) {
         data.errors = new Map(Object.entries(data.errors));
     }
+    return data;
+}
+
+export const createOrder = async (documentId: string, eventCodes: string[]): Promise<Response<CreateOrderResponse>> => {
+    const response = await postJson(`${API_BASE_URL}/api/orders`, { documentId, eventCodes });
+    const data = await response.json() as Response<CreateOrderResponse>;
+
+    if (data.errors) {
+        data.errors = new Map(Object.entries(data.errors));
+    }
+    
     return data;
 }

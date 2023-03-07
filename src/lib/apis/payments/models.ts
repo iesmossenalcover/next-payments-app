@@ -37,19 +37,27 @@ export interface PersonRow {
     academicRecordNumber: number
 }
 
-export interface PeopleActiveEventsVm {
-    events: [
-        {
-            code: string,
-            name: string,
-            price: number,
-            selectable: boolean,
-        }
-    ],
+export interface PersonActiveEventsVm {
+    events: PersonActiveEvent[],
     person: {
         documentId: string,
         fullName: string,
     }
+}
+
+export interface PersonActiveEvent {
+    code: string,
+    name: string,
+    price: number,
+    currencySymbol: string,
+    selectable: boolean,
+}
+
+export interface CreateOrderResponse {
+    url: string,
+    merchantParameters: string,
+    signatureVersion: string,
+    signature: string
 }
 
 export interface Person {

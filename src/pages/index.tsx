@@ -1,16 +1,17 @@
 import Head from 'next/head'
 import { Noto_Sans } from '@next/font/google';
-import { useState } from 'react';
-import { PeopleActiveEventsVm, getPersonActiveEvents } from '@/lib/apis/payments';
+import { createRef, useEffect, useRef, useState } from 'react';
+import { createOrder, getPersonActiveEvents, PersonActiveEvent, PersonActiveEventsVm } from '@/lib/apis/payments';
+import { CreateOrderResponse } from '@/lib/apis/payments/models';
 
 const font = Noto_Sans({ weight: '400', subsets: ['devanagari'] })
 
 const Home = () => {
 
     const [step, setStep] = useState(1)
-    const [viewModel, setViewModel] = useState<PeopleActiveEventsVm | undefined>(undefined);
+    const [viewModel, setViewModel] = useState<PersonActiveEventsVm | undefined>(undefined);
 
-    const onEventsLoaded = (data: PeopleActiveEventsVm) => {
+    const onEventsLoaded = (data: PersonActiveEventsVm) => {
         setStep(2);
         setViewModel(data);
     }
@@ -23,9 +24,9 @@ const Home = () => {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <main className={`${font.className} container mx-auto px-5 mt-10 max-w-md`}>
+            <main className={`${font.className} container mx-auto px-5 mt-10  max-w-xl`}>
                 {step === 1 ? <FirstStep onLoaded={onEventsLoaded} /> : null}
-                {step === 2 && viewModel ? <SecondStep data={viewModel}/> : null}
+                {step === 2 && viewModel ? <SecondStep data={viewModel} /> : null}
             </main>
         </>
     )
@@ -35,7 +36,7 @@ export default Home
 
 
 interface FirstStepProps {
-    onLoaded: (data: PeopleActiveEventsVm) => void,
+    onLoaded: (data: PersonActiveEventsVm) => void,
 }
 
 const FirstStep = ({ onLoaded }: FirstStepProps) => {
@@ -70,7 +71,7 @@ const FirstStep = ({ onLoaded }: FirstStepProps) => {
     }
 
     return (
-        <form action="#" onSubmit={onFormSubmit}>
+        <form className='max-w-md mx-auto' action="#" onSubmit={onFormSubmit}>
             <div>
                 <label
                     className="
@@ -127,13 +128,188 @@ const FirstStep = ({ onLoaded }: FirstStepProps) => {
 }
 
 interface SecondStepProps {
-    data: PeopleActiveEventsVm
+    data: PersonActiveEventsVm
 }
 
 const SecondStep = ({ data }: SecondStepProps) => {
-    const { events } = data;
-    console.log(data)
-    return <ul>
-        {events.map(x => <li key={x.code}>{x.name}</li>)}
-    </ul>
+    const { events, person } = data;
+    const [loading, setLoading] = useState(false);
+    const [selected, setSelected] = useState<boolean[]>(Array(events.length).fill(false));
+    const [errors, setErrors] = useState<Map<string, string[]>>();
+    const [paymentForm, setPaymentForm] = useState<CreateOrderResponse | undefined>(undefined);
+    const formRef = useRef<HTMLFormElement>(null);
+
+    useEffect(() => {
+        if (paymentForm && formRef.current) {
+            let a = document.getElementById("forma");
+            formRef.current.submit();
+        }
+    }, [paymentForm]);
+
+    const toogleEvent = (idx: number, check: boolean) => {
+        selected[idx] = check;
+        setSelected([...selected]);
+    }
+
+    const getSelectedEvents = () => events.filter((_, idx) => selected[idx]);
+
+    const handlePayClick = async () => {
+        setLoading(true);
+        const selectedEvents = getSelectedEvents();
+        const response = await createOrder(person.documentId, selectedEvents.map(x => x.code));
+        if (response.errors) {
+            setErrors(response.errors)
+        } else {
+            setPaymentForm(response.data);
+        }
+    }
+
+    const renderAndSubmitPaymentForm = () => {
+        if (!paymentForm) return null;
+
+        return (
+            <form id='forma' method='post' action={paymentForm.url} ref={formRef}>
+                <input type="hidden" name="Ds_SignatureVersion" defaultValue={paymentForm.signatureVersion} />
+                <input type="hidden" name="Ds_MerchantParameters" defaultValue={paymentForm.merchantParameters} />
+                <input type="hidden" name="Ds_Signature" defaultValue={paymentForm.signature} />
+            </form>
+        )
+    }
+
+    const displayErrors = (key: string) => {
+        if (!errors || !errors.has(key)) return null;
+
+        const list = errors.get(key) as string[];
+        return (
+            <>
+                {list.map((x, idx) => <p key={idx} className="mt-3 text-red-500 italic">{x}</p>)}
+            </>
+        )
+    }
+
+    const displayPayButton = () => {
+        return (
+            <>
+                <div className='mt-5'>{displayErrors("eventCodes")}</div>
+                <div className='mt-5'>
+                    <button disabled={loading}
+                        onClick={handlePayClick}
+                        type="button"
+                        className="w-full
+                            text-white
+                            bg-blue-700
+                            hover:bg-blue-800
+                            focus:ring-4
+                            focus:outline-none
+                            focus:ring-blue-300
+                            rounded
+                            text-lg
+                            px-5
+                            py-2.5
+                            text-center
+                            font-medium
+                            dark:bg-blue-600
+                            dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                        {loading ? <>
+                            <svg aria-hidden="true" role="status" className="inline mr-3 w-4 h-4 text-white animate-spin" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="#E5E7EB"></path>
+                                <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentColor"></path>
+                            </svg>
+                            Loading...
+                        </> : <>Pagar</>}
+                    </button>
+                </div>
+            </>
+        )
+    }
+
+    const displayTotal = () => {
+        const selectedEvents = getSelectedEvents();
+        if (selectedEvents.length === 0) {
+            return null
+        }
+
+        let total = selectedEvents.reduce((part, x) => part + x.price, 0);
+
+        return (
+            <>
+                <hr className="h-px my-8 bg-gray-200 border-2 dark:bg-gray-700" />
+                <div className='mt-5 flex justify-between text-xl'>
+                    <h3>Total</h3>
+                    <h3 className='font-bold'>{total} {selectedEvents[0].currencySymbol}</h3>
+                </div>
+                {displayPayButton()}
+            </>
+        )
+    }
+
+    const displayEvents = () => {
+        if (!events || events.length == 0) {
+            return <h2
+                className='text-md font-bold'
+            >No hi ha esdeveniments actius pendents de pagar.</h2>
+        }
+
+        return (
+            <>
+                <span
+                    className="
+                        block
+                        uppercase
+                        tracking-wide
+                        text-gray-700
+                        text-md
+                        font-bold
+                        mb-10">Selecciona els esdeveniments a pagar</span>
+                <ul>
+                    {events.map((x, idx) =>
+                        <li key={x.code} className="flex items-center mb-7">
+                            <div className="flex items-center h-5">
+                                <input id={`event_${x.code}`}
+                                    aria-describedby="helper-checkbox-text"
+                                    type="checkbox"
+                                    disabled={!x.selectable}
+                                    className="w-5
+                                    h-5
+                                    text-blue-600
+                                    bg-gray-100
+                                    border-gray-300
+                                    rounded
+                                    dark:ring-offset-gray-800
+                                    focus:ring-2
+                                    dark:bg-gray-700
+                                    dark:border-gray-600"
+                                    checked={selected[idx]}
+                                    onChange={(e) => toogleEvent(idx, e.target.checked)}
+                                />
+                            </div>
+                            <div className="ml-2 text-lg w-full flex justify-between">
+                                <div>
+                                    <label htmlFor={`event_${x.code}`}
+                                        className="font-medium text-gray-900 dark:text-gray-300">{x.name}</label>
+                                </div>
+                                <div>{x.price} {x.currencySymbol}</div>
+                            </div>
+                        </li>
+                    )}
+                </ul>
+            </>
+        )
+    }
+
+    return (
+        <>
+            <h3 className='
+                        text-lg
+                        mb-3
+                        tracking-wide
+                        font-bold
+                        text-gray-500
+                        text-md'>{person.fullName}</h3>
+            <hr className="h-px mb-5 border-2 bg-gray-700" />
+            {displayEvents()}
+            {displayTotal()}
+            {renderAndSubmitPaymentForm()}
+        </>
+    )
 }
