@@ -1,3 +1,4 @@
+import { type } from 'os'
 import { useState } from 'react'
 
 export interface TableProps {
@@ -20,6 +21,7 @@ interface HeaderProps {
 }
 
 interface FieldProps {
+    
     value: string
 }
 
@@ -34,7 +36,7 @@ const Table = (props: TableProps) => {
 
     const [page, _setPage] = useState(0)
     const [itemspPerPage, _setItempsPerPage] = useState(rows.length)
-
+    console.log(rows.length);
     const getVisibleRows = (): Row[] => {
         const skip = page * itemspPerPage;
         return rows.slice(skip, skip + itemspPerPage);

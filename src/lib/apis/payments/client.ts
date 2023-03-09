@@ -1,4 +1,4 @@
-import { BatchUploadSummary, Identity, PersonActiveEventsVm, Person, PersonRow, Response, ResponseCode, SigninResponse, CreateOrderResponse } from "./models"
+import { BatchUploadSummary, Identity, PersonActiveEventsVm, Person, PersonRow, Response, ResponseCode, SigninResponse, CreateOrderResponse, EventRow, Event } from "./models"
 import { get, postJson } from "./baseclient"
 import { Selector } from "@/components/Selector"
 
@@ -111,5 +111,26 @@ export const createOrder = async (documentId: string, eventCodes: string[]): Pro
         data.errors = new Map(Object.entries(data.errors));
     }
     
+    return data;
+}
+
+export const getEventsView = async (): Promise<EventRow[]> => {
+
+    let query = `${API_BASE_URL}/api/events`;
+    const response = await get(query)
+    if (response.ok) {
+        return await response.json() as EventRow[]
+    }
+
+    return [];
+}
+
+export const createEvent = async (event: Event): Promise<Response<number>> => {
+    const response = await postJson(`${API_BASE_URL}/api/event`, event);
+    const data = await response.json() as Response<number>;
+
+    if (data.errors) {
+        data.errors = new Map(Object.entries(data.errors));
+    }
     return data;
 }

@@ -77,3 +77,25 @@ export interface BatchUploadSummary {
     peopleCreated: number,
     peopleUpdated: number,
 }
+
+export interface EventRow {
+    id: number,
+    code: string,
+    name: string,
+    price: number,
+    amipaPrice: number,
+    courseId: number,
+    publishDate: string,
+    unpublishDate: string,
+    isActive: boolean
+}
+
+export interface Event {
+    id: number,
+    code: string,
+    name: string,
+    price: number,
+    amipaPrice: number,
+    publishDate: string,
+    unpublishDate: string
+}
