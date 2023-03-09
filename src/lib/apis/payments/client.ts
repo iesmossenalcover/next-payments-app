@@ -1,4 +1,4 @@
-import { BatchUploadSummary, Identity, PersonActiveEventsVm, Person, PersonRow, Response, ResponseCode, SigninResponse, CreateOrderResponse } from "./models"
+import { BatchUploadSummary, Identity, PersonActiveEventsVm, Person, PersonRow, Response, ResponseCode, SigninResponse, CreateOrderResponse, GetOrderInfo } from "./models"
 import { get, postJson } from "./baseclient"
 import { Selector } from "@/components/Selector"
 
@@ -111,5 +111,14 @@ export const createOrder = async (documentId: string, eventCodes: string[]): Pro
         data.errors = new Map(Object.entries(data.errors));
     }
     
+    return data;
+}
+
+export const getOrderInfo = async (merchantParameters: string, singature: string, singatureVersion: string) => {
+    const response = await get(`${API_BASE_URL}/api/order/info?merchantParameters=${merchantParameters}&signature=${singature}&signatureVersion=${singatureVersion}`);
+    const data = await response.json() as Response<GetOrderInfo>;
+    if (data.errors) {
+        data.errors = new Map(Object.entries(data.errors));
+    }
     return data;
 }

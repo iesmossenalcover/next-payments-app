@@ -1,19 +1,85 @@
 import Head from "next/head";
 import { Noto_Sans } from '@next/font/google';
 import { SuccessAlert } from "@/components/Alerts";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import { GetOrderInfo, getOrderInfo, GetOrderInfoEvent } from "@/lib/apis/payments";
 
 const font = Noto_Sans({ weight: '400', subsets: ['devanagari'] })
 
 const Ok = () => {
-
     const router = useRouter()
+    const signatureVersion = router.query["Ds_SignatureVersion"] as string;
+    const merchantParameters = router.query["Ds_MerchantParameters"] as string;
+    const signature = router.query["Ds_Signature"] as string;
+    const [loading, setLoading] = useState(true);
+    const [orderInfo, setOrderInfo] = useState<GetOrderInfo | undefined>(undefined)
 
     useEffect(() => {
-        console.log("todo: load summary")
-        console.log(router.query);
-    }, [router])
+        if (signature && merchantParameters && signatureVersion) {
+            getOrderInfo(merchantParameters, signature, signatureVersion)
+                .then(x => {
+                    if (x.errors) {
+
+                    }
+                    else {
+                        setOrderInfo(x.data)
+                    }
+                })
+                .finally(() => setLoading(false))
+        }
+    }, [signatureVersion, merchantParameters, signature])
+
+
+    if (loading || orderInfo == null) return null;
+
+    const total = () => {
+        if (orderInfo.events.length === 0) return null;
+
+        return (
+            <>
+                {orderInfo.events.reduce((prev, x) => prev + x.price, 0)} {orderInfo.events[0].currency}
+            </>
+        )
+    }
+    const event = (x: GetOrderInfoEvent) => {
+        return (
+            <div className="text-md over flex flex-nowrap items-center justify-between">
+                <span>{x.name}</span>
+                <span className="min-w-[6em] text-right font-bold">{x.price} {x.currency}</span>
+            </div>
+        )
+    }
+
+    const orderEvents = () => {
+        return (
+            <>
+                {orderInfo?.events.map(x =>
+                    <li key={x.code} className="mt-3 rounded-lg border border-gray-400 px-3 py-2">
+                        {event(x)}
+                    </li>
+                )}
+            </>
+        )
+    }
+
+    const orderSummary = () => {
+        return (
+            <div className="mt-10">
+                <h3 className="text-xl font-bold">Resum del pagament</h3>
+                <ul className="text-md rounded-lg">
+                    {orderEvents()}
+                </ul>
+
+                <hr className="border-1 my-6 border-gray-400" />
+
+                <div className="flex justify-end text-xl">
+                    <h3 className="mr-8">Total</h3>
+                    <h3 className="font-bold">{total()}</h3>
+                </div>
+            </div>
+        )
+    }
 
     return (<>
         <Head>
@@ -24,6 +90,10 @@ const Ok = () => {
         </Head>
         <main className={`${font.className} container mx-auto px-5 mt-10  max-w-xl`}>
             <SuccessAlert text="Pagament realitzat correctament" />
+            <hr />
+            <ul>
+                {orderSummary()}
+            </ul>
         </main>
     </>)
 }
