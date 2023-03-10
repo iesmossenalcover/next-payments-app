@@ -1,5 +1,5 @@
 import { BatchUploadSummary, Identity, PersonActiveEventsVm, Person, PersonRow, Response, ResponseCode, SigninResponse, CreateOrderResponse, EventRow, Event, GetOrderInfo } from "./models"
-import { get, postJson } from "./baseclient"
+import { get, postJson, putJson } from "./baseclient"
 import { Selector } from "@/components/Selector"
 
 const API_BASE_URL = process.env.API_BASE_URL
@@ -68,6 +68,16 @@ export const getPersonById = async (id: number): Promise<Response<Person>> => {
 
 export const createPerson = async (person: Person): Promise<Response<number>> => {
     const response = await postJson(`${API_BASE_URL}/api/people`, person);
+    const data = await response.json() as Response<number>;
+
+    if (data.errors) {
+        data.errors = new Map(Object.entries(data.errors));
+    }
+    return data;
+}
+
+export const updatePerson = async (person: Person): Promise<Response<number>> => {
+    const response = await putJson(`${API_BASE_URL}/api/people/${person.id}`, person);
     const data = await response.json() as Response<number>;
 
     if (data.errors) {

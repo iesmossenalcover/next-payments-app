@@ -57,16 +57,6 @@ const PersonFields = ({ person, errors, allowSetStudent = true }: PersonComponen
                         enabled={true}
                     />
                 </div>
-
-                <div className="mt-3 mb-3">
-                    <Toggle
-                        name="preEnrollment"
-                        id="preEnrollment"
-                        value={person.preEnrollment}
-                        text="Prematrícula"
-                        enabled={true}
-                    />
-                </div>
             </>
         )
     }

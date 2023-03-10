@@ -80,7 +80,6 @@ export interface Person {
     groupId: number,
     academicRecordNumber?: number,
     amipa: boolean,
-    preEnrollment: boolean,
 }
 
 export interface BatchUploadSummary {

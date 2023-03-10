@@ -11,7 +11,6 @@ const defaultPerson: Person = {
     documentId: "",
     groupId: 0,
     amipa: false,
-    preEnrollment: false,
 };
 
 const Create = () => {
@@ -46,7 +45,6 @@ const Create = () => {
             documentId: formData.get("documentId") as string,
             groupId: parseInt(formData.get("groupId") as string),
             academicRecordNumber: isStudent ? parseInt(formData.get("academicRecordNumber") as string) || 0 : undefined,
-            preEnrollment: formData.get("preEnrollment") === "on" ? true : false,
             amipa: formData.get("amipa") === "on" ? true : false,
         };
         await onSubmit(p);
