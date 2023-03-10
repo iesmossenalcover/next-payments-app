@@ -59,6 +59,17 @@ export interface CreateOrderResponse {
     signatureVersion: string,
     signature: string
 }
+export interface GetOrderInfo {
+    events: GetOrderInfoEvent[];
+}
+
+export interface GetOrderInfoEvent {
+    code:     string;
+    name:     string;
+    price:    number;
+    currency: string;
+}
+
 
 export interface Person {
     id: number,
