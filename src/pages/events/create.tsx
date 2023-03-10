@@ -63,7 +63,7 @@ const Create = () => {
         <div className="max-w-lg m-auto">
             <div className="m-5">
                 {created ?
-                    <SuccessAlert text="Event afegit correctament" /> :
+                    <SuccessAlert text="Event afegit correctament el codi de l'event és: " /> :
                     <form action="#" method="post" onSubmit={onFormSubmit} autoComplete="off">
                         <EventFields
                             allowSetEvent={true}
