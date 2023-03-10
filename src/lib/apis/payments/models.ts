@@ -77,7 +77,7 @@ export interface Person {
     documentId: string,
     surname1: string,
     surname2?: string,
-    groupId: number,
+    groupId?: number,
     academicRecordNumber?: number,
     amipa: boolean,
 }

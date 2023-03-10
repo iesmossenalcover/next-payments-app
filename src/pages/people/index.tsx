@@ -25,7 +25,8 @@ const People = () => {
 
     const mapToRow = (): Row[] => {
         return people.map(x => {
-            return { key: x.id, values: [ x.documentId, x.firstName, x.lastName, `${x.academicRecordNumber}`, x.groupName ] };
+            const academicRecordNumber = x.academicRecordNumber ? x.academicRecordNumber.toString() : "-";
+            return { key: x.id, values: [ x.documentId, x.firstName, x.lastName, academicRecordNumber, x.groupName ] };
         });
     }
 

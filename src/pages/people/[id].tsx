@@ -29,7 +29,6 @@ const Update = () => {
             setLoading(false);
         }
         else {
-            const id = data.data as number;
             setCreated(true);
         }
     }
@@ -40,6 +39,7 @@ const Update = () => {
         const form = e.currentTarget;
         const formData = new FormData(form);
         const isStudent = formData.get("isStudent");
+        console.log(formData.get("isStudent"))
         const p: Person = {
             id: parseInt(id as string),
             name: formData.get("name") as string,
@@ -50,12 +50,16 @@ const Update = () => {
             academicRecordNumber: isStudent ? parseInt(formData.get("academicRecordNumber") as string) || 0 : undefined,
             amipa: formData.get("amipa") === "on" ? true : false,
         };
+        console.log("submit")
+        console.log(p)
         onSubmit(p);
     }
 
     const formDisabled = () => loading;
 
     if (!person) return null;
+
+    console.log(person)
 
     return (
         <div className="max-w-lg m-auto">

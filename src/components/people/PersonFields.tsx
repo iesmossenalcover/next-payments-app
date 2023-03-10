@@ -10,14 +10,16 @@ interface PersonComponentProps {
     allowSetStudent: boolean
 }
 
-const PersonFields = ({ person, errors, allowSetStudent = true }: PersonComponentProps) => {
-    const [isStudent, setIsStudent] = useState(true)
+const PersonFields = ({ person, errors }: PersonComponentProps) => {
+    const [isStudent, setIsStudent] = useState(!!person.academicRecordNumber)
     const [groups, setGroups] = useState<Selector | undefined>();
+
+    console.log(isStudent)
 
     useEffect(() => {
         getGroupsSelector()
             .then(x => {
-                x.selected = person.groupId.toString();
+                x.selected = person.groupId?.toString() ?? "";
                 setGroups(x);
             });
     }, [person.groupId])
@@ -54,7 +56,6 @@ const PersonFields = ({ person, errors, allowSetStudent = true }: PersonComponen
                         id="amipa"
                         value={person.amipa}
                         text="Amipa"
-                        enabled={true}
                     />
                 </div>
             </>
@@ -127,11 +128,13 @@ const PersonFields = ({ person, errors, allowSetStudent = true }: PersonComponen
                     id="isStudent"
                     value={isStudent}
                     text="És estudiant?"
-                    enabled={allowSetStudent}
                     onToggled={x => setIsStudent(x)}
                 />
             </div>
             {displayStudentFields()}
+            <div className="mt-3">
+            {displayErrors("")}
+            </div>
         </>
     )
 }
