@@ -107,5 +107,6 @@ export interface Event {
     price: number,
     amipaPrice: number,
     publishDate: string,
-    unpublishDate: string
+    unpublishDate: string,
+    enrollment: boolean
 }

@@ -12,7 +12,8 @@ const defaultEvent: Event = {
     price: 0,
     amipaPrice: 0,
     publishDate: "",
-    unpublishDate: ""
+    unpublishDate: "",
+    enrollment: false
 };
 
 const Create = () => {
@@ -38,6 +39,8 @@ const Create = () => {
 
         const form = e.currentTarget;
         const formData = new FormData(form);
+        const enrollment = formData.get("enrollment");
+
         const event: Event = {
             id: 0,
             code: formData.get("code") as string,
@@ -46,7 +49,11 @@ const Create = () => {
             amipaPrice: parseFloat(formData.get("amipaPrice") as string),
             publishDate: formData.get("publishDate") as string,
             unpublishDate: formData.get("unpublishDate") as string,
+            enrollment: formData.get("enrollment") == null ? false : true,
+
         };
+        console.log(event);
+
         await onSubmit(event);
     }
 
