@@ -29,7 +29,8 @@ const Create = () => {
             setLoading(false);
         }
         else {
-            const id = data.data as number;
+            const code = data.data as string;
+            console.log(code);
             setCreated(true);
         }
     }
@@ -47,12 +48,11 @@ const Create = () => {
             name: formData.get("name") as string,
             price: parseFloat(formData.get("price") as string),
             amipaPrice: parseFloat(formData.get("amipaPrice") as string),
-            publishDate: formData.get("publishDate") as string,
-            unpublishDate: formData.get("unpublishDate") as string,
+            publishDate: formData.get("start") as string,
+            unpublishDate: formData.get("end") as string,
             enrollment: formData.get("enrollment") == null ? false : true,
 
         };
-        console.log(event);
 
         await onSubmit(event);
     }

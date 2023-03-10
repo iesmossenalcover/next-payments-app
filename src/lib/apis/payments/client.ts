@@ -135,9 +135,9 @@ export const getEventsView = async (): Promise<EventRow[]> => {
     return [];
 }
 
-export const createEvent = async (event: Event): Promise<Response<number>> => {
-    const response = await postJson(`${API_BASE_URL}/api/event`, event);
-    const data = await response.json() as Response<number>;
+export const createEvent = async (event: Event): Promise<Response<string>> => {
+    const response = await postJson(`${API_BASE_URL}/api/events`, event);
+    const data = await response.json() as Response<string>;
 
     if (data.errors) {
         data.errors = new Map(Object.entries(data.errors));
