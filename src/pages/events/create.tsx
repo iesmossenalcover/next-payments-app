@@ -42,8 +42,8 @@ const Create = () => {
             id: 0,
             code: formData.get("code") as string,
             name: formData.get("name") as string,
-            price: formData.get("price") as unknown as number,
-            amipaPrice: formData.get("amipaPrice") as unknown as number,
+            price: parseFloat(formData.get("price") as string),
+            amipaPrice: parseFloat(formData.get("amipaPrice") as string),
             publishDate: formData.get("publishDate") as string,
             unpublishDate: formData.get("unpublishDate") as string,
         };

@@ -2,7 +2,6 @@ import { getGroupsSelector } from "@/lib/apis/payments/client";
 import { Event } from "@/lib/apis/payments/models";
 import { useState, useEffect } from "react";
 import { Selector, SelectorComponent } from "../Selector";
-//import DateRangePicker from "flowbite-datepicker/DateRangePicker";
 import Toggle from "../Toggle";
 
 interface EventComponentProps {
@@ -12,12 +11,6 @@ interface EventComponentProps {
 }
 
 const EventFields = ({ event, errors, allowSetEvent = true }: EventComponentProps) => {
-
-
-//    const dateRangePickerEl = document.getElementById('dateRangePickerId');
-//    new DateRangePicker(dateRangePickerEl, {
-    // options
-//    }); 
 
     const displayErrors = (key: string) => {
         if (!errors || !errors.has(key)) return null;
@@ -61,26 +54,56 @@ const EventFields = ({ event, errors, allowSetEvent = true }: EventComponentProp
                     id="amipaPrice" name="amipaPrice" defaultValue={event.amipaPrice} />
                 {displayErrors("amipaPrice")}
             </div>
-            
-            <div date-rangepicker="true" className="flex items-center">
-                <div className="relative">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                        <svg aria-hidden="true" className="w-5 h-5 text-gray-500 dark:text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd"></path></svg>
-                    </div>
+
+            <div className="flex justify-between items-center">
+                <div>
+                    <label
+                        className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                        htmlFor="start">Publicar</label>
                     <input
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        placeholder="Select date start"
-                        id="amipaPrice" name="start" type="text" defaultValue={event.amipaPrice} />
+                        className="
+                            bg-gray-50
+                            border
+                            border-gray-300
+                            text-gray-900
+                            text-sm
+                            rounded-lg
+                            focus:ring-blue-500
+                            focus:border-blue-500
+                            block w-full p-2.5
+                            dark:bg-gray-700
+                            dark:border-gray-600
+                            dark:placeholder-gray-400
+                            dark:text-white
+                            dark:focus:ring-blue-500
+                            dark:focus:border-blue-500"
+                        placeholder="Data finalització"
+                        name="start" id="start" type="date" defaultValue={event.amipaPrice} />
                 </div>
-                <span className="mx-4 text-gray-500">to</span>
-                <div className="relative">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                        <svg aria-hidden="true" className="w-5 h-5 text-gray-500 dark:text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd"></path></svg>
-                    </div>
+                <span className="mx-2 pt-7 text-gray-500 uppercase tracking-wide text-lg font-bold mb-2">fins</span>
+                <div>
+                    <label
+                        className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                        htmlFor="end">Retirar</label>
                     <input
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        placeholder="Select date end"
-                        id="amipaPrice" name="end" type="text" defaultValue={event.amipaPrice} />
+                        className="
+                            bg-gray-50
+                            border
+                            border-gray-300
+                            text-gray-900
+                            text-sm
+                            rounded-lg
+                            focus:ring-blue-500
+                            focus:border-blue-500
+                            block w-full p-2.5
+                            dark:bg-gray-700
+                            dark:border-gray-600
+                            dark:placeholder-gray-400
+                            dark:text-white
+                            dark:focus:ring-blue-500
+                            dark:focus:border-blue-500"
+                        placeholder="Data finalització"
+                        name="end" id="end" type="date" defaultValue={event.amipaPrice} />
                 </div>
             </div>
 

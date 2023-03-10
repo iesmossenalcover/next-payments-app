@@ -9,13 +9,13 @@ const Update = () => {
     const router = useRouter()
     const { id } = router.query
     const [loading, setLoading] = useState(false)
-    const [created, setCreated] = useState(false)
+    const [updated, setUpdated] = useState(false)
     const [errors, setErrors] = useState<Map<string, string[]>>()
     const [person, setPerson] = useState<Person | undefined>(undefined)
 
     useEffect(() => {
         if (!id) return;
-        
+
         getPersonById(parseInt(id as string))
             .then(x => setPerson(x.data));
 
@@ -23,14 +23,16 @@ const Update = () => {
 
     const onSubmit = async (p: Person) => {
         setLoading(true);
+        setUpdated(false);
         const data = await updatePerson(p);
         if (data.errors) {
             setErrors(data.errors);
-            setLoading(false);
         }
         else {
-            setCreated(true);
+            setUpdated(true);
+            setTimeout(() => setUpdated(false), 1500);
         }
+        setLoading(false);
     }
 
     const onFormSubmit = (e: React.SyntheticEvent<HTMLFormElement>) => {
@@ -50,8 +52,6 @@ const Update = () => {
             academicRecordNumber: isStudent ? parseInt(formData.get("academicRecordNumber") as string) || 0 : undefined,
             amipa: formData.get("amipa") === "on" ? true : false,
         };
-        console.log("submit")
-        console.log(p)
         onSubmit(p);
     }
 
@@ -59,27 +59,23 @@ const Update = () => {
 
     if (!person) return null;
 
-    console.log(person)
-
     return (
         <div className="max-w-lg m-auto">
             <div className="m-5">
-                {created ?
-                    <SuccessAlert text="Persona afegida correctament" /> :
-                    <form action="#" method="post" onSubmit={onFormSubmit} autoComplete="off">
-                        <PersonFields
-                            allowSetStudent={false}
-                            errors={errors}
-                            person={person} />
-                        <div>
-                            <input
-                                disabled={formDisabled()}
-                                className="w-full mt-6 bg-blue-500 hover:cursor-pointer hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed"
-                                value="Guardar canvis"
-                                type="submit" />
-                        </div>
-                    </form>
-                }
+                {updated ? <SuccessAlert text="Persona actualitzada correctament" /> : null}
+                <form className="mt-5" action="#" method="post" onSubmit={onFormSubmit} autoComplete="off">
+                    <PersonFields
+                        allowSetStudent={false}
+                        errors={errors}
+                        person={person} />
+                    <div>
+                        <input
+                            disabled={formDisabled()}
+                            className="w-full mt-6 bg-blue-500 hover:cursor-pointer hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed"
+                            value="Guardar canvis"
+                            type="submit" />
+                    </div>
+                </form>
             </div>
         </div>
     )
