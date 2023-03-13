@@ -11,10 +11,7 @@ interface PersonComponentProps {
 }
 
 const PersonFields = ({ person, errors }: PersonComponentProps) => {
-    const [isStudent, setIsStudent] = useState(!!person.academicRecordNumber)
     const [groups, setGroups] = useState<Selector | undefined>();
-
-    console.log(isStudent)
 
     useEffect(() => {
         getGroupsSelector()
@@ -31,33 +28,6 @@ const PersonFields = ({ person, errors }: PersonComponentProps) => {
         return (
             <>
                 {list.map((x, idx) => <p key={idx} className="text-red-500 italic">{x}</p>)}
-            </>
-        )
-    }
-
-    const displayStudentFields = () => {
-        if (!isStudent) return null;
-
-        return (
-            <>
-                <div>
-                    <label
-                        className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                        htmlFor="academicRecordNumber">Número expedient acadèmic</label>
-                    <input
-                        className="px-4 appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 leading-tight focus:outline-none focus:bg-white"
-                        id="academicRecordNumber" name="academicRecordNumber" defaultValue={person.academicRecordNumber} />
-                    {displayErrors("academicRecordNumber")}
-                </div>
-
-                <div className="mt-3">
-                    <Toggle
-                        name="amipa"
-                        id="amipa"
-                        value={person.amipa}
-                        text="Amipa"
-                    />
-                </div>
             </>
         )
     }
@@ -122,18 +92,25 @@ const PersonFields = ({ person, errors }: PersonComponentProps) => {
                     onSelect={() => { }} />
                 {displayErrors("groupId")}
             </div>
-            <div className="mt-3 mb-3">
+            <div>
+                <label
+                    className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                    htmlFor="academicRecordNumber">Número expedient acadèmic</label>
+                <input
+                    className="px-4 appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 leading-tight focus:outline-none focus:bg-white"
+                    id="academicRecordNumber" name="academicRecordNumber" defaultValue={person.academicRecordNumber} />
+                {displayErrors("academicRecordNumber")}
+            </div>
+            <div className="mt-3">
                 <Toggle
-                    name="isStudent"
-                    id="isStudent"
-                    value={isStudent}
-                    text="És estudiant?"
-                    onToggled={x => setIsStudent(x)}
+                    name="amipa"
+                    id="amipa"
+                    value={person.amipa}
+                    text="Amipa"
                 />
             </div>
-            {displayStudentFields()}
             <div className="mt-3">
-            {displayErrors("")}
+                {displayErrors("")}
             </div>
         </>
     )

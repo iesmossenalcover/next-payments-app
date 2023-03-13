@@ -33,10 +33,9 @@ const Create = () => {
 
     const onFormSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault();
-
+        setErrors(undefined);
         const form = e.currentTarget;
         const formData = new FormData(form);
-        const isStudent = formData.get("isStudent");
         const p: Person = {
             id: 0,
             name: formData.get("name") as string,
@@ -44,7 +43,7 @@ const Create = () => {
             surname2: formData.get("surname2") as string,
             documentId: formData.get("documentId") as string,
             groupId: parseInt(formData.get("groupId") as string),
-            academicRecordNumber: isStudent ? parseInt(formData.get("academicRecordNumber") as string) || 0 : undefined,
+            academicRecordNumber: parseInt(formData.get("academicRecordNumber") as string) ?? undefined,
             amipa: formData.get("amipa") === "on" ? true : false,
         };
         await onSubmit(p);
