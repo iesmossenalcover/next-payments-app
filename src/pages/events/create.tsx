@@ -12,7 +12,8 @@ const defaultEvent: Event = {
     price: 0,
     amipaPrice: 0,
     publishDate: "",
-    unpublishDate: ""
+    unpublishDate: "",
+    enrollment: false
 };
 
 const Create = () => {
@@ -28,7 +29,8 @@ const Create = () => {
             setLoading(false);
         }
         else {
-            const id = data.data as number;
+            const code = data.data as string;
+            console.log(code);
             setCreated(true);
         }
     }
@@ -38,15 +40,20 @@ const Create = () => {
 
         const form = e.currentTarget;
         const formData = new FormData(form);
+        const enrollment = formData.get("enrollment");
+
         const event: Event = {
             id: 0,
             code: formData.get("code") as string,
             name: formData.get("name") as string,
             price: parseFloat(formData.get("price") as string),
             amipaPrice: parseFloat(formData.get("amipaPrice") as string),
-            publishDate: formData.get("publishDate") as string,
-            unpublishDate: formData.get("unpublishDate") as string,
+            publishDate: formData.get("start") as string,
+            unpublishDate: formData.get("end") as string,
+            enrollment: formData.get("enrollment") == null ? false : true,
+
         };
+
         await onSubmit(event);
     }
 
@@ -56,7 +63,7 @@ const Create = () => {
         <div className="max-w-lg m-auto">
             <div className="m-5">
                 {created ?
-                    <SuccessAlert text="Event afegit correctament" /> :
+                    <SuccessAlert text="Event afegit correctament el codi de l'event és: " /> :
                     <form action="#" method="post" onSubmit={onFormSubmit} autoComplete="off">
                         <EventFields
                             allowSetEvent={true}
