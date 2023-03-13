@@ -37,11 +37,9 @@ const Update = () => {
 
     const onFormSubmit = (e: React.SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault();
-
+        setErrors(undefined);
         const form = e.currentTarget;
         const formData = new FormData(form);
-        const isStudent = formData.get("isStudent");
-        console.log(formData.get("isStudent"))
         const p: Person = {
             id: parseInt(id as string),
             name: formData.get("name") as string,
@@ -49,7 +47,7 @@ const Update = () => {
             surname2: formData.get("surname2") as string,
             documentId: formData.get("documentId") as string,
             groupId: parseInt(formData.get("groupId") as string),
-            academicRecordNumber: isStudent ? parseInt(formData.get("academicRecordNumber") as string) || 0 : undefined,
+            academicRecordNumber: parseInt(formData.get("academicRecordNumber") as string) ?? undefined,
             amipa: formData.get("amipa") === "on" ? true : false,
         };
         onSubmit(p);
