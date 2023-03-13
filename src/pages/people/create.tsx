@@ -11,6 +11,7 @@ const defaultPerson: Person = {
     documentId: "",
     groupId: 0,
     amipa: false,
+    enrolled: false,
 };
 
 const Create = () => {
@@ -26,7 +27,6 @@ const Create = () => {
             setLoading(false);
         }
         else {
-            const id = data.data as number;
             setCreated(true);
         }
     }
@@ -45,6 +45,8 @@ const Create = () => {
             groupId: parseInt(formData.get("groupId") as string),
             academicRecordNumber: parseInt(formData.get("academicRecordNumber") as string) ?? undefined,
             amipa: formData.get("amipa") === "on" ? true : false,
+            enrolled: formData.get("enrolled") === "on" ? true : false,
+            subjectsInfo: formData.get("subjectsInfo") as string ?? undefined,
         };
         await onSubmit(p);
     }

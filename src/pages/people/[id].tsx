@@ -49,6 +49,8 @@ const Update = () => {
             groupId: parseInt(formData.get("groupId") as string),
             academicRecordNumber: parseInt(formData.get("academicRecordNumber") as string) ?? undefined,
             amipa: formData.get("amipa") === "on" ? true : false,
+            enrolled: formData.get("enrolled") === "on" ? true : false,
+            subjectsInfo: formData.get("subjectsInfo") as string ?? undefined,
         };
         onSubmit(p);
     }

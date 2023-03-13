@@ -101,13 +101,29 @@ const PersonFields = ({ person, errors }: PersonComponentProps) => {
                     id="academicRecordNumber" name="academicRecordNumber" defaultValue={person.academicRecordNumber} />
                 {displayErrors("academicRecordNumber")}
             </div>
-            <div className="mt-3">
+            <div className="mt-5">
                 <Toggle
                     name="amipa"
                     id="amipa"
                     value={person.amipa}
                     text="Amipa"
                 />
+            </div>
+            <div className="mt-3">
+                <Toggle
+                    name="enrolled"
+                    id="enrolled"
+                    value={person.enrolled}
+                    text="Matriculat"
+                />
+            </div>
+            <div className="mt-5">                
+                <label htmlFor="subjectsInfo" className="block mb-2 text-md font-medium text-gray-900 dark:text-white">Assignatures (una per línia)</label>
+                <textarea id="subjectsInfo"
+                    name="subjectsInfo"
+                    rows={4}
+                    defaultValue={person.subjectsInfo}
+                    className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"></textarea>
             </div>
             <div className="mt-3">
                 {displayErrors("")}
