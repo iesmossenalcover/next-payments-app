@@ -4,6 +4,7 @@ import { getCoursesSelector, getPeopleView, PersonRow } from '@/lib/apis/payment
 import { Selector, SelectorComponent } from '@/components/Selector'
 import { Spinner } from '@/components/Loading'
 import { Table } from '@/components/table'
+import { Container } from '@/components/layout/SideBar'
 
 const tableHeaders = {
     id: "Identitat",
@@ -82,19 +83,21 @@ const People = () => {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <main>
-                <div className='flex justify-start items-center mb-4'>
-                    <SelectorComponent
-                        id='course'
-                        name='course'
-                        onSelect={onCourseSelected}
-                        selector={selector as Selector} />
+            <Container>
+                <main>
+                    <div className='flex justify-start items-center mb-4'>
+                        <SelectorComponent
+                            id='course'
+                            name='course'
+                            onSelect={onCourseSelected}
+                            selector={selector as Selector} />
 
-                    {loadingPeople ? <Spinner /> : null}
-                </div>
+                        {loadingPeople ? <Spinner /> : null}
+                    </div>
 
-                {listPeople()}
-            </main>
+                    {listPeople()}
+                </main>
+            </Container>
         </>
     )
 }
