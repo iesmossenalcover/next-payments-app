@@ -8,10 +8,10 @@ export const SideBar = () => {
                     <Link href="/">Pagar</Link>
                 </li>
                 <li className="my-3">
-                    <Link href="/people">Llistar persones</Link>
+                    <Link href="/admin/people">Llistar persones</Link>
                 </li>
                 <li className="my-3">
-                    <Link href="/events">Llsitar events</Link>
+                    <Link href="/admin/events">Llsitar events</Link>
                 </li>
             </ul>
         </nav>
