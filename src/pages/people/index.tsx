@@ -1,16 +1,27 @@
 import Head from 'next/head'
 import { useEffect, useState } from 'react'
 import { getCoursesSelector, getPeopleView, PersonRow } from '@/lib/apis/payments'
-import useUser from '@/lib/hooks/useUser'
-import Table, { Row } from '@/components/Table'
 import { Selector, SelectorComponent } from '@/components/Selector'
 import { Spinner } from '@/components/Loading'
+import { Table } from '@/components/table'
 
-const tableHeaders: string[] = ["Identitat", "Nom", "Llinatges", "Número expedient", "Grup"];
+const tableHeaders = {
+    id: "Identitat",
+    firstName: "Nom",
+    lastName: "Llinatges",
+    academicRecordNumber: "Número expedien",
+    group: "Grup"
+};
+
+interface TableRow {
+    id: number,
+    firstName: string,
+    lastName: string,
+    academicRecordNumber: string,
+    group: string,
+};
 
 const People = () => {
-
-    const { user } = useUser()
 
     const [loadingCourses, setLoadingCourses] = useState(true)
     const [loadingPeople, setLoadingPeople] = useState(false)
@@ -23,10 +34,10 @@ const People = () => {
         setCurrentCourseId(parseInt(value))
     }
 
-    const mapToRow = (): Row[] => {
+    const mapToRow = (): TableRow[] => {
         return people.map(x => {
             const academicRecordNumber = x.academicRecordNumber ? x.academicRecordNumber.toString() : "-";
-            return { key: x.id, values: [ x.documentId, x.firstName, x.lastName, academicRecordNumber, x.groupName ] };
+            return { id: x.id, firstName: x.firstName, lastName: x.lastName, academicRecordNumber: academicRecordNumber, group: x.groupName };
         });
     }
 
@@ -43,17 +54,22 @@ const People = () => {
             .finally(() => setLoadingPeople(false));
     }, [currentCourseId]);
 
-    if (loadingCourses || !user) {
+    if (loadingCourses) {
         return null
     }
 
     const listPeople = () => {
         if (loadingPeople) return null;
+
         return (
             <Table
-                paging={false}
                 headers={tableHeaders}
-                rows={mapToRow()}
+                items={mapToRow()}
+                tableClass='min-w-full'
+                headerClass='border-b'
+                headerCellClass='text-sm font-medium text-gray-900 px-6 py-4 text-left'
+                cellClass='text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap'
+                rowClass='border-b'
             />
         )
     }
@@ -73,8 +89,8 @@ const People = () => {
                         name='course'
                         onSelect={onCourseSelected}
                         selector={selector as Selector} />
-                    
-                    {loadingPeople ? <Spinner /> : null }
+
+                    {loadingPeople ? <Spinner /> : null}
                 </div>
 
                 {listPeople()}
