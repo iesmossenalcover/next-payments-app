@@ -26,7 +26,7 @@ export const  Container = ({ children }: ContainerPropos) => {
     return (
         <div className="min-h-screen flex">
             <SideBar />
-            <div className="flex-1 min-w-0 overflow-auto">
+            <div className="flex-1 min-w-0 max-h-screen overflow-y-auto">
                 {children}
             </div>
         </div>
