@@ -13,6 +13,7 @@ interface EventComponentProps {
 const EventFields = ({ event, errors, allowSetEvent = true }: EventComponentProps) => {
 
     const [isEnrollment, setIsEnrollment] = useState(!!event.enrollment)
+    const [isAmpipa, setIsAmpipa] = useState(!!event.amipa)
 
     const displayErrors = (key: string) => {
         if (!errors || !errors.has(key)) return null;
@@ -57,7 +58,7 @@ const EventFields = ({ event, errors, allowSetEvent = true }: EventComponentProp
                 {displayErrors("amipaPrice")}
             </div>
 
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center mb-6">
                 <div>
                     <label
                         className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
@@ -77,13 +78,23 @@ const EventFields = ({ event, errors, allowSetEvent = true }: EventComponentProp
                         name="end" id="end" type="date" defaultValue={new Date().toISOString().split('T')[0]}/>
                 </div>
             </div>
-            <div className="mt-3 mb-3">
+            <div className="mb-6">
                 <Toggle
                     name="enrollment"
                     id="enrollment"
                     value={isEnrollment}
                     text="És un event de matricula?"
                     onToggled={x => setIsEnrollment(x)}
+                />
+            </div>
+
+            <div className="mb-6">
+                <Toggle
+                    name="amipa"
+                    id="amipa"
+                    value={isAmpipa}
+                    text="És un event per ser soci d'AMIPA?"
+                    onToggled={x => setIsAmpipa(x)}
                 />
             </div>
 
