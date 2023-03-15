@@ -99,7 +99,9 @@ export interface EventRow {
     courseId: number,
     publishDate: string,
     unpublishDate: string,
-    isActive: boolean
+    isActive: boolean,
+    enrollment: boolean,
+    amipa: boolean
 }
 
 export interface Event {
@@ -110,5 +112,6 @@ export interface Event {
     amipaPrice: number,
     publishDate: string,
     unpublishDate: string,
-    enrollment: boolean
+    enrollment: boolean,
+    amipa: boolean
 }

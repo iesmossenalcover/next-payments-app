@@ -13,6 +13,8 @@ const tableHeaders = {
     from: "Publicació",
     to: "Expiració",
     active: "Actiu",
+    amipa: "Event Amipa",
+    enrollment: "Event Matricula",
 };
 
 interface TableRow {
@@ -23,6 +25,8 @@ interface TableRow {
     from: string,
     to: string,
     active: string,
+    amipa: string,
+    enrollment: string
 };
 
 const Events = () => {
@@ -42,6 +46,8 @@ const Events = () => {
             const from = new Date(x.publishDate);
             const to = new Date(x.unpublishDate);
             const active = x.isActive ? "Si" : "No";
+            const amipa = x.amipa ? "Si" : "No";
+            const enrollment = x.enrollment ? "Si" : "No";
             return {
                 id: x.code,
                 name: x.name,
@@ -49,7 +55,9 @@ const Events = () => {
                 amipaPrice: `${x.amipaPrice}`,
                 from: from.toLocaleDateString(),
                 to: to.toLocaleDateString(),
-                active: active
+                active: active,
+                amipa: amipa,
+                enrollment: enrollment
             };
         });
     }
