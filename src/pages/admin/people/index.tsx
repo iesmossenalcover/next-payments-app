@@ -5,22 +5,33 @@ import { Selector, SelectorComponent } from '@/components/Selector'
 import { Spinner } from '@/components/Loading'
 import { Table } from '@/components/table'
 import { Container } from '@/components/layout/SideBar'
+import Link from 'next/link'
 
 const tableHeaders = {
     id: "Identitat",
     firstName: "Nom",
     lastName: "Llinatges",
-    academicRecordNumber: "Número expedien",
-    group: "Grup"
+    academicRecordNumber: "Número expedient",
+    group: "Grup",
+    actions: "Accions",
 };
 
 interface TableRow {
-    id: number,
+    id: string,
     firstName: string,
     lastName: string,
     academicRecordNumber: string,
     group: string,
+    actions: "",
 };
+
+const customRenderer = {
+    actions: (item: TableRow) => {
+        return (
+            <Link className='ont-medium text-blue-600 dark:text-blue-500 hover:underline' href={`/admin/people/${item.id}`}>Editar</Link>
+        );
+    },
+}
 
 const People = () => {
 
@@ -38,7 +49,7 @@ const People = () => {
     const mapToRow = (): TableRow[] => {
         return people.map(x => {
             const academicRecordNumber = x.academicRecordNumber ? x.academicRecordNumber.toString() : "-";
-            return { id: x.id, firstName: x.firstName, lastName: x.lastName, academicRecordNumber: academicRecordNumber, group: x.groupName };
+            return { id: x.documentId, firstName: x.firstName, lastName: x.lastName, academicRecordNumber: academicRecordNumber, group: x.groupName, actions: "" };
         });
     }
 
@@ -66,6 +77,7 @@ const People = () => {
             <Table
                 headers={tableHeaders}
                 items={mapToRow()}
+                renderers={customRenderer}
                 tableClass='min-w-full'
                 headerClass='border-b'
                 headerCellClass='text-sm font-medium text-gray-900 px-6 py-4 text-left'
@@ -84,15 +96,44 @@ const People = () => {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <Container>
-                <main>
-                    <div className='flex justify-start items-center mb-4'>
-                        <SelectorComponent
-                            id='course'
-                            name='course'
-                            onSelect={onCourseSelected}
-                            selector={selector as Selector} />
+                <main className='mt-5 mx-10'>
+                    <div className='flex justify-between mb-4'>
+                        <div className='flex justify-start items-center'>
+                            <SelectorComponent
+                                id='course'
+                                name='course'
+                                onSelect={onCourseSelected}
+                                selector={selector as Selector} />
 
-                        {loadingPeople ? <Spinner /> : null}
+                            {loadingPeople ? <Spinner /> : null}
+                        </div>
+                        <div>
+                            <Link className='
+                                inline-block
+                                text-white 
+                                bg-blue-700 
+                                hover:bg-blue-800 
+                                focus:ring-4 
+                                focus:ring-blue-300
+                                font-medium
+                                py-3
+                                px-3
+                                rounded-lg
+                                text-sm
+                                mr-5' href="/admin/people/create">Afegir persona</Link>
+                            <Link className='
+                                inline-block
+                                text-white 
+                                bg-blue-700 
+                                hover:bg-blue-800 
+                                focus:ring-4 
+                                focus:ring-blue-300
+                                font-medium
+                                py-3
+                                px-3
+                                rounded-lg
+                                text-sm' href="/admin/tasks/upload">Carregar persones</Link>
+                        </div>
                     </div>
 
                     {listPeople()}
