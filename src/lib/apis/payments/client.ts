@@ -59,7 +59,6 @@ export const getGroupsSelector = async (): Promise<Selector> => {
 export const getPersonById = async (id: number): Promise<Response<Person>> => {
     const response = await get(`${API_BASE_URL}/api/people/${id}`);
     const data = await response.json() as Response<Person>;
-    console.log(data)
     if (data.errors) {
         data.errors = new Map(Object.entries(data.errors));
     }

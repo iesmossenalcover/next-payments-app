@@ -1,3 +1,4 @@
+import useUser from "@/lib/hooks/useUser"
 import Link from "next/link"
 
 export const SideBar = () => {
@@ -23,6 +24,10 @@ interface ContainerPropos {
 }
 
 export const  Container = ({ children }: ContainerPropos) => {
+    const { user, loading } = useUser();
+    console.log(user)
+    if (loading || !user) return null;
+
     return (
         <div className="min-h-screen flex">
             <SideBar />
