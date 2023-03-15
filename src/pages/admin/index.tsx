@@ -12,13 +12,17 @@ const Admin = () => {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <Container>
-                <main className="text-center mt-10">
-                    <h1>Administració</h1>
-                </main>
-            </Container>
+            <main className="text-center mt-10">
+                <h1>Administració</h1>
+            </main>
         </>
     );
 }
 
-export default Admin;
+export default function AdminPage() {
+    return (
+        <Container>
+            <Admin />
+        </Container>
+    )
+};

@@ -95,20 +95,19 @@ const People = () => {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <Container>
-                <main className='mt-5 mx-10'>
-                    <div className='flex justify-between mb-4'>
-                        <div className='flex justify-start items-center'>
-                            <SelectorComponent
-                                id='course'
-                                name='course'
-                                onSelect={onCourseSelected}
-                                selector={selector as Selector} />
+            <main className='mt-5 mx-10'>
+                <div className='flex justify-between mb-4'>
+                    <div className='flex justify-start items-center'>
+                        <SelectorComponent
+                            id='course'
+                            name='course'
+                            onSelect={onCourseSelected}
+                            selector={selector as Selector} />
 
-                            {loadingPeople ? <Spinner /> : null}
-                        </div>
-                        <div>
-                            <Link className='
+                        {loadingPeople ? <Spinner /> : null}
+                    </div>
+                    <div>
+                        <Link className='
                                 inline-block
                                 text-white 
                                 bg-blue-700 
@@ -121,7 +120,7 @@ const People = () => {
                                 rounded-lg
                                 text-sm
                                 mr-5' href="/admin/people/create">Afegir persona</Link>
-                            <Link className='
+                        <Link className='
                                 inline-block
                                 text-white 
                                 bg-blue-700 
@@ -133,15 +132,19 @@ const People = () => {
                                 px-3
                                 rounded-lg
                                 text-sm' href="/admin/tasks/upload">Carregar persones</Link>
-                        </div>
                     </div>
+                </div>
 
-                    {listPeople()}
-                </main>
-            </Container>
+                {listPeople()}
+            </main>
         </>
     )
 }
 
-
-export default People
+export default function PeoplePage() {
+    return (
+        <Container>
+            <People />
+        </Container>
+    )
+};

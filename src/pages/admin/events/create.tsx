@@ -68,33 +68,37 @@ const Create = () => {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <Container>
-                <main>
-                    <div className="max-w-lg m-auto">
-                        <div className="m-5">
-                            {created ?
-                                <SuccessAlert text="Event afegit correctament el codi de l'event és: " /> :
-                                <form action="#" method="post" onSubmit={onFormSubmit} autoComplete="off">
-                                    <EventFields
-                                        allowSetEvent={true}
-                                        errors={errors}
-                                        event={defaultEvent} />
-                                    <div>
-                                        <input
-                                            disabled={formDisabled()}
-                                            className="w-full mt-6 bg-blue-500 hover:cursor-pointer hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed"
-                                            value="Afegir Event"
-                                            type="submit" />
-                                    </div>
-                                </form>
-                            }
-                        </div>
+            <main>
+                <div className="max-w-lg m-auto">
+                    <div className="m-5">
+                        {created ?
+                            <SuccessAlert text="Event afegit correctament el codi de l'event és: " /> :
+                            <form action="#" method="post" onSubmit={onFormSubmit} autoComplete="off">
+                                <EventFields
+                                    allowSetEvent={true}
+                                    errors={errors}
+                                    event={defaultEvent} />
+                                <div>
+                                    <input
+                                        disabled={formDisabled()}
+                                        className="w-full mt-6 bg-blue-500 hover:cursor-pointer hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed"
+                                        value="Afegir Event"
+                                        type="submit" />
+                                </div>
+                            </form>
+                        }
                     </div>
-                </main>
-            </Container>
+                </div>
+            </main>
         </>
 
     )
 }
 
-export default Create;
+export default function CreateEventPage() {
+    return (
+        <Container>
+            <Create />
+        </Container>
+    )
+};
