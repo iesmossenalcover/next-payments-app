@@ -1,5 +1,5 @@
 import { BatchUploadSummary, Identity, PersonActiveEventsVm, Person, PersonRow, Response, ResponseCode, SigninResponse, CreateOrderResponse, EventRow, Event, GetOrderInfo } from "./models"
-import { get, postJson, putJson } from "./baseclient"
+import { deleteJson, get, postJson, putJson } from "./baseclient"
 import { Selector } from "@/components/Selector"
 
 const API_BASE_URL = process.env.API_BASE_URL
@@ -72,6 +72,17 @@ export const createPerson = async (person: Person): Promise<Response<number>> =>
     if (data.errors) {
         data.errors = new Map(Object.entries(data.errors));
     }
+    return data;
+}
+
+export const deletePerson = async (id: number): Promise<Response<number>> => {
+    const response = await deleteJson(`${API_BASE_URL}/api/people/${id}`);
+    const data = await response.json() as Response<number>;
+
+    if (data.errors) {
+        data.errors = new Map(Object.entries(data.errors));
+    }
+    
     return data;
 }
 

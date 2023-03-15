@@ -6,9 +6,11 @@ import { Spinner } from '@/components/Loading'
 import { Table } from '@/components/table'
 import { Container } from '@/components/layout/SideBar'
 import Link from 'next/link'
+import { deletePerson } from '@/lib/apis/payments/client'
 
 const tableHeaders = {
-    id: "Identitat",
+    id: "Id",
+    documentId: "Identitat",
     firstName: "Nom",
     lastName: "Llinatges",
     academicRecordNumber: "Número expedient",
@@ -17,21 +19,14 @@ const tableHeaders = {
 };
 
 interface TableRow {
-    id: string,
+    id: number,
+    documentId: string,
     firstName: string,
     lastName: string,
     academicRecordNumber: string,
     group: string,
     actions: "",
 };
-
-const customRenderer = {
-    actions: (item: TableRow) => {
-        return (
-            <Link className='ont-medium text-blue-600 dark:text-blue-500 hover:underline' href={`/admin/people/${item.id}`}>Editar</Link>
-        );
-    },
-}
 
 const People = () => {
 
@@ -49,8 +44,15 @@ const People = () => {
     const mapToRow = (): TableRow[] => {
         return people.map(x => {
             const academicRecordNumber = x.academicRecordNumber ? x.academicRecordNumber.toString() : "-";
-            return { id: x.documentId, firstName: x.firstName, lastName: x.lastName, academicRecordNumber: academicRecordNumber, group: x.groupName, actions: "" };
+            return { id: x.id, documentId: x.documentId, firstName: x.firstName, lastName: x.lastName, academicRecordNumber: academicRecordNumber, group: x.groupName, actions: "" };
         });
+    }
+
+    const loadPeople = () => {
+        setLoadingPeople(true);
+        getPeopleView(currentCourseId)
+            .then(x => setPeople(x))
+            .finally(() => setLoadingPeople(false));
     }
 
     useEffect(() => {
@@ -60,11 +62,38 @@ const People = () => {
     }, []);
 
     useEffect(() => {
-        setLoadingPeople(true);
-        getPeopleView(currentCourseId)
-            .then(x => setPeople(x))
-            .finally(() => setLoadingPeople(false));
+        loadPeople();
     }, [currentCourseId]);
+
+    const onDeletePerson = async (item: TableRow) => {
+        const del = confirm(`Eliminar persona ${item.firstName} ${item.lastName} - ${item.documentId}?`);
+        if (del) {
+            const response = await deletePerson(item.id);
+            if (response.errors) {
+                alert("No s'ha pogut eliminar.")
+            }
+            else
+            {
+                loadPeople();
+            }
+        }
+    }
+
+    const customRenderer = {
+        actions: (item: TableRow) => {
+            return (
+                <>
+                    <Link className='font-medium text-blue-600 hover:underline' href={`/admin/people/${item.id}`}>Editar</Link>
+
+                    <button
+                        className='font-medium text-red-600 hover:underline ml-5'
+                        onClick={() => onDeletePerson(item)}>
+                        Eliminar
+                    </button>
+                </>
+            );
+        },
+    }
 
     if (loadingCourses) {
         return null

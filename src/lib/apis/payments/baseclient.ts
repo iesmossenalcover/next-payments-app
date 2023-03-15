@@ -13,6 +13,11 @@ export const postJson = (url: string, body: any, headers: any = {}): Promise<Res
     return apiFetch(url, "POST", body, headers)
 }
 
+export const deleteJson = (url: string, headers: any = {}): Promise<Response> => {
+    headers = { "Content-Type": "application/json", ...headers }
+    return apiFetch(url, "DELETE", headers)
+}
+
 export const get = (url: string, headers: any = {}): Promise<Response> => {
     return apiFetch(url, "GET", null, headers)
 }
