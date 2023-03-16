@@ -12,7 +12,7 @@ const Signin = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    const { redirectTo = "/" } = router.query
+    const { redirectTo = "/admin" } = router.query
 
     const response = await signin(username, password)
     if (response.status == SigninStatus.Ok) {
