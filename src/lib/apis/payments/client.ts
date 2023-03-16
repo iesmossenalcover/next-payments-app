@@ -145,6 +145,26 @@ export const getEventsView = async (): Promise<EventRow[]> => {
     return [];
 }
 
+export const getEventById = async (id: number): Promise<Response<Event>> => {
+    const response = await get(`${API_BASE_URL}/api/events/${id}`);
+    const data = await response.json() as Response<Event>;
+    if (data.errors) {
+        data.errors = new Map(Object.entries(data.errors));
+    }
+    return data;
+}
+
+export const updateEvent = async (event: Event): Promise<Response<number>> => {
+    const response = await putJson(`${API_BASE_URL}/api/events/${event.id}`, event);
+    const data = await response.json() as Response<number>;
+
+    if (data.errors) {
+        data.errors = new Map(Object.entries(data.errors));
+    }
+    return data;
+}
+
+
 export const createEvent = async (event: Event): Promise<Response<string>> => {
     const response = await postJson(`${API_BASE_URL}/api/events`, event);
     const data = await response.json() as Response<string>;
