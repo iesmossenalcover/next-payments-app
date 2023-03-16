@@ -3,10 +3,14 @@ import { Spinner } from "@/components/Loading";
 import { Table } from "@/components/table";
 import { EventsRow, getEventsView } from "@/lib/apis/payments";
 import Head from "next/head";
+import Link from "next/link";
 import { useEffect, useState } from "react";
+import { deleteEvent } from '@/lib/apis/payments/client'
+
 
 const tableHeaders = {
-    id: "Codi",
+    id: "Id",
+    code: "Codi",
     name: "Nom",
     price: "Preu",
     amipaPrice: "Preu AMIPA",
@@ -15,10 +19,12 @@ const tableHeaders = {
     active: "Actiu",
     amipa: "Event Amipa",
     enrollment: "Event Matricula",
+    actions: "Accions",
 };
 
 interface TableRow {
-    id: string,
+    id: number,
+    code: string,
     name: string,
     price: string,
     amipaPrice: string,
@@ -26,7 +32,8 @@ interface TableRow {
     to: string,
     active: string,
     amipa: string,
-    enrollment: string
+    enrollment: string,
+    actions: "",
 };
 
 const Events = () => {
@@ -49,7 +56,8 @@ const Events = () => {
             const amipa = x.amipa ? "Si" : "No";
             const enrollment = x.enrollment ? "Si" : "No";
             return {
-                id: x.code,
+                id: x.id,
+                code: x.code,
                 name: x.name,
                 price: `${x.price}`,
                 amipaPrice: `${x.amipaPrice}`,
@@ -57,9 +65,51 @@ const Events = () => {
                 to: to.toLocaleDateString(),
                 active: active,
                 amipa: amipa,
-                enrollment: enrollment
+                enrollment: enrollment,
+                actions: ""
             };
         });
+    }
+
+    const customRenderer = {
+        actions: (item: TableRow) => {
+            return (
+                <>
+                    <Link className='font-medium text-blue-600 hover:underline' href={`/admin/people/${item.id}`}>Editar</Link>
+
+                    <button
+                        className='font-medium text-red-600 hover:underline ml-5'
+                        onClick={() => onDeleteEvent(item)}>
+                        Eliminar
+                    </button>
+                </>
+            );
+        },
+    }
+
+    const loadEvents = () => {
+        setLoadingEvents(true);
+        getEventsView()
+            .then(x => setEvents(x))
+            .finally(() => setLoadingEvents(false));
+    }
+
+    useEffect(() => {
+        loadEvents();
+    }, []);
+
+    const onDeleteEvent = async (item: TableRow) => {
+        const del = confirm(`Eliminar esdeveniment codi: ${item.code}, nom: ${item.name} ?`);
+        if (del) {
+            const response = await deleteEvent(item.id);
+            if (response.errors) {
+                alert("No s'ha pogut eliminar.")
+            }
+            else
+            {
+                loadEvents();
+            }
+        }
     }
 
     const listEvents = () => {
@@ -68,6 +118,7 @@ const Events = () => {
             <Table
                 headers={tableHeaders}
                 items={mapToRow()}
+                renderers={customRenderer}
                 tableClass='min-w-full'
                 headerClass='border-b'
                 headerCellClass='text-sm font-medium text-gray-900 px-6 py-4 text-left'

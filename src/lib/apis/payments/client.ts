@@ -155,6 +155,17 @@ export const createEvent = async (event: Event): Promise<Response<string>> => {
     return data;
 }
 
+export const deleteEvent = async (id: number): Promise<Response<number>> => {
+    const response = await deleteJson(`${API_BASE_URL}/api/events/${id}`);
+    const data = await response.json() as Response<number>;
+
+    if (data.errors) {
+        data.errors = new Map(Object.entries(data.errors));
+    }
+    
+    return data;
+}
+
 export const getOrderInfo = async (merchantParameters: string, singature: string, singatureVersion: string) => {
     const response = await get(`${API_BASE_URL}/api/order/info?merchantParameters=${merchantParameters}&signature=${singature}&signatureVersion=${singatureVersion}`);
     const data = await response.json() as Response<GetOrderInfo>;
