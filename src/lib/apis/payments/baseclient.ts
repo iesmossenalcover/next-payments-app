@@ -40,7 +40,6 @@ export const apiFetch = (
 
         fetch(url, request)
             .then(response => {
-                console.log(Router.pathname)
                 switch (response.status) {
                     case 401:
                         Router.push({

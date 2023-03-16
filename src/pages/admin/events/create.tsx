@@ -32,7 +32,6 @@ const Create = () => {
         }
         else {
             const code = data.data as string;
-            console.log(code);
             setCreated(true);
         }
     }

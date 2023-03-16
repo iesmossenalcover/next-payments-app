@@ -25,7 +25,6 @@ interface ContainerPropos {
 
 export const  Container = ({ children }: ContainerPropos) => {
     const { user, loading } = useUser();
-    console.log(user)
     if (loading || !user) return null;
 
     return (
