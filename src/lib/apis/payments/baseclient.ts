@@ -1,7 +1,7 @@
 import Router from "next/router"
 
 const INTERNAL_ERROR_PAGE = "/500"
-const SIGNIN_PAGE = "/signin"
+const SIGNIN_PAGE = "/admin/signin"
 
 export const putJson = (url: string, body: any, headers: any = {}): Promise<Response> => {
     headers = { "Content-Type": "application/json", ...headers }
