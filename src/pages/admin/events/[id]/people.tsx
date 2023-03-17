@@ -5,10 +5,14 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
+const textAreaPlaceHolder = "11111111\n22222222\n33333333\n...";
+
 const PeopleToEvent = () => {
     const router = useRouter()
     const [eventData, setEventData] = useState<EventPeople | undefined>(undefined);
     const [selected, setSelected] = useState<Set<number>>(new Set())
+    const [saving, setSaving] = useState(false);
+    const [academicRecordNumbers, setAcademicRecordNumbers] = useState("");
 
     const { id } = router.query
 
@@ -27,8 +31,7 @@ const PeopleToEvent = () => {
                         const g = x.data.peopleGroups[i];
                         for (let j = 0; j < g.people.length; j++) {
                             const p = g.people[j];
-                            if (p.inEvent) 
-                            {
+                            if (p.inEvent) {
                                 s.add(p.id);
                             }
                         }
@@ -40,8 +43,64 @@ const PeopleToEvent = () => {
     }, [id])
 
     const persistChanges = () => {
+        setSaving(true);
         setEventPeople(id as string, Array.from(selected))
-            .then(x => console.log(x));
+            .then((x) => {
+                if (x.code === 0) {
+                    alert("Actualitzat correctament")
+                } else {
+                    alert("S'ha produït un error")
+                }
+            })
+            .finally(() => setSaving(false));
+    }
+
+    const markByAcademicRecordNumber = () => {
+        if (!eventData) return;
+
+        const numbers = academicRecordNumbers.split("\n").map(x => x.trim()).filter(x => x.length > 0);
+        if (numbers.length > 0) {
+
+            for (let i = 0; i < eventData.peopleGroups.length; i++) {
+                const g = eventData.peopleGroups[i];
+                for (let j = 0; j < g.people.length; j++) {
+
+                    const p = g.people[j];
+                    if (numbers.find(x => parseInt(x) === p.academicRecordNumber)) {
+                        selected.add(p.id);
+                    }
+                }
+            }
+            setAcademicRecordNumbers("");
+            setSelected(new Set(selected));
+        }
+    }
+
+    const renderAcademicRecordSelection = () => {
+        return (
+            <div>
+                <label
+                    htmlFor="academicRecordSelector"
+                    className="block mb-2 text-sm font-medium text-gray-900">Selecció per nombre d'expedient acadèmic</label>
+                <textarea
+                    id="academicRecordSelector"
+                    rows={10}
+                    value={academicRecordNumbers}
+                    onChange={e => setAcademicRecordNumbers(e.target.value)}
+                    className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder={textAreaPlaceHolder}></textarea>
+
+                <button
+                    className="text-white
+                                bg-blue-600
+                                font-bold
+                                mt-3
+                                py-2
+                                px-4
+                                rounded"
+                    onClick={markByAcademicRecordNumber}>Selecciona per expedient</button>
+            </div >
+        )
     }
 
     const renderGroups = () => {
@@ -74,13 +133,26 @@ const PeopleToEvent = () => {
                         <h4 className="font-bold text-3xl ml-3">-</h4>
                         <h4 className="font-bold text-3xl ml-3">{eventData.name}</h4>
                     </div>
-                    <button onClick={persistChanges}>Guardar</button>
+                    <div>
+                        <button
+                            disabled={saving}
+                            className={`
+                                ml-10
+                                text-white
+                                font-bold
+                                py-2
+                                px-4
+                                rounded ${!saving ? "bg-green-600 hover:bg-green-900" : "bg-gray-500"}`}
+                            onClick={persistChanges}>Guardar</button>
+                    </div>
                 </div>
                 <h4 className="mt-3 font-semibold">Persones apuntades: {selected.size}</h4>
                 <hr className="h-px mt-3 mb-8 bg-gray-300 border-0" />
                 <div>
                     {renderGroups()}
                 </div>
+                <hr className="h-px mt-3 mb-8 bg-gray-300 border-0" />
+                {renderAcademicRecordSelection()}
             </main>
         </>
     );

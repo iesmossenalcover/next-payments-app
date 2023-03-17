@@ -122,6 +122,7 @@ export interface EventPerson {
     id: number,
     documentId: string,
     fullName: string,
+    academicRecordNumber?: number,
     inEvent: boolean,
 }
 
