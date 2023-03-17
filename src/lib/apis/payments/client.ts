@@ -1,4 +1,4 @@
-import { BatchUploadSummary, Identity, PersonActiveEventsVm, Person, PersonRow, Response, ResponseCode, SigninResponse, CreateOrderResponse, EventRow, Event, GetOrderInfo } from "./models"
+import { BatchUploadSummary, Identity, PersonActiveEventsVm, Person, PersonRow, Response, ResponseCode, SigninResponse, CreateOrderResponse, EventRow, Event, GetOrderInfo, EventPeople } from "./models"
 import { deleteJson, get, postJson, putJson } from "./baseclient"
 import { Selector } from "@/components/Selector"
 
@@ -82,7 +82,7 @@ export const deletePerson = async (id: number): Promise<Response<number>> => {
     if (data.errors) {
         data.errors = new Map(Object.entries(data.errors));
     }
-    
+
     return data;
 }
 
@@ -130,7 +130,7 @@ export const createOrder = async (documentId: string, eventCodes: string[]): Pro
     if (data.errors) {
         data.errors = new Map(Object.entries(data.errors));
     }
-    
+
     return data;
 }
 
@@ -162,13 +162,31 @@ export const deleteEvent = async (id: number): Promise<Response<number>> => {
     if (data.errors) {
         data.errors = new Map(Object.entries(data.errors));
     }
-    
+
     return data;
 }
 
 export const getOrderInfo = async (merchantParameters: string, singature: string, singatureVersion: string) => {
     const response = await get(`${API_BASE_URL}/api/order/info?merchantParameters=${merchantParameters}&signature=${singature}&signatureVersion=${singatureVersion}`);
     const data = await response.json() as Response<GetOrderInfo>;
+    if (data.errors) {
+        data.errors = new Map(Object.entries(data.errors));
+    }
+    return data;
+}
+
+export const getEventPeople = async (eventCode: string) => {
+    const response = await get(`${API_BASE_URL}/api/events/${eventCode}/people`);
+    const data = await response.json() as Response<EventPeople>;
+    if (data.errors) {
+        data.errors = new Map(Object.entries(data.errors));
+    }
+    return data;
+}
+
+export const setEventPeople = async (code: string, peopleIds: number[]) => {
+    const response = await postJson(`${API_BASE_URL}/api/events/${code}/people`, { peopleIds });
+    const data = await response.json() as Response<EventPeople>;
     if (data.errors) {
         data.errors = new Map(Object.entries(data.errors));
     }

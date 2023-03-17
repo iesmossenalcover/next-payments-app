@@ -115,3 +115,25 @@ export interface Event {
     enrollment: boolean,
     amipa: boolean
 }
+
+
+// Event people
+export interface EventPerson {
+    id: number,
+    documentId: string,
+    fullName: string,
+    inEvent: boolean,
+}
+
+export interface EventPeopleGroup {
+    id: number,
+    name: string,
+    people: EventPerson[]
+}
+
+export interface EventPeople {
+    id: number,
+    code: string,
+    name: string, 
+    peopleGroups: EventPeopleGroup[]
+}

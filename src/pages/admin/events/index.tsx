@@ -141,7 +141,7 @@ const Events = () => {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <main className="flex-1 min-w-0 overflow-auto">
+            <main>
                 <div className='flex justify-start items-center mb-4'>
                     {loadingEvents ? <Spinner /> : null}
                     {loadingEvents ? <p>Carregant Informació</p> : null}
