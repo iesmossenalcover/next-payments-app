@@ -49,7 +49,7 @@ const PeopleToEvent = () => {
                 if (x.code === 0) {
                     alert("Actualitzat correctament")
                 } else {
-                    alert("S'ha produït un error")
+                    alert("S&apos;ha produït un error")
                 }
             })
             .finally(() => setSaving(false));
@@ -66,7 +66,8 @@ const PeopleToEvent = () => {
                 for (let j = 0; j < g.people.length; j++) {
 
                     const p = g.people[j];
-                    if (numbers.find(x => parseInt(x) === p.academicRecordNumber)) {
+                    const num = p.academicRecordNumber ? p.academicRecordNumber.toString() : "";
+                    if (numbers.find(x => x === num)) {
                         selected.add(p.id);
                     }
                 }
@@ -81,7 +82,7 @@ const PeopleToEvent = () => {
             <div>
                 <label
                     htmlFor="academicRecordSelector"
-                    className="block mb-2 text-sm font-medium text-gray-900">Selecció per nombre d'expedient acadèmic</label>
+                    className="block mb-2 text-sm font-medium text-gray-900">Selecció per nombre d&apos;expedient acadèmic</label>
                 <textarea
                     id="academicRecordSelector"
                     rows={10}
