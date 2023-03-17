@@ -75,7 +75,7 @@ const Events = () => {
         actions: (item: TableRow) => {
             return (
                 <>
-                    <Link className='font-medium text-blue-600 hover:underline' href={`/admin/people/${item.id}`}>Editar</Link>
+                    <Link className='font-medium text-blue-600 hover:underline' href={`/admin/events/${item.id}`}>Editar</Link>
 
                     <button
                         className='font-medium text-red-600 hover:underline ml-5'
@@ -141,11 +141,31 @@ const Events = () => {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <main>
-                <div className='flex justify-start items-center mb-4'>
-                    {loadingEvents ? <Spinner /> : null}
-                    {loadingEvents ? <p>Carregant Informació</p> : null}
+            <main className="mt-5 mx-10">
+
+
+                <div className='flex justify-between mb-4'>
+                    <div className='flex justify-start items-center'>
+                        {loadingEvents ? <Spinner /> : null}
+                        {loadingEvents ? <p>Carregant Informació</p> : null}
+                    </div>
+                    <div>
+                        <Link className='
+                                inline-block
+                                text-white 
+                                bg-blue-700 
+                                hover:bg-blue-800 
+                                focus:ring-4 
+                                focus:ring-blue-300
+                                font-medium
+                                py-3
+                                px-3
+                                rounded-lg
+                                text-sm
+                                mr-5' href="/admin/events/create">Afegir event</Link>
+                    </div>
                 </div>
+
                 {listEvents()}
             </main>
         </>
