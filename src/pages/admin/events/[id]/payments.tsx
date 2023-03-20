@@ -18,9 +18,11 @@ const EventPayments = () => {
                     console.log(x.errors);
                 } else {
                     setData(x.data);
+                    console.log(x.data);
                 }
             })
-    }, [id])
+            
+        }, [id])
 
     if (!data) return null;
 
@@ -55,6 +57,7 @@ const EventPayments = () => {
                 </div>
                 <h4 className="mt-3 font-semibold">Total: {data.totalPrice} €</h4>
                 <h4 className="mt-3 font-semibold">Amipa total: {data.amipaTotalPrice} €</h4>
+                <h4 className="mt-3 font-semibold">Alumnes total: {data.count}</h4>
                 <hr className="h-px mt-3 mb-8 bg-gray-300 border-0" />
                 <h3 className="text-green-700 text-lg font-bold">Pagats: {data.paidCount}</h3>
                 <ul>
