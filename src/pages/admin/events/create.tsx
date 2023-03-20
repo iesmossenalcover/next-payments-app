@@ -18,9 +18,11 @@ const defaultEvent: Event = {
     amipa: false
 };
 
+
 const Create = () => {
     const [loading, setLoading] = useState(false)
     const [created, setCreated] = useState(false)
+    const [codeCreated, setCodeCreated] = useState("")
     const [errors, setErrors] = useState<Map<string, string[]>>()
 
     const onSubmit = async (e: Event) => {
@@ -32,6 +34,7 @@ const Create = () => {
         }
         else {
             const code = data.data as string;
+            setCodeCreated(code);
             setCreated(true);
         }
     }
@@ -72,7 +75,7 @@ const Create = () => {
                 <div className="max-w-lg m-auto">
                     <div className="m-5">
                         {created ?
-                            <SuccessAlert text="Event afegit correctament el codi de l'event és: " /> :
+                            <SuccessAlert text={`Event afegit correctament el codi de l'event és: ${codeCreated}` }/> :
                             <form action="#" method="post" onSubmit={onFormSubmit} autoComplete="off">
                                 <EventFields
                                     allowSetEvent={true}
