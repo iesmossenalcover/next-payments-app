@@ -58,7 +58,10 @@ const EventPayments = () => {
                 <h4 className="mt-3 font-semibold">Total: {data.totalPrice} €</h4>
                 <h4 className="mt-3 font-semibold">Amipa total: {data.amipaTotalPrice} €</h4>
                 <h4 className="mt-3 font-semibold">No Amipa total: {data.noAmipaTotalPrice} €</h4>
+                <hr className="h-px mt-3 mb-8 bg-gray-300 border-0" />
                 <h4 className="mt-3 font-semibold">Alumnes total: {data.count}</h4>
+                <h4 className="mt-3 font-semibold">Alumnes Amipa: {data.amipaStudents}</h4>
+                <h4 className="mt-3 font-semibold">Alumnes No Amipa: {data.noAmipaStudents}</h4>
                 <hr className="h-px mt-3 mb-8 bg-gray-300 border-0" />
                 <h3 className="text-green-700 text-lg font-bold">Pagats: {data.paidCount}</h3>
                 <ul>
