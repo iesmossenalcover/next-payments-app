@@ -147,6 +147,7 @@ export interface EventPayments {
     name: string
     totalPrice: number
     amipaTotalPrice: number
+    noAmipaTotalPrice: number
     count: number
     paidCount: number
     paidEvents: EventPayment[]
