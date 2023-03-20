@@ -11,9 +11,9 @@ export const SideBar = () => {
                 <li className="my-3">
                     <Link href="/admin/people">Llistar persones</Link>
                 </li>
-                <li className="my-3">
+                {/* <li className="my-3">
                     <Link href="/admin/events">Llsitar events</Link>
-                </li>
+                </li> */}
             </ul>
         </nav>
     )
