@@ -64,9 +64,9 @@ export interface GetOrderInfo {
 }
 
 export interface GetOrderInfoEvent {
-    code:     string;
-    name:     string;
-    price:    number;
+    code: string;
+    name: string;
+    price: number;
     currency: string;
 }
 
@@ -135,6 +135,26 @@ export interface EventPeopleGroup {
 export interface EventPeople {
     id: number,
     code: string,
-    name: string, 
+    name: string,
     peopleGroups: EventPeopleGroup[]
+}
+
+
+export interface EventPayments {
+    id: number
+    code: string
+    name: string
+    totalPrice: number
+    amipaTotalPrice: number
+    count: number
+    paidCount: number
+    payments: EventPayment[]
+}
+
+export interface EventPayment {
+    id: number
+    fullName: string
+    amipa: boolean
+    price: number
+    paid: boolean
 }
