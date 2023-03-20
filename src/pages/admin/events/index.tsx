@@ -59,8 +59,8 @@ const Events = () => {
                 id: x.id,
                 code: x.code,
                 name: x.name,
-                price: `${x.price}`,
-                amipaPrice: `${x.amipaPrice}`,
+                price: `${x.price} €`,
+                amipaPrice: `${x.amipaPrice} €`,
                 from: from.toLocaleDateString(),
                 to: to.toLocaleDateString(),
                 active: active,
@@ -75,8 +75,9 @@ const Events = () => {
         actions: (item: TableRow) => {
             return (
                 <>
-                    <Link className='font-medium text-blue-600 hover:underline' href={`/admin/events/${item.id}`}>Editar</Link>
-
+                    <Link className='font-medium text-blue-600 hover:underline ml-5' href={`/admin/events/${item.id}`}>Editar</Link>
+                    <Link className='font-medium text-blue-600 hover:underline ml-5' href={`/admin/events/${item.code}/people`}>Persones</Link>
+                    <Link className='font-medium text-blue-600 hover:underline ml-5' href={`/admin/events/${item.code}/payments`}>Pagaments</Link>
                     <button
                         className='font-medium text-red-600 hover:underline ml-5'
                         onClick={() => onDeleteEvent(item)}>
@@ -121,8 +122,8 @@ const Events = () => {
                 renderers={customRenderer}
                 tableClass='min-w-full'
                 headerClass='border-b'
-                headerCellClass='text-sm font-medium text-gray-900 px-6 py-4 text-left'
-                cellClass='text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap'
+                headerCellClass='text-sm font-medium text-gray-900 px-6 py-4 text-left text-center'
+                cellClass='text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap text-center'
                 rowClass='border-b'
             />
         )

@@ -57,6 +57,7 @@ const Update = () => {
             id: parseInt(id as string),
             code: formData.get("code") as string,
             name: formData.get("name") as string,
+            description: formData.get("description") as string,
             price: parseFloat(formData.get("price") as string),
             amipaPrice: parseFloat(formData.get("amipaPrice") as string),
             publishDate: formData.get("start") as string,

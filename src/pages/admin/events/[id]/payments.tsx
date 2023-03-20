@@ -53,14 +53,15 @@ const EventPayments = () => {
                         <h4 className="font-bold text-3xl ml-3">{data.name}</h4>
                     </div>
                 </div>
-                {/* <h4 className="mt-3 font-semibold">Persones apuntades: {selected.size}</h4> */}
+                <h4 className="mt-3 font-semibold">Total: {data.totalPrice} €</h4>
+                <h4 className="mt-3 font-semibold">Amipa total: {data.amipaTotalPrice} €</h4>
                 <hr className="h-px mt-3 mb-8 bg-gray-300 border-0" />
-                <h3 className="text-green-500 text-lg font-bold">Pagats</h3>
+                <h3 className="text-green-700 text-lg font-bold">Pagats: {data.paidCount}</h3>
                 <ul>
                     {paidEvents}
                 </ul>
                 <hr className="h-px mt-3 mb-8 bg-gray-300 border-0" />
-                <h3 className="text-red-500 text-lg font-bold">No Pagats</h3>
+                <h3 className="text-red-500 text-lg font-bold">No Pagats: {data.count - data.paidCount}</h3>
                 <ul>
                     {unPaidEvents}
                 </ul>
