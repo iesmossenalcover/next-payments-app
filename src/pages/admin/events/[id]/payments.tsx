@@ -24,7 +24,13 @@ const EventPayments = () => {
 
     if (!data) return null;
 
-    const payments = data.payments.map(x => (
+    const paidEvents = data.paidEvents.map(x => (
+        <li key={x.id} className="mt-3">
+            {x.fullName}
+        </li>
+    ))
+
+    const unPaidEvents = data.unPaidEvents.map(x => (
         <li key={x.id} className="mt-3">
             {x.fullName}
         </li>
@@ -49,8 +55,14 @@ const EventPayments = () => {
                 </div>
                 {/* <h4 className="mt-3 font-semibold">Persones apuntades: {selected.size}</h4> */}
                 <hr className="h-px mt-3 mb-8 bg-gray-300 border-0" />
+                <h3 className="text-green-500 text-lg font-bold">Pagats</h3>
                 <ul>
-                    {payments}
+                    {paidEvents}
+                </ul>
+                <hr className="h-px mt-3 mb-8 bg-gray-300 border-0" />
+                <h3 className="text-red-500 text-lg font-bold">No Pagats</h3>
+                <ul>
+                    {unPaidEvents}
                 </ul>
             </main>
         </>

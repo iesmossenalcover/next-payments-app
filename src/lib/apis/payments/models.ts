@@ -107,6 +107,7 @@ export interface EventRow {
 export interface Event {
     id: number,
     code: string,
+    description: string,
     name: string,
     price: number,
     amipaPrice: number,
@@ -148,7 +149,8 @@ export interface EventPayments {
     amipaTotalPrice: number
     count: number
     paidCount: number
-    payments: EventPayment[]
+    paidEvents: EventPayment[]
+    unPaidEvents: EventPayment[]
 }
 
 export interface EventPayment {
