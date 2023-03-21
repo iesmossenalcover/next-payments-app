@@ -158,7 +158,8 @@ export interface EventPayments {
 
 export interface EventPayment {
     id: number
-    fullName: string
+    documentId: string,
+    fullName: string,
     amipa: boolean
     price: number
     paid: boolean
