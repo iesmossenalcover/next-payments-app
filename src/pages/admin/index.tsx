@@ -1,7 +1,49 @@
 import { Container } from "@/components/layout/SideBar";
+import Toggle from "@/components/Toggle";
+import { AdminInfo, AppConfig, getAdminInfo, setAppConfig } from "@/lib/apis/payments";
 import Head from "next/head";
+import { useEffect, useState } from "react";
 
 const Admin = () => {
+
+    const [data, setData] = useState<AdminInfo | undefined>(undefined);
+    const [updatingConfig, setUpdatingConfig] = useState(false);
+    const [loading, setLoading] = useState(false)
+
+    useEffect(() => {
+        setLoading(true);
+        getAdminInfo()
+            .then(x => {
+                setData(x);
+            })
+            .finally(() => setLoading(false));
+    }, []);
+
+
+    const onSubmitAppConfig = async (e: React.SyntheticEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setUpdatingConfig(true);
+
+        const form = e.currentTarget;
+        const formData = new FormData(form);
+
+        const config: AppConfig = {
+            displayEnrollment: formData.get("displayEnrollment") === "on" ? true : false,
+        };
+
+        const result = await setAppConfig(config);
+        if(!result.errors){
+            alert("Actualitzat");
+        } else {
+            alert("No s'ha pogut actualitzar")
+        }
+
+        setUpdatingConfig(false);
+    }
+
+    if (loading || !data) {
+        return null;
+    }
 
     return (
 
@@ -13,7 +55,112 @@ const Admin = () => {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <main className="text-center mt-10">
-                <h1>Administració</h1>
+                <h1 className='
+                        text-lg
+                        mb-3
+                        tracking-wide
+                        font-bold
+                        text-gray-500
+                        text-md'>Tauler Administratiu</h1>
+                <hr className="h-px mb-5 mt-5 border-2 bg-gray-700" />
+
+                <div className="flex flex-wrap">
+                    <div className="w-full md:w-1/2 xl:w-1/3 p-3">
+                        <div className="bg-white border rounded shadow p-2">
+                            <div className="flex flex-row items-center">
+                                <div className="flex-shrink pr-4">
+                                    <div className="rounded p-3 bg-green-600"><i className="fa fa-wallet fa-2x fa-fw fa-inverse"></i></div>
+                                </div>
+                                <div className="flex-1 text-right md:text-center">
+                                    <h5 className="font-bold uppercase text-gray-500">Total Events</h5>
+                                    <h3 className="font-bold text-3xl">{data.events} <span className="text-green-500"><i className="fas fa-caret-up"></i></span></h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="w-full md:w-1/2 xl:w-1/3 p-3">
+                        <div className="bg-white border rounded shadow p-2">
+                            <div className="flex flex-row items-center">
+                                <div className="flex-shrink pr-4">
+                                    <div className="rounded p-3 bg-pink-600"><i className="fas fa-users fa-2x fa-fw fa-inverse"></i></div>
+                                </div>
+                                <div className="flex-1 text-right md:text-center">
+                                    <h5 className="font-bold uppercase text-gray-500">Total Events Actius</h5>
+                                    <h3 className="font-bold text-3xl">{data.activeEvents} <span className="text-pink-500"><i className="fas fa-exchange-alt"></i></span></h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="w-full md:w-1/2 xl:w-1/3 p-3">
+                        <div className="bg-white border rounded shadow p-2">
+                            <div className="flex flex-row items-center">
+                                <div className="flex-shrink pr-4">
+                                    <div className="rounded p-3 bg-yellow-600"><i className="fas fa-user-plus fa-2x fa-fw fa-inverse"></i></div>
+                                </div>
+                                <div className="flex-1 text-right md:text-center">
+                                    <h5 className="font-bold uppercase text-gray-500">Total Events que acaben avui</h5>
+                                    <h3 className="font-bold text-3xl">{data.eventsEndToday} <span className="text-yellow-600"><i className="fas fa-caret-up"></i></span></h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="w-full md:w-1/2 xl:w-1/3 p-3">
+                        <div className="bg-white border rounded shadow p-2">
+                            <div className="flex flex-row items-center">
+                                <div className="flex-shrink pr-4">
+                                    <div className="rounded p-3 bg-blue-600"><i className="fas fa-server fa-2x fa-fw fa-inverse"></i></div>
+                                </div>
+                                <div className="flex-1 text-right md:text-center">
+                                    <h5 className="font-bold uppercase text-gray-500">Total Grups</h5>
+                                    <h3 className="font-bold text-3xl">{data.grups}</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="w-full md:w-1/2 xl:w-1/3 p-3">
+                        <div className="bg-white border rounded shadow p-2">
+                            <div className="flex flex-row items-center">
+                                <div className="flex-shrink pr-4">
+                                    <div className="rounded p-3 bg-indigo-600"><i className="fas fa-tasks fa-2x fa-fw fa-inverse"></i></div>
+                                </div>
+                                <div className="flex-1 text-right md:text-center">
+                                    <h5 className="font-bold uppercase text-gray-500">Total Persones</h5>
+                                    <h3 className="font-bold text-3xl">{data.people}</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="w-full md:w-1/2 xl:w-1/3 p-3">
+                        <div className="bg-white border rounded shadow p-2">
+                            <div className="flex flex-row items-center">
+                                <div className="flex-shrink pr-4">
+                                    <div className="rounded p-3 bg-red-600"><i className="fas fa-inbox fa-2x fa-fw fa-inverse"></i></div>
+                                </div>
+                                <div className="flex-1 text-right md:text-center">
+                                    <h5 className="font-bold uppercase text-gray-500">Total pagaments fets avui</h5>
+                                    <h3 className="font-bold text-3xl">{data.todayPayments}<span className="text-red-500"><i className="fas fa-caret-up"></i></span></h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr className="h-px mb-5 mt-5 border-2 bg-gray-700" />
+                <form action="#" onSubmit={onSubmitAppConfig}>
+                    <div className="flex flex-wrap mt-5 p-3">
+                        <Toggle
+                            name="displayEnrollment"
+                            id="displayEnrollment"
+                            value={data.appConfig.displayEnrollment}
+                            text="Assignatures a les que s'han matriculat visible"
+                        />
+                    </div>
+                    <input
+                        disabled={updatingConfig}
+                        className="mt-6 bg-blue-500 hover:cursor-pointer hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed"
+                        value="Guardar"
+                        type="submit" />
+                </form>
+
             </main>
         </>
     );

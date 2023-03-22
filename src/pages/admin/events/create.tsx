@@ -55,8 +55,8 @@ const Create = () => {
             amipaPrice: parseFloat(formData.get("amipaPrice") as string),
             publishDate: formData.get("start") as string,
             unpublishDate: formData.get("end") as string,
-            enrollment: formData.get("enrollment") == null ? false : true,
-            amipa: formData.get("amipa") == null ? false : true,
+            enrollment: formData.get("enrollment") === "on" ? true : false,
+            amipa: formData.get("amipa") === "on" ? true : false,
 
         };
 

@@ -104,6 +104,22 @@ export interface EventRow {
     amipa: boolean
 }
 
+export interface AdminInfo {
+    events: number,
+    activeEvents: number,
+    eventsEndToday: number,
+    grups: number,
+    people: number,
+    todayPayments: number,
+    appConfig: AppConfig
+   
+}
+
+export interface AppConfig {
+    displayEnrollment: boolean,
+}
+
+
 export interface Event {
     id: number,
     code: string,
