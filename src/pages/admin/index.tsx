@@ -72,7 +72,7 @@ const Admin = () => {
                                     <div className="rounded p-3 bg-green-600"><i className="fa fa-wallet fa-2x fa-fw fa-inverse"></i></div>
                                 </div>
                                 <div className="flex-1 text-right md:text-center">
-                                    <h5 className="font-bold uppercase text-gray-500">Total Events</h5>
+                                    <h5 className="font-bold uppercase text-gray-500">Total Esdeveniments</h5>
                                     <h3 className="font-bold text-3xl">{data.events} <span className="text-green-500"><i className="fas fa-caret-up"></i></span></h3>
                                 </div>
                             </div>
@@ -85,7 +85,7 @@ const Admin = () => {
                                     <div className="rounded p-3 bg-pink-600"><i className="fas fa-users fa-2x fa-fw fa-inverse"></i></div>
                                 </div>
                                 <div className="flex-1 text-right md:text-center">
-                                    <h5 className="font-bold uppercase text-gray-500">Total Events Actius</h5>
+                                    <h5 className="font-bold uppercase text-gray-500">Total Esdeveniments Actius</h5>
                                     <h3 className="font-bold text-3xl">{data.activeEvents} <span className="text-pink-500"><i className="fas fa-exchange-alt"></i></span></h3>
                                 </div>
                             </div>
@@ -98,7 +98,7 @@ const Admin = () => {
                                     <div className="rounded p-3 bg-yellow-600"><i className="fas fa-user-plus fa-2x fa-fw fa-inverse"></i></div>
                                 </div>
                                 <div className="flex-1 text-right md:text-center">
-                                    <h5 className="font-bold uppercase text-gray-500">Total Events que acaben avui</h5>
+                                    <h5 className="font-bold uppercase text-gray-500">Total Esdeveniments que acaben avui</h5>
                                     <h3 className="font-bold text-3xl">{data.eventsEndToday} <span className="text-yellow-600"><i className="fas fa-caret-up"></i></span></h3>
                                 </div>
                             </div>
