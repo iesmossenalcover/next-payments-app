@@ -137,6 +137,7 @@ const SecondStep = ({ data }: SecondStepProps) => {
     const [selected, setSelected] = useState<boolean[]>(Array(events.length).fill(false));
     const [errors, setErrors] = useState<Map<string, string[]>>();
     const [paymentForm, setPaymentForm] = useState<CreateOrderResponse | undefined>(undefined);
+    const [displayEnrollment, setDisplayEnrollment] = useState(false)
     const formRef = useRef<HTMLFormElement>(null);
 
     useEffect(() => {
@@ -297,19 +298,50 @@ const SecondStep = ({ data }: SecondStepProps) => {
         )
     }
 
+    const enrollmentButton = !person.enrolled || !person.enrollmentSubjectsInfo ? null :
+        (
+            <>
+                <button
+                    className='text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:outline-none font-medium rounded-lg text-sm px-2 py-1 text-center'
+                    onClick={() => setDisplayEnrollment(!displayEnrollment)}
+                >{displayEnrollment ? "Amaga matrícula" : "Mostra matrícula"}</button>
+            </>
+        );
+
+    const renderEnrollment = () => {
+        return (
+            <>
+                <h3>Assignatures a les que s'ha matriculat:</h3>
+                <ul>
+                    {person.enrollmentSubjectsInfo.split("\n").map((x, idx) => (
+                        <li key={idx} className="mt-3">{x}</li>
+                    ))}
+                </ul>
+            </>
+        )
+    }
+
     return (
         <>
-            <h3 className='
-                        text-lg
-                        mb-3
-                        tracking-wide
-                        font-bold
-                        text-gray-500
-                        text-md'>{person.fullName}</h3>
+            <div className='flex justify-between items-center mb-4'>
+                <h3 className='
+                    text-lg
+                    tracking-wide
+                    font-bold
+                    text-gray-500
+                    text-md'>{person.fullName}</h3>
+                {enrollmentButton}
+            </div>
             <hr className="h-px mb-5 border-2 bg-gray-700" />
-            {displayEvents()}
-            {displayTotal()}
-            {renderAndSubmitPaymentForm()}
+            {displayEnrollment ?
+                <>{renderEnrollment()}</> :
+                <>
+                    {displayEvents()}
+                    {displayTotal()}
+                    {renderAndSubmitPaymentForm()}
+                </>
+            }
+
         </>
     )
 }

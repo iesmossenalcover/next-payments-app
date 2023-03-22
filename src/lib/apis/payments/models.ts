@@ -42,6 +42,8 @@ export interface PersonActiveEventsVm {
     person: {
         documentId: string,
         fullName: string,
+        enrolled: boolean,
+        enrollmentSubjectsInfo: string,
     }
 }
 
