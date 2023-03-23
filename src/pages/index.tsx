@@ -311,7 +311,7 @@ const SecondStep = ({ data }: SecondStepProps) => {
     const renderEnrollment = () => {
         return (
             <>
-                <h3>Assignatures a les que s'ha matriculat:</h3>
+                <h3>Assignatures a les que s&apos;ha matriculat:</h3>
                 <ul>
                     {person.enrollmentSubjectsInfo.split("\n").map((x, idx) => (
                         <li key={idx} className="mt-3">{x}</li>
