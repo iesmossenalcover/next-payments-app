@@ -32,13 +32,31 @@ const Admin = () => {
         };
 
         const result = await setAppConfig(config);
-        if(!result.errors){
+        if (!result.errors) {
             alert("Actualitzat");
         } else {
             alert("No s'ha pogut actualitzar")
         }
 
         setUpdatingConfig(false);
+    }
+
+    const box = (t :string, x :number ) => {
+        return (
+            <div className="w-full md:w-1/2 xl:w-1/3 p-3">
+                <div className="bg-white border rounded shadow p-2">
+                    <div className="flex flex-row items-center">
+                        <div className="flex-shrink pr-4">
+                            <div className="rounded p-3 bg-blue-500"><i className="fa fa-wallet fa-2x fa-fw fa-inverse"></i></div>
+                        </div>
+                        <div className="flex-1 text-right md:text-center">
+                            <h5 className="font-bold uppercase text-gray-500">{t}</h5>
+                            <h3 className="font-bold text-3xl">{x}<span className="text-green-500"><i className="fas fa-caret-up"></i></span></h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     if (loading || !data) {
@@ -65,84 +83,13 @@ const Admin = () => {
                 <hr className="h-px mb-5 mt-5 border-2 bg-gray-700" />
 
                 <div className="flex flex-wrap">
-                    <div className="w-full md:w-1/2 xl:w-1/3 p-3">
-                        <div className="bg-white border rounded shadow p-2">
-                            <div className="flex flex-row items-center">
-                                <div className="flex-shrink pr-4">
-                                    <div className="rounded p-3 bg-green-600"><i className="fa fa-wallet fa-2x fa-fw fa-inverse"></i></div>
-                                </div>
-                                <div className="flex-1 text-right md:text-center">
-                                    <h5 className="font-bold uppercase text-gray-500">Total Events</h5>
-                                    <h3 className="font-bold text-3xl">{data.events} <span className="text-green-500"><i className="fas fa-caret-up"></i></span></h3>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="w-full md:w-1/2 xl:w-1/3 p-3">
-                        <div className="bg-white border rounded shadow p-2">
-                            <div className="flex flex-row items-center">
-                                <div className="flex-shrink pr-4">
-                                    <div className="rounded p-3 bg-pink-600"><i className="fas fa-users fa-2x fa-fw fa-inverse"></i></div>
-                                </div>
-                                <div className="flex-1 text-right md:text-center">
-                                    <h5 className="font-bold uppercase text-gray-500">Total Events Actius</h5>
-                                    <h3 className="font-bold text-3xl">{data.activeEvents} <span className="text-pink-500"><i className="fas fa-exchange-alt"></i></span></h3>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="w-full md:w-1/2 xl:w-1/3 p-3">
-                        <div className="bg-white border rounded shadow p-2">
-                            <div className="flex flex-row items-center">
-                                <div className="flex-shrink pr-4">
-                                    <div className="rounded p-3 bg-yellow-600"><i className="fas fa-user-plus fa-2x fa-fw fa-inverse"></i></div>
-                                </div>
-                                <div className="flex-1 text-right md:text-center">
-                                    <h5 className="font-bold uppercase text-gray-500">Total Events que acaben avui</h5>
-                                    <h3 className="font-bold text-3xl">{data.eventsEndToday} <span className="text-yellow-600"><i className="fas fa-caret-up"></i></span></h3>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="w-full md:w-1/2 xl:w-1/3 p-3">
-                        <div className="bg-white border rounded shadow p-2">
-                            <div className="flex flex-row items-center">
-                                <div className="flex-shrink pr-4">
-                                    <div className="rounded p-3 bg-blue-600"><i className="fas fa-server fa-2x fa-fw fa-inverse"></i></div>
-                                </div>
-                                <div className="flex-1 text-right md:text-center">
-                                    <h5 className="font-bold uppercase text-gray-500">Total Grups</h5>
-                                    <h3 className="font-bold text-3xl">{data.grups}</h3>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="w-full md:w-1/2 xl:w-1/3 p-3">
-                        <div className="bg-white border rounded shadow p-2">
-                            <div className="flex flex-row items-center">
-                                <div className="flex-shrink pr-4">
-                                    <div className="rounded p-3 bg-indigo-600"><i className="fas fa-tasks fa-2x fa-fw fa-inverse"></i></div>
-                                </div>
-                                <div className="flex-1 text-right md:text-center">
-                                    <h5 className="font-bold uppercase text-gray-500">Total Persones</h5>
-                                    <h3 className="font-bold text-3xl">{data.people}</h3>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="w-full md:w-1/2 xl:w-1/3 p-3">
-                        <div className="bg-white border rounded shadow p-2">
-                            <div className="flex flex-row items-center">
-                                <div className="flex-shrink pr-4">
-                                    <div className="rounded p-3 bg-red-600"><i className="fas fa-inbox fa-2x fa-fw fa-inverse"></i></div>
-                                </div>
-                                <div className="flex-1 text-right md:text-center">
-                                    <h5 className="font-bold uppercase text-gray-500">Total pagaments fets avui</h5>
-                                    <h3 className="font-bold text-3xl">{data.todayPayments}<span className="text-red-500"><i className="fas fa-caret-up"></i></span></h3>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    {box("Total Esdeveniments", data.events)}
+                    {box("Total Esdeveniments Actius", data.activeEvents)}
+                    {box("Total Esdeveniments que acaben avui", data.eventsEndToday)}
+                    {box("Total Grups", data.grups)}
+                    {box("Total Persones", data.people)}
+                    {box("Total pagaments fets avui", data.todayPayments)}
+                    
                 </div>
                 <hr className="h-px mb-5 mt-5 border-2 bg-gray-700" />
                 <form action="#" onSubmit={onSubmitAppConfig}>
@@ -154,11 +101,19 @@ const Admin = () => {
                             text="Assignatures a les que s'han matriculat visible"
                         />
                     </div>
-                    <input
-                        disabled={updatingConfig}
-                        className="mt-6 bg-blue-500 hover:cursor-pointer hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed"
-                        value="Guardar"
-                        type="submit" />
+                    <div className="relative">
+                    <div className="absolute inset-y-0 right-0 mb-5 mt-5 mr-6">
+                        <input
+                            disabled={updatingConfig}
+                            className="bg-blue-500 hover:cursor-pointer hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed"
+                            value="Guardar"
+                            type="submit"
+                        />
+
+                    </div>
+                    </div>
+                    
+                    
                 </form>
 
             </main>
