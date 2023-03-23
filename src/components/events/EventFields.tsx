@@ -60,7 +60,10 @@ const EventFields = ({ event, errors, allowSetEvent = true }: EventComponentProp
                     htmlFor="price">Preu</label>
                 <input
                     className="px-4 appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 leading-tight focus:outline-none focus:bg-white"
-                    id="price" name="price" defaultValue={event.price} />
+                    id="price"
+                    type="number"
+                    step="any"
+                    name="price" defaultValue={event.price} />
                 {displayErrors("price")}
             </div>
 
@@ -70,6 +73,8 @@ const EventFields = ({ event, errors, allowSetEvent = true }: EventComponentProp
                     htmlFor="amipaPrice">Preu Amipa</label>
                 <input
                     className="px-4 appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 leading-tight focus:outline-none focus:bg-white"
+                    type="number"
+                    step="any"
                     id="amipaPrice" name="amipaPrice" defaultValue={event.amipaPrice} />
                 {displayErrors("amipaPrice")}
             </div>
