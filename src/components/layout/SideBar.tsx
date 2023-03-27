@@ -5,9 +5,9 @@ export const SideBar = () => {
     return (
         <nav className="w-56 flex-none bg-blue-900 text-white p-4 text-lg">
             <ul>
-                {/* <li className="my-3">
+                <li className="my-3">
                     <Link href="/admin">Administració</Link>
-                </li> */}
+                </li>
                 <li className="my-3">
                     <Link href="/">Pagar</Link>
                 </li>
