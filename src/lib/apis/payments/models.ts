@@ -33,7 +33,8 @@ export interface PersonRow {
     firstName: string,
     lastName: string,
     groupId: number,
-    groupName: string
+    groupName: string,
+    amipa: boolean,
     academicRecordNumber: number
 }
 

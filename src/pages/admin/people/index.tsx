@@ -15,6 +15,7 @@ const tableHeaders = {
     lastName: "Llinatges",
     academicRecordNumber: "Número expedient",
     group: "Grup",
+    amipa: "Amipa",
     actions: "Accions",
 };
 
@@ -25,6 +26,7 @@ interface TableRow {
     lastName: string,
     academicRecordNumber: string,
     group: string,
+    amipa: string,
     actions: "",
 };
 
@@ -44,7 +46,7 @@ const People = () => {
     const mapToRow = (): TableRow[] => {
         return people.map(x => {
             const academicRecordNumber = x.academicRecordNumber ? x.academicRecordNumber.toString() : "-";
-            return { id: x.id, documentId: x.documentId, firstName: x.firstName, lastName: x.lastName, academicRecordNumber: academicRecordNumber, group: x.groupName, actions: "" };
+            return { id: x.id, documentId: x.documentId, firstName: x.firstName, lastName: x.lastName, academicRecordNumber: academicRecordNumber, group: x.groupName, amipa: x.amipa ? "Si" : "No", actions: "" };
         });
     }
 
