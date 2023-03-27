@@ -127,29 +127,31 @@ const PeopleToEvent = () => {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <main className="p-10">
-                <div className="flex justify-between items-center">
-                    <div className="flex items-baseline">
-                        <h4 className="font-bold text-3xl">{eventData.code}</h4>
-                        <h4 className="font-bold text-3xl ml-3">-</h4>
-                        <h4 className="font-bold text-3xl ml-3">{eventData.name}</h4>
+            <main className="px-10">
+                <div className="sticky top-0 z-50 bg-white pt-10">
+                    <div className="flex justify-between items-center ">
+                        <div className="flex items-baseline">
+                            <h4 className="font-bold text-3xl">{eventData.code}</h4>
+                            <h4 className="font-bold text-3xl ml-3">-</h4>
+                            <h4 className="font-bold text-3xl ml-3">{eventData.name}</h4>
+                        </div>
+                        <div>
+                            <button
+                                disabled={saving}
+                                className={`
+                                    ml-10
+                                    text-white
+                                    font-bold
+                                    py-2
+                                    px-4
+                                    rounded ${!saving ? "bg-green-600 hover:bg-green-900" : "bg-gray-500"}`}
+                                onClick={persistChanges}>Guardar</button>
+                        </div>
                     </div>
-                    <div>
-                        <button
-                            disabled={saving}
-                            className={`
-                                ml-10
-                                text-white
-                                font-bold
-                                py-2
-                                px-4
-                                rounded ${!saving ? "bg-green-600 hover:bg-green-900" : "bg-gray-500"}`}
-                            onClick={persistChanges}>Guardar</button>
-                    </div>
+                    <h4 className="mt-3 font-semibold">Persones apuntades: {selected.size}</h4>
+                    <hr className="h-px mt-3 mb-8 bg-gray-300 border-0" />
                 </div>
-                <h4 className="mt-3 font-semibold">Persones apuntades: {selected.size}</h4>
-                <hr className="h-px mt-3 mb-8 bg-gray-300 border-0" />
-                <div>
+                <div className="relative">
                     {renderGroups()}
                 </div>
                 <hr className="h-px mt-3 mb-8 bg-gray-300 border-0" />
