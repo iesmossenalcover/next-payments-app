@@ -208,9 +208,7 @@ const SecondStep = ({ data }: SecondStepProps) => {
                             px-5
                             py-2.5
                             text-center
-                            font-medium
-                            dark:bg-blue-600
-                            dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                            font-medium">
                         {loading ? <>
                             <svg aria-hidden="true" role="status" className="inline mr-3 w-4 h-4 text-white animate-spin" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="#E5E7EB"></path>
@@ -234,7 +232,7 @@ const SecondStep = ({ data }: SecondStepProps) => {
 
         return (
             <>
-                <hr className="h-px my-8 bg-gray-200 border-2 dark:bg-gray-700" />
+                <hr className="h-px my-8 bg-gray-200 border-2" />
                 <div className='mt-5 flex justify-between text-xl'>
                     <h3>Total</h3>
                     <h3 className='font-bold'>{total} {selectedEvents[0].currencySymbol}</h3>
@@ -276,10 +274,7 @@ const SecondStep = ({ data }: SecondStepProps) => {
                                     bg-gray-100
                                     border-gray-300
                                     rounded
-                                    dark:ring-offset-gray-800
-                                    focus:ring-2
-                                    dark:bg-gray-700
-                                    dark:border-gray-600"
+                                    focus:ring-2"
                                     checked={selected[idx]}
                                     onChange={(e) => toogleEvent(idx, e.target.checked)}
                                 />
@@ -287,7 +282,7 @@ const SecondStep = ({ data }: SecondStepProps) => {
                             <div className="ml-2 text-lg w-full flex justify-between">
                                 <div>
                                     <label htmlFor={`event_${x.code}`}
-                                        className="font-medium text-gray-900 dark:text-gray-300">{x.name}</label>
+                                        className="font-medium text-gray-900">{x.name}</label>
                                 </div>
                                 <div>{x.price} {x.currencySymbol}</div>
                             </div>

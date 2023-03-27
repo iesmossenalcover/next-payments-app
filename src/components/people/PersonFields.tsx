@@ -118,7 +118,7 @@ const PersonFields = ({ person, errors }: PersonComponentProps) => {
                 />
             </div>
             <div className="mt-5">                
-                <label htmlFor="subjectsInfo" className="block mb-2 text-md font-medium text-gray-900 dark:text-white">Assignatures (una per línia)</label>
+                <label htmlFor="subjectsInfo" className="block mb-2 text-md font-medium text-gray-900">Assignatures (una per línia)</label>
                 <textarea id="subjectsInfo"
                     name="subjectsInfo"
                     rows={4}
