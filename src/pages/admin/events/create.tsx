@@ -46,6 +46,9 @@ const Create = () => {
         const form = e.currentTarget;
         const formData = new FormData(form);
 
+        const publish  = new Date(formData.get("start") as string);
+        const unpublish  = new Date(formData.get("end") as string);
+
         const event: Event = {
             id: 0,
             code: formData.get("code") as string,
@@ -53,8 +56,8 @@ const Create = () => {
             description: formData.get("description") as string,
             price: parseFloat(formData.get("price") as string),
             amipaPrice: parseFloat(formData.get("amipaPrice") as string),
-            publishDate: formData.get("start") as string,
-            unpublishDate: formData.get("end") as string,
+            publishDate: publish.toJSON(),
+            unpublishDate: unpublish ? unpublish.toJSON() : undefined,
             enrollment: formData.get("enrollment") === "on" ? true : false,
             amipa: formData.get("amipa") === "on" ? true : false,
 
@@ -80,7 +83,6 @@ const Create = () => {
                             <SuccessAlert text={`Event afegit correctament el codi de l'event és: ${codeCreated}` }/> :
                             <form action="#" method="post" onSubmit={onFormSubmit} autoComplete="off">
                                 <EventFields
-                                    allowSetEvent={true}
                                     errors={errors}
                                     event={defaultEvent} />
                                 <div>

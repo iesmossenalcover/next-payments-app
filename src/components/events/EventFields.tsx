@@ -1,16 +1,13 @@
-import { getGroupsSelector } from "@/lib/apis/payments/client";
 import { Event } from "@/lib/apis/payments/models";
-import { useState, useEffect } from "react";
-import { Selector, SelectorComponent } from "../Selector";
+import { useState } from "react";
 import Toggle from "../Toggle";
 
 interface EventComponentProps {
     errors?: Map<string, string[]>
     event: Event,
-    allowSetEvent: boolean
 }
 
-const EventFields = ({ event, errors, allowSetEvent = true }: EventComponentProps) => {
+const EventFields = ({ event, errors }: EventComponentProps) => {
 
     const [isEnrollment, setIsEnrollment] = useState(!!event.enrollment)
     const [isAmpipa, setIsAmpipa] = useState(!!event.amipa)
@@ -86,7 +83,7 @@ const EventFields = ({ event, errors, allowSetEvent = true }: EventComponentProp
                         htmlFor="start">Publicar</label>
                     <input
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Data finalització"
-                        name="start" id="start" type="date" defaultValue={event.publishDate} />
+                        name="start" id="start" type="datetime-local" defaultValue={event.publishDate} />
                 </div>
                 <span className="mx-2 pt-7 text-gray-500 uppercase tracking-wide text-lg font-bold mb-2">fins</span>
                 <div>
@@ -96,7 +93,7 @@ const EventFields = ({ event, errors, allowSetEvent = true }: EventComponentProp
                     <input
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                         placeholder="Data finalització"
-                        name="end" id="end" type="date" defaultValue={event.unpublishDate} />
+                        name="end" id="end" type="datetime-local" defaultValue={event.unpublishDate} />
                 </div>
             </div>
             <div className="mb-6">

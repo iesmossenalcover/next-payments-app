@@ -20,11 +20,12 @@ const Update = () => {
         if (!id) return;
         getEventById(parseInt(id as string))
             .then(x => {
-                if(!x.data){
+                if (!x.data) {
                     return;
                 }
-                x.data.publishDate = new Date(x.data.publishDate).toISOString().split('T')[0]
-                x.data.unpublishDate = new Date(x.data.unpublishDate).toISOString().split('T')[0]
+                const publish = new Date(x.data.publishDate);
+                x.data.publishDate = toInputDate(publish);
+                x.data.unpublishDate = x.data.unpublishDate ? toInputDate(new Date(x.data.unpublishDate)) : "";
                 setEvent(x.data)
 
             });
@@ -53,6 +54,9 @@ const Update = () => {
         const form = e.currentTarget;
         const formData = new FormData(form);
 
+        const publish  = new Date(formData.get("start") as string);
+        const unpublish  = new Date(formData.get("end") as string);
+
         const event: Event = {
             id: parseInt(id as string),
             code: formData.get("code") as string,
@@ -60,8 +64,8 @@ const Update = () => {
             description: formData.get("description") as string,
             price: parseFloat(formData.get("price") as string),
             amipaPrice: parseFloat(formData.get("amipaPrice") as string),
-            publishDate: formData.get("start") as string,
-            unpublishDate: formData.get("end") as string,
+            publishDate: publish.toJSON(),
+            unpublishDate: unpublish ? unpublish.toJSON() : undefined,
             enrollment: formData.get("enrollment") == null ? false : true,
             amipa: formData.get("amipa") == null ? false : true,
 
@@ -88,7 +92,6 @@ const Update = () => {
 
                         <form className="mt-5" action="#" method="post" onSubmit={onFormSubmit} autoComplete="off">
                             <EventFields
-                                allowSetEvent={true}
                                 errors={errors}
                                 event={event} />
                             <div>
@@ -115,3 +118,6 @@ export default function UpdateEventPage() {
         </Container>
     )
 };
+
+const twoDigit = (n: number) => n < 10 ? '0' + n : '' + n;
+const toInputDate = (d: Date): string => `${d.getFullYear()}-${twoDigit(d.getMonth() + 1)}-${twoDigit(d.getDate())}T${twoDigit(d.getHours())}:${twoDigit(d.getMinutes())}`;
