@@ -7,6 +7,9 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { deleteEvent } from '@/lib/apis/payments/client'
 
+const dateDisplayOptions: Intl.DateTimeFormatOptions = { day: '2-digit', month: '2-digit', year: 'numeric' };
+const dateTimeDisplayOptions: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit' };
+
 
 const tableHeaders = {
     id: "Id",
@@ -61,8 +64,8 @@ const Events = () => {
                 name: x.name,
                 price: `${x.price} €`,
                 amipaPrice: `${x.amipaPrice} €`,
-                from: `${from.toLocaleDateString()} ${from.toLocaleTimeString()}`,
-                to: x.unpublishDate ? `${to.toLocaleDateString()} ${to.toLocaleTimeString()}` : '-',
+                from: `${from.toLocaleDateString([], dateDisplayOptions)} - ${from.toLocaleTimeString([], dateTimeDisplayOptions)}`,
+                to: x.unpublishDate ? `${to.toLocaleDateString([], dateDisplayOptions)} - ${to.toLocaleTimeString([], dateTimeDisplayOptions)}` : '-',
                 active: active,
                 amipa: amipa,
                 enrollment: enrollment,
@@ -106,8 +109,7 @@ const Events = () => {
             if (response.errors) {
                 alert("No s'ha pogut eliminar.")
             }
-            else
-            {
+            else {
                 loadEvents();
             }
         }
