@@ -5,6 +5,7 @@ import { useState } from "react";
 import EventFields from "@/components/events/EventFields";
 import { Container } from "@/components/layout/SideBar";
 import Head from "next/head";
+import { toInputDate } from "@/lib/utils";
 
 const defaultEvent: Event = {
     id: 0,
@@ -13,8 +14,8 @@ const defaultEvent: Event = {
     description: "",
     price: 0,
     amipaPrice: 0,
-    publishDate: new Date().toISOString().split('T')[0],
-    unpublishDate: new Date().toISOString().split('T')[0],
+    publishDate: toInputDate(new Date()),
+    unpublishDate: undefined,
     enrollment: false,
     amipa: false
 };
@@ -46,8 +47,8 @@ const Create = () => {
         const form = e.currentTarget;
         const formData = new FormData(form);
 
-        const publish  = new Date(formData.get("start") as string);
-        const unpublish  = new Date(formData.get("end") as string);
+        const start = formData.get("start") as string;
+        const end = formData.get("end") as string;
 
         const event: Event = {
             id: 0,
@@ -56,8 +57,8 @@ const Create = () => {
             description: formData.get("description") as string,
             price: parseFloat(formData.get("price") as string),
             amipaPrice: parseFloat(formData.get("amipaPrice") as string),
-            publishDate: publish.toJSON(),
-            unpublishDate: unpublish ? unpublish.toJSON() : undefined,
+            publishDate: start ? new Date(start).toJSON() : new Date().toJSON(),
+            unpublishDate: end ? new Date(end).toJSON() : undefined,
             enrollment: formData.get("enrollment") === "on" ? true : false,
             amipa: formData.get("amipa") === "on" ? true : false,
 
@@ -80,7 +81,7 @@ const Create = () => {
                 <div className="max-w-lg m-auto">
                     <div className="m-5">
                         {created ?
-                            <SuccessAlert text={`Event afegit correctament el codi de l'event és: ${codeCreated}` }/> :
+                            <SuccessAlert text={`Event afegit correctament el codi de l'event és: ${codeCreated}`} /> :
                             <form action="#" method="post" onSubmit={onFormSubmit} autoComplete="off">
                                 <EventFields
                                     errors={errors}

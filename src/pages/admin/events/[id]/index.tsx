@@ -6,6 +6,7 @@ import EventFields from "@/components/events/EventFields";
 import { Container } from "@/components/layout/SideBar";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import { toInputDate } from "@/lib/utils";
 
 const Update = () => {
     const router = useRouter()
@@ -54,8 +55,8 @@ const Update = () => {
         const form = e.currentTarget;
         const formData = new FormData(form);
 
-        const publish  = new Date(formData.get("start") as string);
-        const unpublish  = new Date(formData.get("end") as string);
+        const start = formData.get("start") as string;
+        const end = formData.get("end") as string;
 
         const event: Event = {
             id: parseInt(id as string),
@@ -64,8 +65,8 @@ const Update = () => {
             description: formData.get("description") as string,
             price: parseFloat(formData.get("price") as string),
             amipaPrice: parseFloat(formData.get("amipaPrice") as string),
-            publishDate: publish.toJSON(),
-            unpublishDate: unpublish ? unpublish.toJSON() : undefined,
+            publishDate: start ? new Date(start).toJSON() : new Date().toJSON(),
+            unpublishDate: end ? new Date(end).toJSON() : undefined,
             enrollment: formData.get("enrollment") == null ? false : true,
             amipa: formData.get("amipa") == null ? false : true,
 
@@ -119,5 +120,3 @@ export default function UpdateEventPage() {
     )
 };
 
-const twoDigit = (n: number) => n < 10 ? '0' + n : '' + n;
-const toInputDate = (d: Date): string => `${d.getFullYear()}-${twoDigit(d.getMonth() + 1)}-${twoDigit(d.getDate())}T${twoDigit(d.getHours())}:${twoDigit(d.getMinutes())}`;

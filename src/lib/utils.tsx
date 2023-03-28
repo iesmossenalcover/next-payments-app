@@ -1,0 +1,2 @@
+export const twoDigit = (n: number) => n < 10 ? '0' + n : '' + n;
+export const toInputDate = (d: Date): string => `${d.getFullYear()}-${twoDigit(d.getMonth() + 1)}-${twoDigit(d.getDate())}T${twoDigit(d.getHours())}:${twoDigit(d.getMinutes())}`;
