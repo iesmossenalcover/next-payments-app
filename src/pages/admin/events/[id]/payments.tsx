@@ -28,13 +28,13 @@ const EventPayments = () => {
 
     const paidEvents = data.paidEvents.map(x => (
         <li key={x.id} className="mt-3">
-            {x.documentId} - {x.fullName}
+            {x.documentId} - {x.fullName} - {x.group}
         </li>
     ))
 
     const unPaidEvents = data.unPaidEvents.map(x => (
         <li key={x.id} className="mt-3">
-            {x.documentId} - {x.fullName}
+            {x.documentId} - {x.fullName} - {x.group}
         </li>
     ))
 
