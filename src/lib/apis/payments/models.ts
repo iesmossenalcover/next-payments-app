@@ -184,3 +184,19 @@ export interface EventPayment {
     group: string,
     paid: boolean
 }
+
+export interface EventSummaries {
+    id: number
+    code: string
+    name: string
+    paidEvents: EventSummary[]
+    unPaidEvents: EventSummary[]
+}
+
+export interface EventSummary {
+    id: number
+    documentId: string,
+    fullName: string,
+    group: string,
+    paid: boolean
+}

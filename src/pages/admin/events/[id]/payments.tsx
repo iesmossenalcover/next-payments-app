@@ -2,6 +2,7 @@ import { Container } from "@/components/layout/SideBar";
 import { EventPayments } from "@/lib/apis/payments";
 import { getEventPayments } from "@/lib/apis/payments/client";
 import Head from "next/head";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
@@ -21,8 +22,8 @@ const EventPayments = () => {
                     console.log(x.data);
                 }
             })
-            
-        }, [id])
+
+    }, [id])
 
     if (!data) return null;
 
@@ -37,6 +38,14 @@ const EventPayments = () => {
             {x.documentId} - {x.fullName} - {x.group}
         </li>
     ))
+
+
+    const summaryURL = () => `${window.location.protocol}//${window.location.hostname}/admin/events/${data.code}/summary`;
+
+    const copyToClipboard = () => {
+        navigator.clipboard.writeText(summaryURL());
+        alert("Copiat al portapapers");
+    }
 
     return (
 
@@ -53,6 +62,14 @@ const EventPayments = () => {
                         <h4 className="font-bold text-3xl">{data.code}</h4>
                         <h4 className="font-bold text-3xl ml-3">-</h4>
                         <h4 className="font-bold text-3xl ml-3">{data.name}</h4>
+                    </div>
+                    <div className="flex">
+                        <button
+                            className="text-blue-600 font-bold pr-2"
+                            onClick={copyToClipboard}>Copiar - </button>
+                        <p>
+                            {summaryURL()}
+                        </p>
                     </div>
                 </div>
                 <h4 className="mt-3 font-semibold">Total: {data.totalPrice} €</h4>
