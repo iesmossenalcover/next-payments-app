@@ -2,7 +2,6 @@ import { Container } from "@/components/layout/SideBar";
 import { EventPayments } from "@/lib/apis/payments";
 import { getEventPayments } from "@/lib/apis/payments/client";
 import Head from "next/head";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
@@ -44,7 +43,7 @@ const EventPayments = () => {
 
     const copyToClipboard = () => {
         navigator.clipboard.writeText(summaryURL());
-        alert("Copiat al portapapers");
+        alert("Copiat al porta-retalls");
     }
 
     return (
