@@ -100,6 +100,7 @@ const EventFields = ({ event, errors }: EventComponentProps) => {
                 <Toggle
                     name="enrollment"
                     id="enrollment"
+                    className="text-green-600"
                     value={isEnrollment}
                     text="És un event de matricula?"
                     onToggled={x => setIsEnrollment(x)}
@@ -109,8 +110,9 @@ const EventFields = ({ event, errors }: EventComponentProps) => {
             <div className="mb-6">
                 <Toggle
                     name="amipa"
-                    id="amipa"
                     value={isAmpipa}
+                    id="amipa"
+                    className="text-orange-600"
                     text="És un event per ser soci d'AMIPA?"
                     onToggled={x => setIsAmpipa(x)}
                 />
