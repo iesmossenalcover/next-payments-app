@@ -1,6 +1,5 @@
 import { Container } from "@/components/layout/SideBar";
-import { EventPayments } from "@/lib/apis/payments";
-import { getEventPayments, setPayment } from "@/lib/apis/payments/client";
+import { EventPayments, getEventPayments, setPayment } from "@/lib/apis/payments";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
