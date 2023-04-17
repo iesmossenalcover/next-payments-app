@@ -1,6 +1,6 @@
 import { Container } from "@/components/layout/SideBar";
 import { EventPayments } from "@/lib/apis/payments";
-import { getEventPayments } from "@/lib/apis/payments/client";
+import { getEventPayments, setPayment } from "@/lib/apis/payments/client";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -12,7 +12,7 @@ const EventPayments = () => {
 
     const { id } = router.query
 
-    useEffect(() => {
+    const loadEventsPayments = () => {
         getEventPayments(id as string)
             .then(x => {
                 if (x.errors) {
@@ -21,20 +21,38 @@ const EventPayments = () => {
                     setData(x.data);
                 }
             })
+    }
 
+    useEffect(() => {
+        loadEventsPayments();
     }, [id])
 
     if (!data) return null;
 
+    
+    const payment = async (id: number, v: boolean) => {
+        const result = await setPayment(id, v);
+
+        if (!result.errors) {
+            loadEventsPayments();
+        } else {
+            alert("No s'ha pogut actualitzar")
+        }
+    }
+
     const paidEvents = data.paidEvents.map(x => (
-        <li key={x.id} className="mt-3">
+        <li key={x.id} className="mt-3 relative">
+            <hr className="h-px mt-1 mb-1 bg-gray-200 border-0"></hr>
             {x.group} - {x.documentId} - {x.fullName}
+            <button onClick={() => payment(x.id, false)} className="absolute inset-y-0 right-0 text-red-600 font-bold">Desmarcar Pagat</button>
         </li>
     ))
 
     const unPaidEvents = data.unPaidEvents.map(x => (
-        <li key={x.id} className="mt-3">
+        <li key={x.id} className="mt-3 relative">
+            <hr className="h-px mt-1 mb-1 bg-gray-200 border-0"></hr>
             {x.group} - {x.documentId} - {x.fullName}
+            <button onClick={() => payment(x.id, true)} className="absolute inset-y-0 right-0 text-green-600 font-bold">Marcar Pagat</button>
         </li>
     ))
 
@@ -45,6 +63,8 @@ const EventPayments = () => {
         navigator.clipboard.writeText(summaryURL());
         alert("Copiat al porta-retalls");
     }
+
+    
 
     return (
 
@@ -72,16 +92,16 @@ const EventPayments = () => {
                 <h4 className="mt-3 font-semibold">Total: {data.totalPrice} €</h4>
                 <h4 className="mt-3 font-semibold">Amipa total: {data.amipaTotalPrice} €</h4>
                 <h4 className="mt-3 font-semibold">No Amipa total: {data.noAmipaTotalPrice} €</h4>
-                <hr className="h-px mt-3 mb-8 bg-gray-300 border-0" />
+                <hr className="h-px mt-3 mb-8 bg-gray-500 border-0" />
                 <h4 className="mt-3 font-semibold">Alumnes total: {data.count}</h4>
                 <h4 className="mt-3 font-semibold">Alumnes Amipa: {data.amipaStudents}</h4>
                 <h4 className="mt-3 font-semibold">Alumnes No Amipa: {data.noAmipaStudents}</h4>
-                <hr className="h-px mt-3 mb-8 bg-gray-300 border-0" />
+                <hr className="h-px mt-3 mb-8 bg-gray-500 border-0" />
                 <h3 className="text-green-700 text-lg font-bold">Pagats: {data.paidCount}</h3>
                 <ul>
                     {paidEvents}
                 </ul>
-                <hr className="h-px mt-3 mb-8 bg-gray-300 border-0" />
+                <hr className="h-px mt-3 mb-8 bg-white-300 border-0" />
                 <h3 className="text-red-500 text-lg font-bold">No Pagats: {data.count - data.paidCount}</h3>
                 <ul>
                     {unPaidEvents}

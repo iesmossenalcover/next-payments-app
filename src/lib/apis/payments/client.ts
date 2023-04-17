@@ -246,3 +246,12 @@ export const setAppConfig = async (config: AppConfig) => {
     }
     return data;
 }
+
+export const setPayment = async (id: number, paid: boolean) => {
+    const response = await putJson(`${API_BASE_URL}/api/events/${id}/payment`, {paid});
+    const data = await response.json() as Response<number>;
+    if (data.errors) {
+        data.errors = new Map(Object.entries(data.errors));
+    }
+    return data;
+}
