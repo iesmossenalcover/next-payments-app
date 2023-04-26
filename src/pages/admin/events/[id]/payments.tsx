@@ -89,8 +89,10 @@ const EventPayments = () => {
                     </div>
                 </div>
                 <h4 className="mt-3 font-semibold">Total a pagar: {data.totalPrice} €</h4>
+                <hr className="h-px mt-3 mb-8 bg-gray-500 border-0" />
                 <h4 className="mt-3 font-semibold">Total pagat alumnes que son Amipa fins ara: {data.amipaTotalPrice} €</h4>
                 <h4 className="mt-3 font-semibold">Total pagat alumnes que NO son Amipa fins ara: {data.noAmipaTotalPrice} €</h4>
+                <h4 className="mt-3 font-semibold">Total pagat alumnes SUMA fins ara: {data.noAmipaTotalPrice + data.amipaTotalPrice} €</h4>
                 <hr className="h-px mt-3 mb-8 bg-gray-500 border-0" />
                 <h4 className="mt-3 font-semibold">Alumnes totals: {data.count}</h4>
                 <h4 className="mt-3 font-semibold">Alumnes que son Amipa: {data.amipaStudents}</h4>
