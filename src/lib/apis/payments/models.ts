@@ -164,15 +164,24 @@ export interface EventPayments {
     id: number
     code: string
     name: string
-    totalPrice: number
-    amipaTotalPrice: number
-    noAmipaTotalPrice: number
-    amipaStudents: number
-    noAmipaStudents: number
-    count: number
-    paidCount: number
+    summary: PaymentSummary
     paidEvents: EventPayment[]
     unPaidEvents: EventPayment[]
+}
+
+export interface PaymentSummary {
+    totalCount: number
+    amipaCount: number
+    noAmipaCount: number
+    totalPaidCount: number
+    amipaPaidCount: number
+    paidCount: number
+    total: number
+    amipa: number
+    noamipa: number
+    totalPaid: number
+    amipaPaid: number
+    noAmipaPaid: number
 }
 
 export interface EventPayment {
