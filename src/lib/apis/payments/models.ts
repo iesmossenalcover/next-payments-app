@@ -178,7 +178,7 @@ export interface PaymentSummary {
     paidCount: number
     total: number
     amipa: number
-    noamipa: number
+    noAmipa: number
     totalPaid: number
     amipaPaid: number
     noAmipaPaid: number

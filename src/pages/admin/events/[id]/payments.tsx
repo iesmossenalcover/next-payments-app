@@ -2,14 +2,70 @@ import { Container } from "@/components/layout/SideBar";
 import { EventPayments, getEventPayments, setPayment } from "@/lib/apis/payments";
 import Head from "next/head";
 import Link from "next/link";
+import { Table } from "@/components/table";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+
+
+const tableHeaders = {
+    id: "",
+    personesTotal: "Recompte Total",
+    personesActual: "Recompte Actual",
+    dinersTotal: "Diners Totals",
+    dinersActual: "Diners Actuals"
+};
+
+interface TableRow {
+    id: string,
+    personesTotal: string,
+    personesActual: string,
+    dinersTotal: string,
+    dinersActual: string
+};
 
 const EventPayments = () => {
     const router = useRouter()
     const [data, setData] = useState<EventPayments | undefined>(undefined)
 
     const { id } = router.query
+
+    const getItems = () => {
+        if (!data) return [];
+        return [
+            {
+              id: "No Amipa",
+              personesTotal: data.summary.noAmipaCount,
+              personesActual: data.summary.paidCount,
+              dinersTotal: data.summary.noAmipa  + " €",
+              dinersActual: data.summary.noAmipaPaid  + " €"
+            },
+            {
+                id: "Amipa",
+                personesTotal: data.summary.amipaCount,
+                personesActual: data.summary.amipaPaidCount,
+                dinersTotal: data.summary.amipa  + " €",
+                dinersActual: data.summary.amipaPaid  + " €"
+            },
+            {
+                id: "Total",
+                personesTotal: data.summary.totalCount,
+                personesActual: data.summary.totalPaidCount,
+                dinersTotal: data.summary.total + " €",
+                dinersActual: data.summary.totalPaid  + " €"
+            }
+          ];
+    }
+
+
+      const mapToRow = (): TableRow[] => {
+        return getItems().map(x => ({
+          id: x.id,
+          personesTotal: x.personesTotal.toString() || '',
+          personesActual: x.personesActual.toString() || '',
+          dinersTotal: x.dinersTotal.toString() || '',
+          dinersActual: x.dinersActual.toString() || '',
+        }));
+      };
 
     const loadEventsPayments = () => {
         getEventPayments(id as string)
@@ -89,13 +145,23 @@ const EventPayments = () => {
                     </div>
                 </div>
 
-                <hr className="h-px mt-3 mb-8 bg-gray-500 border-0" />
-                <h3 className="text-green-700 text-lg font-bold">Pagats: {data.summary.paidCount}</h3>
+                <hr className="h-px mt-3 mb-3 bg-gray-500 border-0" />
+                <Table
+                headers={tableHeaders}
+                items={mapToRow()}
+                tableClass='min-w-full'
+                headerClass='border-b'
+                headerCellClass='text-sm font-medium text-gray-900 px-6 py-4 text-left'
+                cellClass='text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap'
+                rowClass='border-b'
+                />
+
+                <h3 className=" mt-8 text-green-700 text-lg font-bold">Pagats: {data.summary.totalPaidCount}</h3>
                 <ul>
                     {paidEvents}
                 </ul>
                 <hr className="h-px mt-3 mb-8 bg-white-300 border-0" />
-                <h3 className="text-red-500 text-lg font-bold">No Pagats: {data.summary.totalCount - data.summary.paidCount}</h3>
+                <h3 className="text-red-500 text-lg font-bold">No Pagats: {data.summary.totalCount - data.summary.totalPaidCount}</h3>
                 <ul>
                     {unPaidEvents}
                 </ul>
