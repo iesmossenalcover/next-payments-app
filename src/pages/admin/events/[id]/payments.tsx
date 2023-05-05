@@ -33,39 +33,39 @@ const EventPayments = () => {
         if (!data) return [];
         return [
             {
-              id: "No Amipa",
-              personesTotal: data.summary.noAmipaCount,
-              personesActual: data.summary.paidCount,
-              dinersTotal: data.summary.noAmipa  + " €",
-              dinersActual: data.summary.noAmipaPaid  + " €"
+                id: "No Amipa",
+                personesTotal: data.summary.noAmipaCount,
+                personesActual: data.summary.paidCount,
+                dinersTotal: data.summary.noAmipa + " €",
+                dinersActual: data.summary.noAmipaPaid + " €"
             },
             {
                 id: "Amipa",
                 personesTotal: data.summary.amipaCount,
                 personesActual: data.summary.amipaPaidCount,
-                dinersTotal: data.summary.amipa  + " €",
-                dinersActual: data.summary.amipaPaid  + " €"
+                dinersTotal: data.summary.amipa + " €",
+                dinersActual: data.summary.amipaPaid + " €"
             },
             {
                 id: "Total",
                 personesTotal: data.summary.totalCount,
                 personesActual: data.summary.totalPaidCount,
                 dinersTotal: data.summary.total + " €",
-                dinersActual: data.summary.totalPaid  + " €"
+                dinersActual: data.summary.totalPaid + " €"
             }
-          ];
+        ];
     }
 
 
-      const mapToRow = (): TableRow[] => {
+    const mapToRow = (): TableRow[] => {
         return getItems().map(x => ({
-          id: x.id,
-          personesTotal: x.personesTotal.toString() || '',
-          personesActual: x.personesActual.toString() || '',
-          dinersTotal: x.dinersTotal.toString() || '',
-          dinersActual: x.dinersActual.toString() || '',
+            id: x.id,
+            personesTotal: x.personesTotal.toString() || '',
+            personesActual: x.personesActual.toString() || '',
+            dinersTotal: x.dinersTotal.toString() || '',
+            dinersActual: x.dinersActual.toString() || '',
         }));
-      };
+    };
 
     const loadEventsPayments = () => {
         getEventPayments(id as string)
@@ -84,7 +84,7 @@ const EventPayments = () => {
 
     if (!data) return null;
 
-    
+
     const payment = async (id: number, v: boolean) => {
         const result = await setPayment(id, v);
 
@@ -99,7 +99,7 @@ const EventPayments = () => {
         <li key={x.id} className="mt-3 relative">
             <hr className="h-px mt-1 mb-1 bg-gray-200 border-0"></hr>
             {x.group} - {x.documentId} - {x.fullName}
-            <button onClick={() => payment(x.id, false)} className="absolute inset-y-0 right-0 text-red-600 font-bold">Desmarcar Pagat</button>
+            {/* <button onClick={() => payment(x.id, false)} className="absolute inset-y-0 right-0 text-red-600 font-bold">Desmarcar Pagat</button> */}
         </li>
     ))
 
@@ -107,7 +107,7 @@ const EventPayments = () => {
         <li key={x.id} className="mt-3 relative">
             <hr className="h-px mt-1 mb-1 bg-gray-200 border-0"></hr>
             {x.group} - {x.documentId} - {x.fullName}
-            <button onClick={() => payment(x.id, true)} className="absolute inset-y-0 right-0 text-green-600 font-bold">Marcar Pagat</button>
+            {/* <button onClick={() => payment(x.id, true)} className="absolute inset-y-0 right-0 text-green-600 font-bold">Marcar Pagat</button> */}
         </li>
     ))
 
@@ -119,7 +119,7 @@ const EventPayments = () => {
         alert("Copiat al porta-retalls");
     }
 
-    
+
 
     return (
 
@@ -138,22 +138,26 @@ const EventPayments = () => {
                         <h4 className="font-bold text-3xl ml-3">{data.name}</h4>
                     </div>
                     <div className="flex">
+                        <Link href={summaryURL()} target="_blank">{summaryURL()}</Link> 
                         <button
-                            className="text-blue-600 font-bold pr-2"
-                            onClick={copyToClipboard}>Copiar - </button>
-                        <Link href={summaryURL()} target="_blank">{summaryURL()}</Link>
+                            className="text-blue-600 font-bold pl-3"
+                            onClick={copyToClipboard}>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75" />
+                            </svg>
+                        </button>
                     </div>
                 </div>
 
                 <hr className="h-px mt-3 mb-3 bg-gray-500 border-0" />
                 <Table
-                headers={tableHeaders}
-                items={mapToRow()}
-                tableClass='min-w-full'
-                headerClass='border-b'
-                headerCellClass='text-sm font-medium text-gray-900 px-6 py-4 text-left'
-                cellClass='text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap'
-                rowClass='border-b'
+                    headers={tableHeaders}
+                    items={mapToRow()}
+                    tableClass='min-w-full'
+                    headerClass='border-b'
+                    headerCellClass='text-sm font-medium text-gray-900 px-6 py-4 text-left'
+                    cellClass='text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap'
+                    rowClass='border-b'
                 />
 
                 <h3 className=" mt-8 text-green-700 text-lg font-bold">Pagats: {data.summary.totalPaidCount}</h3>
