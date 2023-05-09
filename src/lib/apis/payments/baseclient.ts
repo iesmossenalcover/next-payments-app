@@ -45,7 +45,7 @@ export const apiFetch = (
                         Router.push({
                             pathname: SIGNIN_PAGE,
                             query: {
-                                redirectTo: Router.pathname
+                                redirectTo: window.location.pathname
                             }
                         })
                         break;
