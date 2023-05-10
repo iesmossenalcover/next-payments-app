@@ -85,13 +85,21 @@ const EventPayments = () => {
     if (!data) return null;
 
 
-    const payment = async (id: number, v: boolean) => {
-        const result = await setPayment(id, v);
+    const payment = async (id: number, v: boolean, di: string, n: string) => {
+        let del = null;
+        if(v){
+            del = confirm(`Marcar com a pagat l'alumne ${n} amb DNI: ${di} ?`);
 
-        if (!result.errors) {
-            loadEventsPayments();
         } else {
-            alert("No s'ha pogut actualitzar")
+            del = confirm(`Desmarcar de pagats l'alumne ${n} amb DNI: ${di} ?`);
+        }
+        if (del) {
+        const result = await setPayment(id, v);
+            if (!result.errors) {
+                loadEventsPayments();
+            } else {
+                alert("No s'ha pogut actualitzar")
+            }
         }
     }
 
@@ -99,7 +107,7 @@ const EventPayments = () => {
         <li key={x.id} className="mt-3 relative">
             <hr className="h-px mt-1 mb-1 bg-gray-200 border-0"></hr>
             {x.group} - {x.documentId} - {x.fullName}
-            {/* <button onClick={() => payment(x.id, false)} className="absolute inset-y-0 right-0 text-red-600 font-bold">Desmarcar Pagat</button> */}
+            {/* <button onClick={() => payment(x.id, false, x.documentId, x.fullName)} className="absolute inset-y-0 right-0 text-red-600 font-bold">Desmarcar Pagat</button> */}
         </li>
     ))
 
@@ -107,7 +115,7 @@ const EventPayments = () => {
         <li key={x.id} className="mt-3 relative">
             <hr className="h-px mt-1 mb-1 bg-gray-200 border-0"></hr>
             {x.group} - {x.documentId} - {x.fullName}
-            {/* <button onClick={() => payment(x.id, true)} className="absolute inset-y-0 right-0 text-green-600 font-bold">Marcar Pagat</button> */}
+            {/* <button onClick={() => payment(x.id, true, x.documentId, x.fullName)} className="absolute inset-y-0 right-0 text-green-600 font-bold">Marcar Pagat</button> */}
         </li>
     ))
 
