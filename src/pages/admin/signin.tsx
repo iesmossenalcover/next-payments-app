@@ -1,8 +1,8 @@
 import Head from 'next/head'
 import React, { useState } from 'react'
 import { useRouter } from 'next/router';
-import { signin, SigninStatus } from '@/lib/apis/payments';
-import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
+import { signin, signinOAuth, SigninResponse, SigninStatus } from '@/lib/apis/payments';
+// import { CredentialResponse, GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
 import { DangerAlert } from '@/components/Alerts';
 
 const Signin = () => {
@@ -13,23 +13,34 @@ const Signin = () => {
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    const { redirectTo = "/admin" } = router.query
-
+    e.preventDefault();
     const response = await signin(username, password)
+    handleSigninResponse(response);
+  }
+
+  // const onGoogleLogin = async (cr: CredentialResponse) => {
+  //   const { credential } = cr;
+  //   if (credential)
+  //   {
+  //     const response = await signinOAuth(credential);
+  //     handleSigninResponse(response);
+  //   }
+  // }
+
+  const handleSigninResponse = (response: SigninResponse) => {
+    const { redirectTo = "/admin" } = router.query
     if (response.status == SigninStatus.Ok) {
       router.push(redirectTo as string)
     }
     else {
       setError(response.errorMessage as string)
     }
-
   }
 
   const renderError = () => {
     if (!error) return null
     return (
-      <DangerAlert title="Error d'accés" text={`Usuari o contrasenya incorrectes`} />
+      <DangerAlert title="Error d'accés" text={error} />
     )
   }
 
@@ -42,28 +53,26 @@ const Signin = () => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main>
+      <main className='mx-5'>
 
         <div className="max-w-lg m-auto">
           <div className="mt-12">
             {renderError()}
           </div>
           <div className="mt-12">
-            <p className="text-lg font-medium text-gray-900">Accés Administratiu</p>
+            <p className="text-lg font-medium text-gray-900 text-center mb-3">Accés Administratiu</p>
           </div>
           <div className="mb-6">
             <hr />
           </div>
 
-          <div className="mb-6">
-            <GoogleLogin
-              onSuccess={credentialResponse => {
-                console.log(credentialResponse);
-              }}
+          <div className="mb-6 flex justify-center">
+            {/* <GoogleLogin
+              onSuccess={onGoogleLogin}
               onError={() => {
                 setError("Login Failed")
               }}
-            />
+            /> */}
           </div>
 
           <div
@@ -101,9 +110,12 @@ const Signin = () => {
 }
 
 
+// const SingInPage = () => {
+//   return <GoogleOAuthProvider clientId={process.env.CLIENT_ID_GOOGLE as string}><Signin /></GoogleOAuthProvider>;
+// }
+
 const SingInPage = () => {
-  console.log(process.env.CLIENT_ID_GOOGLE as string);
-  return <GoogleOAuthProvider clientId={process.env.CLIENT_ID_GOOGLE as string}><Signin /></GoogleOAuthProvider>;
+  return <Signin />;
 }
 
 export default SingInPage
