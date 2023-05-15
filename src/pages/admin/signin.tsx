@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { useRouter } from 'next/router';
 import { signin, SigninStatus } from '@/lib/apis/payments';
 import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
+import { DangerAlert } from '@/components/Alerts';
 
 const Signin = () => {
 
@@ -28,7 +29,7 @@ const Signin = () => {
   const renderError = () => {
     if (!error) return null
     return (
-      <span>{error}</span>
+      <DangerAlert title="Error d'accés" text={`Usuari o contrasenya incorrectes`} />
     )
   }
 
@@ -42,9 +43,11 @@ const Signin = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        {renderError()}
 
         <div className="max-w-lg m-auto">
+          <div className="mt-12">
+            {renderError()}
+          </div>
           <div className="mt-12">
             <p className="text-lg font-medium text-gray-900">Accés Administratiu</p>
           </div>
@@ -58,7 +61,7 @@ const Signin = () => {
                 console.log(credentialResponse);
               }}
               onError={() => {
-                console.log('Login Failed');
+                setError("Login Failed")
               }}
             />
           </div>
@@ -99,6 +102,7 @@ const Signin = () => {
 
 
 const SingInPage = () => {
+  console.log(process.env.CLIENT_ID_GOOGLE as string);
   return <GoogleOAuthProvider clientId={process.env.CLIENT_ID_GOOGLE as string}><Signin /></GoogleOAuthProvider>;
 }
 
