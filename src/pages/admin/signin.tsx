@@ -2,6 +2,7 @@ import Head from 'next/head'
 import React, { useState } from 'react'
 import { useRouter } from 'next/router';
 import { signin, SigninStatus } from '@/lib/apis/payments';
+import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
 
 const Signin = () => {
 
@@ -31,6 +32,7 @@ const Signin = () => {
     )
   }
 
+
   return (
     <>
       <Head>
@@ -49,6 +51,26 @@ const Signin = () => {
           <div className="mb-6">
             <hr />
           </div>
+
+          <div className="mb-6">
+            <GoogleLogin
+              onSuccess={credentialResponse => {
+                console.log(credentialResponse);
+              }}
+              onError={() => {
+                console.log('Login Failed');
+              }}
+            />
+          </div>
+
+          <div
+            className="my-4 flex items-center before:mt-0.5 before:flex-1 before:border-t before:border-neutral-300 after:mt-0.5 after:flex-1 after:border-t after:border-neutral-300">
+            <p
+              className="mx-4 mb-0 text-center font-semibold dark:text-white">
+              O bé
+            </p>
+          </div>
+
           <form action="/api/signin" method="post" onSubmit={handleSubmit}>
             <div className="mb-6">
               <label htmlFor="username" className="block mb-2 text-sm font-medium text-gray-900">Usuari</label>
@@ -75,4 +97,9 @@ const Signin = () => {
   )
 }
 
-export default Signin
+
+const SingInPage = () => {
+  return <GoogleOAuthProvider clientId={process.env.CLIENT_ID_GOOGLE as string}><Signin /></GoogleOAuthProvider>;
+}
+
+export default SingInPage
