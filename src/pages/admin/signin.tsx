@@ -66,13 +66,13 @@ const Signin = () => {
             <hr />
           </div>
 
-          <div className="mb-6 flex justify-center">
-            {/* <GoogleLogin
+          {/* <div className="mb-6 flex justify-center">
+            <GoogleLogin
               onSuccess={onGoogleLogin}
               onError={() => {
                 setError("Login Failed")
               }}
-            /> */}
+            />
           </div>
 
           <div
@@ -81,7 +81,7 @@ const Signin = () => {
               className="mx-4 mb-0 text-center font-semibold dark:text-white">
               O bé
             </p>
-          </div>
+          </div> */}
 
           <form action="/api/signin" method="post" onSubmit={handleSubmit}>
             <div className="mb-6">
