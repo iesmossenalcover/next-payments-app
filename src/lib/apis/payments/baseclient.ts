@@ -1,6 +1,7 @@
 import Router from "next/router"
 
 const INTERNAL_ERROR_PAGE = "/500"
+const UNAUTHORIZED_ERROR_PAGE = "/403"
 const SIGNIN_PAGE = "/admin/signin"
 
 export const putJson = (url: string, body: any, headers: any = {}): Promise<Response> => {
@@ -42,18 +43,15 @@ export const apiFetch = (
             .then(response => {
                 switch (response.status) {
                     case 401:
-                        Router.push({
-                            pathname: SIGNIN_PAGE,
-                            query: {
-                                redirectTo: window.location.pathname
-                            }
-                        })
+                        window.location.replace(`${location.protocol + '//' + location.host}${SIGNIN_PAGE}?redirectTo=${window.location.pathname}`)
+                        break;
+                    case 403:
+                        window.location.replace(`${location.protocol + '//' + location.host}${UNAUTHORIZED_ERROR_PAGE}`)
                         break;
                     case 500:
                         Router.push(INTERNAL_ERROR_PAGE)
                         break;
-                }
-                
+                }                
                 resolve(response)
             })
             .catch(() => Router.push(INTERNAL_ERROR_PAGE))

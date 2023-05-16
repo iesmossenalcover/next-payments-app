@@ -1,10 +1,14 @@
 import Link from "next/link"
 
-const InternalServerErrorPage = () => {
+const UnauthorizedErrorPage = () => {
     return (
         <main className="text-center mt-10 p-5">
-            <h1 className="text-2xl font-bold">Oops, s&apos;ha produït un error!</h1>
+            <h1 className="text-2xl font-bold">Oops, no tens permisos per visitar aquesta pàgina!</h1>
             
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="mt-3 w-24 h-24 m-auto">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+            </svg>
+
             <Link
                 className="text-white
                     inline-block
@@ -24,9 +28,9 @@ const InternalServerErrorPage = () => {
                     dark:hover:bg-blue-700
                     focus:outline-none
                     dark:focus:ring-blue-800"
-                href="/">Torna a la pàgina principal.</Link>
+                href="/admin/signin">Inicia sessió amb un altre usuari.</Link>
         </main>
     )
 }
 
-export default InternalServerErrorPage
+export default UnauthorizedErrorPage

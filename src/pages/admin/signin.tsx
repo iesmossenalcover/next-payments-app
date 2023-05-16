@@ -2,7 +2,7 @@ import Head from 'next/head'
 import React, { useState } from 'react'
 import { useRouter } from 'next/router';
 import { signin, signinOAuth, SigninResponse, SigninStatus } from '@/lib/apis/payments';
-// import { CredentialResponse, GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
+import { CredentialResponse, GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
 import { DangerAlert } from '@/components/Alerts';
 
 const Signin = () => {
@@ -18,14 +18,14 @@ const Signin = () => {
     handleSigninResponse(response);
   }
 
-  // const onGoogleLogin = async (cr: CredentialResponse) => {
-  //   const { credential } = cr;
-  //   if (credential)
-  //   {
-  //     const response = await signinOAuth(credential);
-  //     handleSigninResponse(response);
-  //   }
-  // }
+  const onGoogleLogin = async (cr: CredentialResponse) => {
+    const { credential } = cr;
+    if (credential)
+    {
+      const response = await signinOAuth(credential);
+      handleSigninResponse(response);
+    }
+  }
 
   const handleSigninResponse = (response: SigninResponse) => {
     const { redirectTo = "/admin" } = router.query
@@ -66,7 +66,7 @@ const Signin = () => {
             <hr />
           </div>
 
-          {/* <div className="mb-6 flex justify-center">
+          <div className="mb-6 flex justify-center">
             <GoogleLogin
               onSuccess={onGoogleLogin}
               onError={() => {
@@ -81,7 +81,7 @@ const Signin = () => {
               className="mx-4 mb-0 text-center font-semibold dark:text-white">
               O bé
             </p>
-          </div> */}
+          </div>
 
           <form action="/api/signin" method="post" onSubmit={handleSubmit}>
             <div className="mb-6">
@@ -110,12 +110,12 @@ const Signin = () => {
 }
 
 
-// const SingInPage = () => {
-//   return <GoogleOAuthProvider clientId={process.env.CLIENT_ID_GOOGLE as string}><Signin /></GoogleOAuthProvider>;
-// }
-
 const SingInPage = () => {
-  return <Signin />;
+  return <GoogleOAuthProvider clientId={process.env.CLIENT_ID_GOOGLE as string}><Signin /></GoogleOAuthProvider>;
 }
+
+// const SingInPage = () => {
+//   return <Signin />;
+// }
 
 export default SingInPage
