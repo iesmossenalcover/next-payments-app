@@ -1,3 +1,5 @@
+import { SelectorOption } from "@/components/Selector";
+
 export enum SigninStatus {
     Ok = 1,
     Error = 2,
@@ -194,18 +196,19 @@ export interface EventPayment {
     paid: boolean
 }
 
-export interface EventSummaries {
+export interface EventSummaryVm {
     id: number
     code: string
     name: string
-    paidEvents: EventSummary[]
-    unPaidEvents: EventSummary[]
+    groups: SelectorOption[]
+    events: EventSummary[]
 }
 
 export interface EventSummary {
     id: number
     documentId: string,
     fullName: string,
-    group: string,
+    groupName: string,
+    groupId: number,
     paid: boolean
 }
