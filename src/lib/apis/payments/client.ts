@@ -1,4 +1,4 @@
-import { BatchUploadSummary, Identity, PersonActiveEventsVm, Person, PersonRow, Response, ResponseCode, SigninResponse, CreateOrderResponse, EventRow, Event, GetOrderInfo, EventPeople, EventPayments, AdminInfo, AppConfig, EventSummaries } from "./models"
+import { BatchUploadSummary, Identity, PersonActiveEventsVm, Person, PersonRow, Response, SigninResponse, CreateOrderResponse, EventRow, Event, GetOrderInfo, EventPeople, EventPayments, AdminInfo, AppConfig, EventSummaryVm } from "./models"
 import { deleteJson, get, postJson, putJson } from "./baseclient"
 import { Selector } from "@/components/Selector"
 
@@ -229,7 +229,7 @@ export const getEventPayments = async (code: string) => {
 
 export const getEventSummary = async (code: string) => {
     const response = await get(`${API_BASE_URL}/api/events/${code}/summary`);
-    const data = await response.json() as Response<EventSummaries>;
+    const data = await response.json() as Response<EventSummaryVm>;
     if (data.errors) {
         data.errors = new Map(Object.entries(data.errors));
     }
