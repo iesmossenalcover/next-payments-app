@@ -6,22 +6,18 @@ import Head from "next/head";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { deleteEvent } from '@/lib/apis/payments/client'
-
-const dateDisplayOptions: Intl.DateTimeFormatOptions = { day: '2-digit', month: '2-digit', year: 'numeric' };
-const dateTimeDisplayOptions: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit' };
-
+import { displayDate, displayDateTime } from "@/lib/utils";
 
 const tableHeaders = {
     id: "Id",
     code: "Codi",
     name: "Nom",
+    date: "Data",
     price: "Preu",
     amipaPrice: "Preu AMIPA",
     from: "Publicació",
     to: "Expiració",
     active: "Actiu",
-    amipa: "Event Amipa",
-    enrollment: "Event Matricula",
     actions: "Accions",
 };
 
@@ -29,13 +25,12 @@ interface TableRow {
     id: number,
     code: string,
     name: string,
+    date: string,
     price: string,
     amipaPrice: string,
     from: string,
     to: string,
     active: string,
-    amipa: string,
-    enrollment: string,
     actions: "",
 };
 
@@ -53,22 +48,20 @@ const Events = () => {
 
     const mapToRow = (): TableRow[] => {
         return events.map(x => {
+            const date = new Date(x.date);
             const from = new Date(x.publishDate);
             const to = new Date(x.unpublishDate);
             const active = x.isActive ? "Si" : "No";
-            const amipa = x.amipa ? "Si" : "No";
-            const enrollment = x.enrollment ? "Si" : "No";
             return {
                 id: x.id,
                 code: x.code,
                 name: x.name,
+                date: displayDate(date),
                 price: `${x.price} €`,
                 amipaPrice: `${x.amipaPrice} €`,
-                from: `${from.toLocaleDateString([], dateDisplayOptions)} - ${from.toLocaleTimeString([], dateTimeDisplayOptions)}`,
-                to: x.unpublishDate ? `${to.toLocaleDateString([], dateDisplayOptions)} - ${to.toLocaleTimeString([], dateTimeDisplayOptions)}` : '-',
+                from: displayDateTime(from),
+                to: x.unpublishDate ? displayDateTime(to) : '-',
                 active: active,
-                amipa: amipa,
-                enrollment: enrollment,
                 actions: ""
             };
         });

@@ -12,6 +12,7 @@ const defaultEvent: Event = {
     code: "",
     name: "",
     description: "",
+    date: toInputDate(new Date()),
     price: 0,
     amipaPrice: 0,
     publishDate: toInputDate(new Date()),
@@ -47,6 +48,7 @@ const Create = () => {
         const form = e.currentTarget;
         const formData = new FormData(form);
 
+        const date = formData.get("date") as string;
         const start = formData.get("start") as string;
         const end = formData.get("end") as string;
 
@@ -54,6 +56,7 @@ const Create = () => {
             id: 0,
             code: formData.get("code") as string,
             name: formData.get("name") as string,
+            date: date ? new Date(start).toJSON() : new Date().toJSON(),
             description: formData.get("description") as string,
             price: parseFloat(formData.get("price") as string),
             amipaPrice: parseFloat(formData.get("amipaPrice") as string),

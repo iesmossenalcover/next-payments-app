@@ -3,6 +3,7 @@ import { Noto_Sans } from '@next/font/google';
 import { useEffect, useRef, useState } from 'react';
 import { createOrder, getPersonActiveEvents, PersonActiveEvent, PersonActiveEventsVm } from '@/lib/apis/payments';
 import { CreateOrderResponse } from '@/lib/apis/payments/models';
+import { displayDate } from '@/lib/utils';
 
 const font = Noto_Sans({ weight: '400', subsets: ['devanagari'] })
 
@@ -282,7 +283,7 @@ const SecondStep = ({ data }: SecondStepProps) => {
                             <div className="ml-2 text-lg w-full flex justify-between">
                                 <div>
                                     <label htmlFor={`event_${x.code}`}
-                                        className="font-medium text-gray-900">{x.name}</label>
+                                        className="font-medium text-gray-900">{`${x.name} - ${displayDate(x.date)}`}</label>
                                 </div>
                                 <div>{x.price} {x.currencySymbol}</div>
                             </div>

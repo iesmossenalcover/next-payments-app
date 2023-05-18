@@ -24,7 +24,9 @@ const Update = () => {
                 if (!x.data) {
                     return;
                 }
+                const date = new Date(x.data.date);
                 const publish = new Date(x.data.publishDate);
+                x.data.date = toInputDate(date);
                 x.data.publishDate = toInputDate(publish);
                 x.data.unpublishDate = x.data.unpublishDate ? toInputDate(new Date(x.data.unpublishDate)) : "";
                 setEvent(x.data)
@@ -55,6 +57,7 @@ const Update = () => {
         const form = e.currentTarget;
         const formData = new FormData(form);
 
+        const date = formData.get("date") as string;
         const start = formData.get("start") as string;
         const end = formData.get("end") as string;
 
@@ -62,6 +65,7 @@ const Update = () => {
             id: parseInt(id as string),
             code: formData.get("code") as string,
             name: formData.get("name") as string,
+            date: date ? new Date(date).toJSON() : new Date().toJSON(),
             description: formData.get("description") as string,
             price: parseFloat(formData.get("price") as string),
             amipaPrice: parseFloat(formData.get("amipaPrice") as string),

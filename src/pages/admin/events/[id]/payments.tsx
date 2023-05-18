@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Table } from "@/components/table";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { displayDate } from "@/lib/utils";
 
 
 const tableHeaders = {
@@ -143,7 +144,7 @@ const EventPayments = () => {
                     <div className="flex items-baseline">
                         <h4 className="font-bold text-3xl">{data.code}</h4>
                         <h4 className="font-bold text-3xl ml-3">-</h4>
-                        <h4 className="font-bold text-3xl ml-3">{data.name}</h4>
+                        <h4 className="font-bold text-3xl ml-3">{`${data.name} - ${displayDate(data.date)}`}</h4>
                     </div>
                     <div className="flex">
                         <Link href={summaryURL()} target="_blank">{summaryURL()}</Link> 

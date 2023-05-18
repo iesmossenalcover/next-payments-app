@@ -1,6 +1,7 @@
 import { Container } from "@/components/layout/SideBar";
 import { EventPeople, EventPeopleGroup, EventPerson, getEventPeople } from "@/lib/apis/payments";
 import { setEventPeople } from "@/lib/apis/payments/client";
+import { displayDate } from "@/lib/utils";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -133,7 +134,7 @@ const PeopleToEvent = () => {
                         <div className="flex items-baseline">
                             <h4 className="font-bold text-3xl">{eventData.code}</h4>
                             <h4 className="font-bold text-3xl ml-3">-</h4>
-                            <h4 className="font-bold text-3xl ml-3">{eventData.name}</h4>
+                            <h4 className="font-bold text-3xl ml-3">{`${eventData.name} - ${displayDate(eventData.date)}`}</h4>
                         </div>
                         <div>
                             <button

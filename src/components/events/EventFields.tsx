@@ -54,6 +54,17 @@ const EventFields = ({ event, errors }: EventComponentProps) => {
             <div className="mb-6">
                 <label
                     className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                    htmlFor="date">Data esdeveniment</label>
+                <input
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Data esdeveniment"
+                    name="date" id="start" type="datetime-local" defaultValue={event.date} />
+
+                {displayErrors("description")}
+            </div>
+
+            <div className="mb-6">
+                <label
+                    className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                     htmlFor="price">Preu</label>
                 <input
                     className="px-4 appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 leading-tight focus:outline-none focus:bg-white"

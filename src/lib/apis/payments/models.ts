@@ -53,6 +53,7 @@ export interface PersonActiveEventsVm {
 export interface PersonActiveEvent {
     code: string,
     name: string,
+    date: string,
     price: number,
     currencySymbol: string,
     selectable: boolean,
@@ -102,6 +103,7 @@ export interface EventRow {
     price: number,
     amipaPrice: number,
     courseId: number,
+    date: string,
     publishDate: string,
     unpublishDate: string,
     isActive: boolean,
@@ -130,6 +132,7 @@ export interface Event {
     code: string,
     description: string,
     name: string,
+    date: string,
     price: number,
     amipaPrice: number,
     publishDate: string,
@@ -158,6 +161,7 @@ export interface EventPeople {
     id: number,
     code: string,
     name: string,
+    date: string,
     peopleGroups: EventPeopleGroup[]
 }
 
@@ -165,7 +169,8 @@ export interface EventPeople {
 export interface EventPayments {
     id: number
     code: string
-    name: string
+    name: string,
+    date: string,
     summary: PaymentSummary
     paidEvents: EventPayment[]
     unPaidEvents: EventPayment[]
@@ -200,6 +205,7 @@ export interface EventSummaryVm {
     id: number
     code: string
     name: string
+    date: string
     groups: SelectorOption[]
     events: EventSummary[]
 }
