@@ -109,11 +109,11 @@ const EventPayments = () => {
             <li key={x.id} className="relative hover:text-blue-900 hover:font-bold">
                 {x.group} - {x.documentId} - {x.fullName}
 
-                {/* {
+                {
                     x.paid ?
                     <button onClick={() => payment(x.id, false, x.documentId, x.fullName)} className="absolute inset-y-0 right-0 text-red-600 font-bold">Desmarcar Pagat</button> :
                     <button onClick={() => payment(x.id, true, x.documentId, x.fullName)} className="absolute inset-y-0 right-0 text-green-600 font-bold">Marcar Pagat</button>
-                } */}
+                }
                 <hr className="h-px mt-1 mb-4 bg-gray-200 border-0"></hr>
             </li>
         ))

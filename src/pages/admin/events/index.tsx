@@ -167,8 +167,8 @@ const Events = () => {
                         <Link className='
                                 inline-block
                                 text-white 
-                                bg-blue-700 
-                                hover:bg-blue-800 
+                                bg-green-700 
+                                hover:bg-green-800
                                 focus:ring-4 
                                 focus:ring-blue-300
                                 font-medium
@@ -176,7 +176,7 @@ const Events = () => {
                                 px-3
                                 rounded-lg
                                 text-sm
-                                mr-5' href="/admin/events/create">Afegir event</Link>
+                                mr-5' href="/admin/events/create">Nou esdeveniment</Link>
                     </div>
                 </div>
 
