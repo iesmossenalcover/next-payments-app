@@ -1,5 +1,5 @@
 import { Container } from "@/components/layout/SideBar";
-import { EventPayments, getEventPayments, setPayment } from "@/lib/apis/payments";
+import { EventPayment, EventPayments, getEventPayments, setPayment } from "@/lib/apis/payments";
 import Head from "next/head";
 import Link from "next/link";
 import { Table } from "@/components/table";
@@ -104,21 +104,23 @@ const EventPayments = () => {
         }
     }
 
-    const paidEvents = data.paidEvents.map(x => (
-        <li key={x.id} className="mt-3 relative">
-            <hr className="h-px mt-1 mb-1 bg-gray-200 border-0"></hr>
-            {x.group} - {x.documentId} - {x.fullName}
-            {/* <button onClick={() => payment(x.id, false, x.documentId, x.fullName)} className="absolute inset-y-0 right-0 text-red-600 font-bold">Desmarcar Pagat</button> */}
-        </li>
-    ))
+    const displayEvents = (events: EventPayment[]) => {
+        return events.map(x => (
+            <li key={x.id} className="relative hover:text-blue-900 hover:font-bold">
+                {x.group} - {x.documentId} - {x.fullName}
 
-    const unPaidEvents = data.unPaidEvents.map(x => (
-        <li key={x.id} className="mt-3 relative">
-            <hr className="h-px mt-1 mb-1 bg-gray-200 border-0"></hr>
-            {x.group} - {x.documentId} - {x.fullName}
-            {/* <button onClick={() => payment(x.id, true, x.documentId, x.fullName)} className="absolute inset-y-0 right-0 text-green-600 font-bold">Marcar Pagat</button> */}
-        </li>
-    ))
+                {/* {
+                    x.paid ?
+                    <button onClick={() => payment(x.id, false, x.documentId, x.fullName)} className="absolute inset-y-0 right-0 text-red-600 font-bold">Desmarcar Pagat</button> :
+                    <button onClick={() => payment(x.id, true, x.documentId, x.fullName)} className="absolute inset-y-0 right-0 text-green-600 font-bold">Marcar Pagat</button>
+                } */}
+                <hr className="h-px mt-1 mb-4 bg-gray-200 border-0"></hr>
+            </li>
+        ))
+    }
+
+    const paidEvents = displayEvents(data.paidEvents)
+    const unPaidEvents = displayEvents(data.unPaidEvents)
 
 
     const summaryURL = () => `${window.location.protocol}//${window.location.hostname}/admin/events/${data.code}/summary`;
@@ -169,12 +171,12 @@ const EventPayments = () => {
                     rowClass='border-b'
                 />
 
-                <h3 className=" mt-8 text-green-700 text-lg font-bold">Pagats: {data.summary.totalPaidCount}</h3>
+                <h3 className=" mt-8 mb-4 text-green-700 text-lg font-bold">Pagats: {data.summary.totalPaidCount}</h3>
                 <ul>
                     {paidEvents}
                 </ul>
                 <hr className="h-px mt-3 mb-8 bg-white-300 border-0" />
-                <h3 className="text-red-500 text-lg font-bold">No Pagats: {data.summary.totalCount - data.summary.totalPaidCount}</h3>
+                <h3 className="text-red-500 mb-4 text-lg font-bold">No Pagats: {data.summary.totalCount - data.summary.totalPaidCount}</h3>
                 <ul>
                     {unPaidEvents}
                 </ul>
