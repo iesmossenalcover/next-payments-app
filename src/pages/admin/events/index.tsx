@@ -135,8 +135,19 @@ const Events = () => {
                     tableClass='w-full table-auto overflow-scroll w-full'
                     headerClass='border-b'
                     headerCellClass='text-sm font-medium text-gray-900 px-6 py-4 text-left text-center'
-                    cellClass='text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap text-center'
-                    rowClass='border-b'
+                    cellClass='px-6 py-4 whitespace-nowrap text-center'
+                    rowClass='border-b hover:bg-blue-100'
+                    visibleFields={[
+                        "code",
+                        "name",
+                        "date",
+                        "price",
+                        "amipaPrice",
+                        "from",
+                        "to",
+                        "active",
+                        "actions"
+                    ]}
                 />
             </div>
         )
@@ -155,7 +166,7 @@ const Events = () => {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <main className="mt-5 mx-10">
+            <main className="mt-5 mx-2">
 
 
                 <div className='flex justify-between mb-4'>

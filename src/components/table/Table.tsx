@@ -1,4 +1,4 @@
-type PrimitiveType = string | number | boolean;
+type PrimitiveType = string | number;
 
 interface BaseTableItem {
     id: string | number;
@@ -9,17 +9,18 @@ type Renderers<T extends BaseTableItem> = Partial<Record<keyof T, (it: T) => Rea
 
 interface TableHeaderProps<T extends BaseTableItem> {
     headers: TableHeaders<T>;
-    headerClass: string,
-    headerCellClass: string,
+    visibleFields: (keyof T)[];
+    headerClass: string;
+    headerCellClass: string;
 }
 
-function TableHeader<T extends BaseTableItem>({ headers, headerClass, headerCellClass }: TableHeaderProps<T>) {
+function TableHeader<T extends BaseTableItem>({ headers, headerClass, headerCellClass, visibleFields }: TableHeaderProps<T>) {
     return (
         <thead className={headerClass}>
             <tr>
 
-                {Object.keys(headers).map(key => (
-                    <th key={key} className={headerCellClass}>{headers[key as keyof T]}</th>
+                {visibleFields.map(key => (
+                    <th key={key as string} className={headerCellClass}>{headers[key as keyof T]}</th>
                 ))}
             </tr>
         </thead>
@@ -29,15 +30,16 @@ function TableHeader<T extends BaseTableItem>({ headers, headerClass, headerCell
 interface TableRowProps<T extends BaseTableItem> {
     item: T;
     renderers?: Renderers<T>;
-    rowClass: string,
-    cellClass: string,
+    visibleFields: (keyof T)[];
+    rowClass: string;
+    cellClass: string;
 };
 
-function TableRow<T extends BaseTableItem>({ item, renderers, rowClass, cellClass }: TableRowProps<T>) {
+function TableRow<T extends BaseTableItem>({ item, renderers, rowClass, cellClass, visibleFields }: TableRowProps<T>) {
 
     return (
         <tr className={rowClass}>
-            {objectKeys(item).map((key, idx) => {
+            {visibleFields.map((key, idx) => {
                 const customRenderer = renderers?.[key];
                 const value = item[key];
 
@@ -58,17 +60,18 @@ function TableRow<T extends BaseTableItem>({ item, renderers, rowClass, cellClas
 interface TableBodyProps<T extends BaseTableItem> {
     items: T[];
     renderers?: Renderers<T>;
+    visibleFields: (keyof T)[];
     bodyClass: string,
     rowClass: string,
     cellClass: string,
 };
 
-function TableBody<T extends BaseTableItem>({ items, renderers, bodyClass, rowClass, cellClass }: TableBodyProps<T>) {
+function TableBody<T extends BaseTableItem>({ items, renderers, bodyClass, rowClass, cellClass, visibleFields }: TableBodyProps<T>) {
 
     return (
         <tbody className={bodyClass}>
             {items.map(x => (
-                <TableRow key={x.id} item={x} renderers={renderers} cellClass={cellClass} rowClass={rowClass} />
+                <TableRow key={x.id} item={x} renderers={renderers} cellClass={cellClass} rowClass={rowClass} visibleFields={visibleFields} />
             ))}
         </tbody>
     );
@@ -85,6 +88,7 @@ interface TableProps<T extends BaseTableItem> {
     cellClass?: string;
     headerClass?: string;
     headerCellClass?: string;
+    visibleFields?: (keyof T)[];
 };
 
 export function Table<T extends BaseTableItem>({
@@ -97,12 +101,13 @@ export function Table<T extends BaseTableItem>({
     cellClass = "",
     headerClass = "",
     headerCellClass = "",
+    visibleFields = Object.keys(headers) as (keyof T)[]
 }: TableProps<T>) {
 
     return (
         <table className={tableClass}>
-            <TableHeader headers={headers} headerClass={headerClass} headerCellClass={headerCellClass} />
-            <TableBody items={items} renderers={renderers} bodyClass={bodyClass} cellClass={cellClass} rowClass={rowClass} />
+            <TableHeader headers={headers} headerClass={headerClass} headerCellClass={headerCellClass} visibleFields={visibleFields} />
+            <TableBody items={items} renderers={renderers} bodyClass={bodyClass} cellClass={cellClass} rowClass={rowClass}  visibleFields={visibleFields} />
         </table>
     );
 
@@ -116,8 +121,6 @@ function objectKeys<T extends {}>(obj: T) {
 function isPrimitive(value: any): value is PrimitiveType {
     return (
         typeof value === "string" ||
-        typeof value === "number" ||
-        typeof value === "boolean" ||
-        typeof value === "symbol"
+        typeof value === "number"
     );
 }

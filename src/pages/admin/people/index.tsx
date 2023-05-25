@@ -27,7 +27,7 @@ interface TableRow {
     academicRecordNumber: string,
     group: string,
     amipa: string,
-    actions: "",
+    actions: string,
 };
 
 const People = () => {
@@ -119,10 +119,18 @@ const People = () => {
                     items={mapToRow()}
                     renderers={customRenderer}
                     tableClass='w-full table-auto overflow-scroll h-full'
-                    headerClass='border-b'
-                    headerCellClass='text-sm font-medium text-gray-900 px-6 py-4 text-left'
-                    cellClass='text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap'
-                    rowClass='border-b'
+                    headerCellClass='text-sm font-medium text-gray-900 px-6 py-4 text-left text-center'
+                    cellClass='px-6 py-4 whitespace-nowrap text-center'
+                    rowClass='border-b hover:bg-blue-100'
+                    visibleFields={[
+                        "documentId",
+                        "firstName",
+                        "lastName",
+                        "academicRecordNumber",
+                        "group",
+                        "amipa",
+                        "actions",
+                    ]}
                 />
             </div>
         )
