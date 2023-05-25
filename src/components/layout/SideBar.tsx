@@ -4,7 +4,7 @@ import Link from "next/link"
 export const SideBar = () => {
     return (
         <nav className="min-h-screen bg-gray-800">
-            <div className="sidebar min-h-screen w-[3.35rem] overflow-hidden border-r hover:w-56 hover:shadow-lg">
+            <div className="sidebar min-h-screen w-[3.35rem] overflow-hidden border-r hover:w-56 hover:shadow-lg transition-all duration-100 ease-linear">
                 <div className="flex h-screen flex-col justify-between pt-2 pb-6">
                     <ul className="mt-6 space-y-2 tracking-wide text-white px-4">
                         <li className="min-w-max">
