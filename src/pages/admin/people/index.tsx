@@ -31,7 +31,7 @@ interface TableRow {
 };
 
 const People = () => {
-
+    const [filter, setFilter] = useState("");
     const [loadingCourses, setLoadingCourses] = useState(true)
     const [loadingPeople, setLoadingPeople] = useState(false)
     const [selector, setSelector] = useState<Selector | undefined>(undefined)
@@ -44,10 +44,20 @@ const People = () => {
     }
 
     const mapToRow = (): TableRow[] => {
-        return people.map(x => {
-            const academicRecordNumber = x.academicRecordNumber ? x.academicRecordNumber.toString() : "-";
-            return { id: x.id, documentId: x.documentId, firstName: x.firstName, lastName: x.lastName, academicRecordNumber: academicRecordNumber, group: x.groupName, amipa: x.amipa ? "Si" : "No", actions: "" };
-        });
+
+        const normalizedFilter = filter.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+        return people
+            .filter(x =>
+                x.firstName.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().includes(normalizedFilter) ||
+                x.lastName.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().includes(normalizedFilter) ||
+                x.groupName.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().includes(normalizedFilter) ||
+                x.documentId.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().includes(normalizedFilter)
+            )
+            .slice(0, 100)
+            .map(x => {
+                const academicRecordNumber = x.academicRecordNumber ? x.academicRecordNumber.toString() : "-";
+                return { id: x.id, documentId: x.documentId, firstName: x.firstName, lastName: x.lastName, academicRecordNumber: academicRecordNumber, group: x.groupName, amipa: x.amipa ? "Si" : "No", actions: "" };
+            });
     }
 
     const loadPeople = () => {
@@ -111,35 +121,49 @@ const People = () => {
 
     const listPeople = () => {
         if (loadingPeople) return null;
-
         return (
-            <div className='overflow-y-auto overflow-x-auto'>
-                <Table
-                    headers={tableHeaders}
-                    items={mapToRow()}
-                    renderers={customRenderer}
-                    tableClass='w-full table-auto overflow-scroll h-full'
-                    headerCellClass='text-sm font-medium text-gray-900 px-6 py-4 text-left text-center'
-                    cellClass='px-6 py-4 whitespace-nowrap text-center'
-                    rowClass='border-b hover:bg-blue-100'
-                    visibleFields={[
-                        "documentId",
-                        "firstName",
-                        "lastName",
-                        "academicRecordNumber",
-                        "group",
-                        "amipa",
-                        "actions",
-                    ]}
-                />
-            </div>
+            <>
+                <div className="mb-6 max-w-3xl">
+                    <label
+                        className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                        htmlFor="filter">Cerca persones</label>
+                    <input
+                        autoComplete="off"
+                        className="px-4 appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 leading-tight focus:outline-none focus:bg-white"
+                        type="text"
+                        id="filter" onChange={e => setFilter(e.target.value)} />
+                </div>
+                <input type="text" onChange={e => setFilter(e.target.value)} />
+                {!filter.length ? null :
+                    <div className='overflow-y-auto overflow-x-auto'>
+                        <Table
+                            headers={tableHeaders}
+                            items={mapToRow()}
+                            renderers={customRenderer}
+                            tableClass='w-full table-auto overflow-scroll h-full'
+                            headerCellClass='text-sm font-medium text-gray-900 px-6 py-4 text-left text-center'
+                            cellClass='px-6 py-4 whitespace-nowrap text-center'
+                            rowClass='border-b hover:bg-blue-100'
+                            visibleFields={[
+                                "documentId",
+                                "firstName",
+                                "lastName",
+                                "academicRecordNumber",
+                                "group",
+                                "amipa",
+                                "actions",
+                            ]}
+                        />
+                    </div>
+                }
+            </>
         )
     }
 
     return (
         <>
             <Head>
-                <title>Administració - IES MOSSÈN ALCOVER</title>
+                <title>Persones - IES MOSSÈN ALCOVER</title>
                 <meta name="description" content="Generated by create next app" />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />

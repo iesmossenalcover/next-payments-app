@@ -37,7 +37,7 @@ export interface PersonRow {
     groupId: number,
     groupName: string,
     amipa: boolean,
-    academicRecordNumber: number
+    academicRecordNumber?: number
 }
 
 export interface PersonActiveEventsVm {
