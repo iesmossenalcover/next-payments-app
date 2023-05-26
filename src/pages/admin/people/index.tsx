@@ -1,12 +1,11 @@
 import Head from 'next/head'
 import { useEffect, useState } from 'react'
-import { getCoursesSelector, getPeopleView, PersonRow } from '@/lib/apis/payments'
-import { Selector, SelectorComponent } from '@/components/Selector'
-import { Spinner } from '@/components/Loading'
+import { PersonRow } from '@/lib/apis/payments'
 import { Table } from '@/components/table'
 import { Container } from '@/components/layout/SideBar'
 import Link from 'next/link'
-import { deletePerson } from '@/lib/apis/payments/client'
+import { deletePerson, filterPeopleQuery } from '@/lib/apis/payments/client'
+import useDebounce from '@/lib/hooks/useDebounce'
 
 const tableHeaders = {
     id: "Id",
@@ -32,50 +31,35 @@ interface TableRow {
 
 const People = () => {
     const [filter, setFilter] = useState("");
-    const [loadingCourses, setLoadingCourses] = useState(true)
     const [loadingPeople, setLoadingPeople] = useState(false)
-    const [selector, setSelector] = useState<Selector | undefined>(undefined)
     const [people, setPeople] = useState<PersonRow[]>([])
-    const [currentCourseId, setCurrentCourseId] = useState<number | undefined>()
-
-    const onCourseSelected = (value: string) => {
-        setLoadingPeople(true);
-        setCurrentCourseId(parseInt(value))
-    }
 
     const mapToRow = (): TableRow[] => {
-
-        const normalizedFilter = filter.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
         return people
-            .filter(x =>
-                x.firstName.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().includes(normalizedFilter) ||
-                x.lastName.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().includes(normalizedFilter) ||
-                x.groupName.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().includes(normalizedFilter) ||
-                x.documentId.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().includes(normalizedFilter)
-            )
-            .slice(0, 100)
             .map(x => {
                 const academicRecordNumber = x.academicRecordNumber ? x.academicRecordNumber.toString() : "-";
                 return { id: x.id, documentId: x.documentId, firstName: x.firstName, lastName: x.lastName, academicRecordNumber: academicRecordNumber, group: x.groupName, amipa: x.amipa ? "Si" : "No", actions: "" };
             });
     }
 
-    const loadPeople = () => {
+    const debouncedSearchTerm = useDebounce<string>(filter, 300);
+
+    useEffect(() => {
+        if (filter.length > 1)
+            updatePeople();
+    }, [debouncedSearchTerm]);
+
+    const onFilterChange = (e: React.FormEvent<HTMLInputElement>) => {
+        setFilter(e.currentTarget.value);
+    }
+
+    const updatePeople = () => {
         setLoadingPeople(true);
-        getPeopleView(currentCourseId)
+        const normalizedFilter = filter.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+        filterPeopleQuery(normalizedFilter)
             .then(x => setPeople(x))
             .finally(() => setLoadingPeople(false));
     }
-
-    useEffect(() => {
-        getCoursesSelector()
-            .then(x => setSelector(x))
-            .finally(() => setLoadingCourses(false))
-    }, []);
-
-    useEffect(() => {
-        loadPeople();
-    }, [currentCourseId]);
 
     const onDeletePerson = async (item: TableRow) => {
         const del = confirm(`Eliminar persona ${item.firstName} ${item.lastName} - ${item.documentId}?`);
@@ -85,7 +69,7 @@ const People = () => {
                 alert("No s'ha pogut eliminar.")
             }
             else {
-                loadPeople();
+                updatePeople();
             }
         }
     }
@@ -115,12 +99,7 @@ const People = () => {
         },
     }
 
-    if (loadingCourses) {
-        return null
-    }
-
     const listPeople = () => {
-        if (loadingPeople) return null;
         return (
             <>
                 <div className="mb-6 max-w-3xl">
@@ -131,10 +110,9 @@ const People = () => {
                         autoComplete="off"
                         className="px-4 appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 leading-tight focus:outline-none focus:bg-white"
                         type="text"
-                        id="filter" onChange={e => setFilter(e.target.value)} />
+                        id="filter" value={filter} onChange={onFilterChange} />
                 </div>
-                <input type="text" onChange={e => setFilter(e.target.value)} />
-                {!filter.length ? null :
+                {loadingPeople || !filter.length ? null :
                     <div className='overflow-y-auto overflow-x-auto'>
                         <Table
                             headers={tableHeaders}
@@ -169,43 +147,32 @@ const People = () => {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <main className='mt-5 mx-10'>
-                <div className='flex justify-between mb-4'>
-                    <div className='flex justify-start items-center'>
-                        <SelectorComponent
-                            id='course'
-                            name='course'
-                            onSelect={onCourseSelected}
-                            selector={selector as Selector} />
-
-                        {loadingPeople ? <Spinner /> : null}
-                    </div>
-                    <div>
-                        <Link className='
-                                inline-block
-                                text-white 
-                                bg-blue-700 
-                                hover:bg-blue-800 
-                                focus:ring-4 
-                                focus:ring-blue-300
-                                font-medium
-                                py-3
-                                px-3
-                                rounded-lg
-                                text-sm
-                                mr-5' href="/admin/people/create">Afegir persona</Link>
-                        <Link className='
-                                inline-block
-                                text-white 
-                                bg-blue-700 
-                                hover:bg-blue-800 
-                                focus:ring-4 
-                                focus:ring-blue-300
-                                font-medium
-                                py-3
-                                px-3
-                                rounded-lg
-                                text-sm' href="/admin/tasks/upload">Carregar persones</Link>
-                    </div>
+                <div className='flex mb-4'>
+                    <Link className='
+                        inline-block
+                        text-white 
+                        bg-blue-700 
+                        hover:bg-blue-800 
+                        focus:ring-4 
+                        focus:ring-blue-300
+                        font-medium
+                        py-3
+                        px-3
+                        rounded-lg
+                        text-sm
+                        mr-5' href="/admin/people/create">Afegir persona</Link>
+                    <Link className='
+                        inline-block
+                        text-white 
+                        bg-blue-700 
+                        hover:bg-blue-800 
+                        focus:ring-4 
+                        focus:ring-blue-300
+                        font-medium
+                        py-3
+                        px-3
+                        rounded-lg
+                        text-sm' href="/admin/tasks/upload">Carregar persones</Link>
                 </div>
 
                 {listPeople()}

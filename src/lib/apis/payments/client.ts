@@ -39,6 +39,16 @@ export const getPeopleView = async (courseId?: number): Promise<PersonRow[]> => 
     return [];
 }
 
+export const filterPeopleQuery = async (q: string): Promise<PersonRow[]> => {
+
+    const response = await get(`${API_BASE_URL}/api/people/filter?query=${q}`)
+    if (response.ok) {
+        return await response.json() as PersonRow[]
+    }
+
+    return [];
+}
+
 export const getCoursesSelector = async (): Promise<Selector | undefined> => {
 
     const query = `${API_BASE_URL}/api/courses/selector`;
@@ -239,7 +249,7 @@ export const getEventSummary = async (code: string) => {
 export const getAdminInfo = async () => {
     const response = await get(`${API_BASE_URL}/api/admin`);
     const data = await response.json() as AdminInfo;
-   
+
     return data;
 }
 
@@ -253,7 +263,7 @@ export const setAppConfig = async (config: AppConfig) => {
 }
 
 export const setPayment = async (id: number, paid: boolean) => {
-    const response = await putJson(`${API_BASE_URL}/api/events/${id}/payment`, {paid});
+    const response = await putJson(`${API_BASE_URL}/api/events/${id}/payment`, { paid });
     const data = await response.json() as Response<number>;
     if (data.errors) {
         data.errors = new Map(Object.entries(data.errors));
