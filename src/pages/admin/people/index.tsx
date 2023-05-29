@@ -6,6 +6,7 @@ import { Container } from '@/components/layout/SideBar'
 import Link from 'next/link'
 import { deletePerson, filterPeopleQuery } from '@/lib/apis/payments/client'
 import useDebounce from '@/lib/hooks/useDebounce'
+import { Spinner } from '@/components/Loading'
 
 const tableHeaders = {
     id: "Id",
@@ -45,8 +46,7 @@ const People = () => {
     const debouncedSearchTerm = useDebounce<string>(filter, 300);
 
     useEffect(() => {
-        if (filter.length > 1)
-            updatePeople();
+        updatePeople();
     }, [debouncedSearchTerm]);
 
     const onFilterChange = (e: React.FormEvent<HTMLInputElement>) => {
@@ -55,10 +55,13 @@ const People = () => {
 
     const updatePeople = () => {
         setLoadingPeople(true);
+        setPeople([]);
         const normalizedFilter = filter.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
-        filterPeopleQuery(normalizedFilter)
-            .then(x => setPeople(x))
-            .finally(() => setLoadingPeople(false));
+        if (normalizedFilter.length >= 2) {
+            filterPeopleQuery(normalizedFilter)
+                .then(x => setPeople(x))
+                .finally(() => setLoadingPeople(false));
+        }
     }
 
     const onDeletePerson = async (item: TableRow) => {
@@ -106,13 +109,14 @@ const People = () => {
                     <label
                         className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                         htmlFor="filter">Cerca persones</label>
+
                     <input
                         autoComplete="off"
                         className="px-4 appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 leading-tight focus:outline-none focus:bg-white"
                         type="text"
                         id="filter" value={filter} onChange={onFilterChange} />
                 </div>
-                {loadingPeople || !filter.length ? null :
+                {loadingPeople && filter.length >= 2 ? <Spinner /> :
                     <div className='overflow-y-auto overflow-x-auto'>
                         <Table
                             headers={tableHeaders}
