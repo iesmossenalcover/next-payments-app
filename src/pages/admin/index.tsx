@@ -41,7 +41,7 @@ const Admin = () => {
         setUpdatingConfig(false);
     }
 
-    const box = (t :string, x :number ) => {
+    const box = (t: string, x: number) => {
         return (
             <div className="w-full md:w-1/2 xl:w-1/3 p-3">
                 <div className="bg-white border rounded shadow p-2">
@@ -73,13 +73,10 @@ const Admin = () => {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <main className="text-center mt-10">
-                <h1 className='
-                        text-lg
-                        mb-3
-                        tracking-wide
-                        font-bold
-                        text-gray-500
-                        text-md'>Tauler Administratiu</h1>
+
+                <h1 className='text-2xl ml-3 mb-3 tracking-wide font-bold text-left text-black'>Curs: {data?.currentCurs}</h1>
+                <h1 className='text-lg mb-3 tracking-wide font-bold text-center text-gray-500 text-md'>Tauler Administratiu</h1>
+
                 <hr className="h-px mb-5 mt-5 border-2 bg-gray-700" />
 
                 <div className="flex flex-wrap">
@@ -89,7 +86,7 @@ const Admin = () => {
                     {box("Total Grups", data.grups)}
                     {box("Total Persones", data.people)}
                     {box("Total pagaments fets avui", data.todayPayments)}
-                    
+
                 </div>
                 <hr className="h-px mb-5 mt-5 border-2 bg-gray-700" />
                 <form action="#" onSubmit={onSubmitAppConfig}>
@@ -102,18 +99,18 @@ const Admin = () => {
                         />
                     </div>
                     <div className="relative">
-                    <div className="absolute inset-y-0 right-0 mb-5 mt-5 mr-6">
-                        <input
-                            disabled={updatingConfig}
-                            className="bg-blue-500 hover:cursor-pointer hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed"
-                            value="Guardar"
-                            type="submit"
-                        />
+                        <div className="absolute inset-y-0 right-0 mb-5 mt-5 mr-6">
+                            <input
+                                disabled={updatingConfig}
+                                className="bg-blue-500 hover:cursor-pointer hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed"
+                                value="Guardar"
+                                type="submit"
+                            />
 
+                        </div>
                     </div>
-                    </div>
-                    
-                    
+
+
                 </form>
 
             </main>

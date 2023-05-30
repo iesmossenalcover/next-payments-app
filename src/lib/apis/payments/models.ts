@@ -112,6 +112,7 @@ export interface EventRow {
 }
 
 export interface AdminInfo {
+    currentCurs: string,
     events: number,
     activeEvents: number,
     eventsEndToday: number,
