@@ -49,7 +49,7 @@ const PersonFields = ({ person, errors }: PersonComponentProps) => {
             <div className="mb-6">
                 <label
                     className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                    htmlFor="lastName">Primer llinatge</label>
+                    htmlFor="lastName">Llinatges</label>
                 <input
                     className="px-4 appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 leading-tight focus:outline-none focus:bg-white"
                     id="lastName" name="lastName" defaultValue={person.lastName} />
