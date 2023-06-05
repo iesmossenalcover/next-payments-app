@@ -45,8 +45,7 @@ const Update = () => {
         const p: Person = {
             id: parseInt(id as string),
             name: formData.get("name") as string,
-            surname1: formData.get("surname1") as string,
-            surname2: formData.get("surname2") as string,
+            lastName: formData.get("lastName") as string,
             documentId: formData.get("documentId") as string,
             groupId: parseInt(formData.get("groupId") as string),
             academicRecordNumber: parseInt(formData.get("academicRecordNumber") as string) ?? undefined,

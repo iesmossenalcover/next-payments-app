@@ -49,21 +49,11 @@ const PersonFields = ({ person, errors }: PersonComponentProps) => {
             <div className="mb-6">
                 <label
                     className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                    htmlFor="surname1">Primer llinatge</label>
+                    htmlFor="lastName">Primer llinatge</label>
                 <input
                     className="px-4 appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 leading-tight focus:outline-none focus:bg-white"
-                    id="surname1" name="surname1" defaultValue={person.surname1} />
-                {displayErrors("surname1")}
-            </div>
-
-            <div className="mb-6">
-                <label
-                    className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                    htmlFor="surname2">Segon llinatge</label>
-                <input
-                    className="px-4 appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 leading-tight focus:outline-none focus:bg-white"
-                    id="surname2" name="surname2" defaultValue={person.surname2} />
-                {displayErrors("surname2")}
+                    id="lastName" name="lastName" defaultValue={person.lastName} />
+                {displayErrors("lastName")}
             </div>
 
             <div className="mb-6">
