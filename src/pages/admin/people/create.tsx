@@ -9,7 +9,7 @@ import { Container } from "@/components/layout/SideBar";
 const defaultPerson: Person = {
     id: 0,
     name: "",
-    lastName: "",
+    surname1: "",
     documentId: "",
     groupId: 0,
     amipa: false,
@@ -41,7 +41,8 @@ const Create = () => {
         const p: Person = {
             id: 0,
             name: formData.get("name") as string,
-            lastName: formData.get("lastName") as string,
+            surname1: formData.get("surname1") as string,
+            surname2: formData.get("surname2") as string,
             documentId: formData.get("documentId") as string,
             groupId: parseInt(formData.get("groupId") as string),
             academicRecordNumber: parseInt(formData.get("academicRecordNumber") as string) ?? undefined,
