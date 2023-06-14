@@ -27,6 +27,7 @@ export interface Identity {
     id: number,
     username: string,
     givenName: string,
+    role?: string,
 }
 
 export interface PersonRow {
@@ -65,6 +66,12 @@ export interface CreateOrderResponse {
     signatureVersion: string,
     signature: string
 }
+
+export interface SyncPersonResponse {
+    email: string,
+    password?: string,
+}
+
 export interface GetOrderInfo {
     events: GetOrderInfoEvent[];
 }
