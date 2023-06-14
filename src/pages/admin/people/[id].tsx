@@ -71,7 +71,10 @@ const Update = () => {
         const response = await callGenerateEmail(id);
         setLoading(false);
         if (response.errors) {
-            alert("No s'ha pogut crear el correu.")
+            const errorMessage: string = Array.from(response.errors.values())
+                .flatMap((values: string[]) => values)
+                .join(", ");
+            alert(errorMessage);
         }
         else {
             getPerson();
