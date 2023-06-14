@@ -78,6 +78,17 @@ const Update = () => {
                                 allowSetStudent={false}
                                 errors={errors}
                                 person={person} />
+
+                            <div className="mb-6">
+                                <label
+                                    className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                                    htmlFor="mail">Correu</label>
+                                <input disabled
+                                    className="px-4 appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 leading-tight focus:outline-none focus:bg-white"
+                                    id="mail" name="mail" defaultValue={person.email} />
+
+                            </div>
+
                             <div>
                                 <input
                                     disabled={formDisabled()}

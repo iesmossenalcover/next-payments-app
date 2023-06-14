@@ -80,6 +80,7 @@ export interface GetOrderInfoEvent {
 export interface Person {
     id: number,
     name: string,
+    email?: string,
     documentId: string,
     surname1: string,
     surname2?: string,
