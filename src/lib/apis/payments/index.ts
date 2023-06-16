@@ -1,3 +1,49 @@
-export { filterPeopleQuery, signinOAuth, getEventPayments, setPayment, getAdminInfo, setAppConfig,getEventSummary, getEventPeople, updatePerson, getOrderInfo, getIdentity, signin, getPeopleView, getCoursesSelector, batchUpload, getPersonById, getPersonActiveEvents, createOrder, getEventsView } from "./client"
-export type { SyncPersonResponse, AdminInfo, AppConfig, PaymentSummary, EventSummaryVm, EventSummary, EventPayments, EventPayment, EventPerson, EventPeopleGroup, EventPeople, GetOrderInfoEvent, GetOrderInfo, SigninResponse, Identity, PersonRow, Response, BatchUploadSummary, PersonActiveEventsVm, PersonActiveEvent, EventRow as EventsRow } from "./models"
-export { SigninStatus } from "./models"
+import { useState } from "react";
+
+export {
+  batchUpload,
+  createOrder,
+  filterPeopleQuery,
+  getAdminInfo,
+  getCoursesSelector,
+  getEventPayments,
+  getEventPeople,
+  getEventSummary,
+  getEventsView,
+  getIdentity,
+  getOrderInfo,
+  getPeopleView,
+  getPersonActiveEvents,
+  getPersonById,
+  setAppConfig,
+  setPayment,
+  signin,
+  signinOAuth,
+  updatePerson,
+} from "./client";
+
+export type {
+  AdminInfo,
+  AppConfig,
+  BatchUploadSummary,
+  EventPayment,
+  EventPayments,
+  EventPeople,
+  EventPeopleGroup,
+  EventPerson,
+  EventRow as EventsRow,
+  EventSummary,
+  EventSummaryVm,
+  GetOrderInfo,
+  GetOrderInfoEvent,
+  Identity,
+  PaymentSummary,
+  PersonActiveEvent,
+  PersonActiveEventsVm,
+  PersonRow,
+  Response,
+  SigninResponse,
+  SyncPersonResponse,
+} from "./models";
+
+export { SigninStatus } from "./models";

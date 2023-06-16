@@ -1,6 +1,7 @@
 import { BatchUploadSummary, Identity, PersonActiveEventsVm, Person, PersonRow, Response, SigninResponse, CreateOrderResponse, EventRow, Event, GetOrderInfo, EventPeople, EventPayments, AdminInfo, AppConfig, EventSummaryVm, SyncPersonResponse } from "./models"
 import { deleteJson, get, postJson, putJson } from "./baseclient"
 import { Selector } from "@/components/Selector"
+import { ApiResult } from "@/lib/hooks/useApiRequest"
 
 const API_BASE_URL = process.env.API_BASE_URL
 
@@ -39,14 +40,17 @@ export const getPeopleView = async (courseId?: number): Promise<PersonRow[]> => 
     return [];
 }
 
-export const filterPeopleQuery = async (q: string): Promise<PersonRow[]> => {
+export const filterPeopleQuery = async (q: string): Promise<ApiResult<PersonRow[]>> => {
 
     const response = await get(`${API_BASE_URL}/api/people/filter?query=${q}`)
+    
     if (response.ok) {
-        return await response.json() as PersonRow[]
+        return {
+            data: await response.json() as PersonRow[],
+        }
     }
 
-    return [];
+    return { errors: new Map([ ["error", await response.text()]]) };
 }
 
 export const getCoursesSelector = async (): Promise<Selector | undefined> => {

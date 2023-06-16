@@ -1,12 +1,12 @@
 import Head from 'next/head'
 import { useEffect, useState } from 'react'
-import { PersonRow } from '@/lib/apis/payments'
 import { Table } from '@/components/table'
 import { Container } from '@/components/layout/SideBar'
 import Link from 'next/link'
 import { deletePerson, filterPeopleQuery } from '@/lib/apis/payments/client'
 import useDebounce from '@/lib/hooks/useDebounce'
 import { Spinner } from '@/components/Loading'
+import { useApiRequest } from '@/lib/hooks/useApiRequest'
 
 const tableHeaders = {
     id: "Id",
@@ -32,10 +32,12 @@ interface TableRow {
 
 const People = () => {
     const [filter, setFilter] = useState("");
-    const [loadingPeople, setLoadingPeople] = useState(false)
-    const [people, setPeople] = useState<PersonRow[]>([])
+    const { data: people, error, isLoading, executeRequest } = useApiRequest(filterPeopleQuery);
+    const debouncedSearchTerm = useDebounce<string>(filter, 300);
 
     const mapToRow = (): TableRow[] => {
+        if (!people) return [];
+
         return people
             .map(x => {
                 const academicRecordNumber = x.academicRecordNumber ? x.academicRecordNumber.toString() : "-";
@@ -43,25 +45,23 @@ const People = () => {
             });
     }
 
-    const debouncedSearchTerm = useDebounce<string>(filter, 300);
+    const updatePeople = () => {
+        const normalizedFilter = filter.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+
+        if (normalizedFilter.length >= 2) {
+            executeRequest(normalizedFilter);
+        }
+    }
+
 
     useEffect(() => {
         updatePeople();
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [debouncedSearchTerm]);
 
     const onFilterChange = (e: React.FormEvent<HTMLInputElement>) => {
         setFilter(e.currentTarget.value);
-    }
-
-    const updatePeople = () => {
-        setLoadingPeople(true);
-        setPeople([]);
-        const normalizedFilter = filter.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
-        if (normalizedFilter.length >= 2) {
-            filterPeopleQuery(normalizedFilter)
-                .then(x => setPeople(x))
-                .finally(() => setLoadingPeople(false));
-        }
     }
 
     const onDeletePerson = async (item: TableRow) => {
@@ -116,7 +116,7 @@ const People = () => {
                         type="text"
                         id="filter" value={filter} onChange={onFilterChange} />
                 </div>
-                {loadingPeople && filter.length >= 2 ? <Spinner /> :
+                {isLoading && filter.length >= 2 ? <Spinner /> :
                     <div className='overflow-y-auto overflow-x-auto'>
                         <Table
                             headers={tableHeaders}
@@ -179,7 +179,10 @@ const People = () => {
                         text-sm' href="/admin/tasks/upload">Carregar persones</Link>
                 </div>
 
-                {listPeople()}
+                { error ? 
+                    <div>S&aposha produït un error recuperant la informació.</div> :
+                    listPeople()
+                }
             </main>
         </>
     )
