@@ -5,18 +5,19 @@ export type ApiResult<T> = {
   errors?: Map<string, string>;
 };
 
-type ApiCallType<T> = (...args: any[]) => Promise<ApiResult<T>>;
+type ApiCallType<T, U extends any[]> = (...args: U) => Promise<ApiResult<T>>;
 
-export const useApiRequest = <T>(apiCall: ApiCallType<T>) => {
+export const useApiRequest = <T, U extends any[]>(apiCall: ApiCallType<T, U>) => {
+  
   const [data, setData] = useState<T | undefined>(undefined);
   const [error, setError] = useState<string | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const executeRequest = async (...args: any[]) => {
+  const executeRequest = async (...args: U) => {
     setIsLoading(true);
 
     try {
-      const response = await apiCall(args);
+      const response = await apiCall(...args);
 
       if (response.errors) {
         const errorMessages = Array.from(response.errors.values()).join(" ");
