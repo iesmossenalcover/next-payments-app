@@ -5,10 +5,11 @@ export type ApiResult<T> = {
   errors?: Map<string, string>;
 };
 
-type ApiCallType<T, U extends any[]> = (...args: U) => Promise<ApiResult<T>>;
+type ApiCallType<T, U extends unknown[]> = (...args: U) => Promise<ApiResult<T> | T>;
 
-export const useApiRequest = <T, U extends any[]>(apiCall: ApiCallType<T, U>) => {
-  
+export const useApiRequest = <T, U extends any[]>(
+  apiCall: ApiCallType<T, U>,
+) => {
   const [data, setData] = useState<T | undefined>(undefined);
   const [error, setError] = useState<string | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -18,12 +19,15 @@ export const useApiRequest = <T, U extends any[]>(apiCall: ApiCallType<T, U>) =>
 
     try {
       const response = await apiCall(...args);
-
-      if (response.errors) {
-        const errorMessages = Array.from(response.errors.values()).join(" ");
+      const result = response as ApiResult<T>;
+      if (result && result.errors && result.errors.size > 0) {
+        const errorMessages = Array.from(result.errors.values()).join(" ");
         setError(errorMessages);
-      } else if (response.data) {
-        setData(response.data);
+      } else if (result && result.data) {
+        setData(result.data);
+      }
+      else {
+        setData(response as T);
       }
     } catch (error) {
       setError("An error occurred while fetching data.");

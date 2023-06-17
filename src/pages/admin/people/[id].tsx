@@ -20,9 +20,7 @@ const Update = () => {
 
     useEffect(() => {
         if (!id) return;
-
         getPerson()
-
     }, [id])
     const getPerson = () => {
         getPersonById(parseInt(id as string))

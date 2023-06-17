@@ -56,8 +56,6 @@ const People = () => {
 
     useEffect(() => {
         updatePeople();
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [debouncedSearchTerm]);
 
     const onFilterChange = (e: React.FormEvent<HTMLInputElement>) => {
@@ -179,7 +177,7 @@ const People = () => {
                         text-sm' href="/admin/tasks/upload">Carregar persones</Link>
                 </div>
 
-                { error ? 
+                {error ?
                     <div>S&aposha produït un error recuperant la informació.</div> :
                     listPeople()
                 }

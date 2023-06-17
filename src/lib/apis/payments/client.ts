@@ -40,21 +40,12 @@ export const getPeopleView = async (courseId?: number): Promise<PersonRow[]> => 
     return [];
 }
 
-export const filterPeopleQuery = async (q: string): Promise<ApiResult<PersonRow[]>> => {
-
+export const filterPeopleQuery = async (q: string): Promise<PersonRow[]> => {
     const response = await get(`${API_BASE_URL}/api/people/filter?query=${q}`)
-    
-    if (response.ok) {
-        return {
-            data: await response.json() as PersonRow[],
-        }
-    }
-
-    return { errors: new Map([ ["error", await response.text()]]) };
+    return await response.json() as PersonRow[];
 }
 
 export const getCoursesSelector = async (): Promise<Selector | undefined> => {
-
     const query = `${API_BASE_URL}/api/courses/selector`;
     const response = await get(query)
     if (response.ok) {

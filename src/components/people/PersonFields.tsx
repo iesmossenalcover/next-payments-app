@@ -3,6 +3,7 @@ import { Person } from "@/lib/apis/payments/models";
 import { useState, useEffect } from "react";
 import { Selector, SelectorComponent } from "../Selector";
 import Toggle from "../Toggle";
+import { useApiRequest } from "@/lib/hooks/useApiRequest";
 
 interface PersonComponentProps {
     errors?: Map<string, string[]>
@@ -11,15 +12,11 @@ interface PersonComponentProps {
 }
 
 const PersonFields = ({ person, errors }: PersonComponentProps) => {
-    const [groups, setGroups] = useState<Selector | undefined>();
+    const { data: groups, executeRequest } = useApiRequest(getGroupsSelector);
 
     useEffect(() => {
-        getGroupsSelector()
-            .then(x => {
-                x.selected = person.groupId?.toString() ?? "";
-                setGroups(x);
-            });
-    }, [person.groupId])
+        executeRequest();
+    }, [])
 
     const displayErrors = (key: string) => {
         if (!errors || !errors.has(key)) return null;
@@ -32,7 +29,8 @@ const PersonFields = ({ person, errors }: PersonComponentProps) => {
         )
     }
 
-    if (!groups || !groups) return null;
+    if (groups) 
+        groups.selected = person.groupId ? person.groupId.toString() : "";
 
     return (
         <>
@@ -79,19 +77,22 @@ const PersonFields = ({ person, errors }: PersonComponentProps) => {
                     defaultValue={person.documentId} />
                 {displayErrors("documentId")}
             </div>
-            <div className="mb-6">
-                <label
-                    className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                    htmlFor="groupId"
-                >
-                    Grup al curs actual</label>
-                <SelectorComponent
-                    id="groupId"
-                    name="groupId"
-                    selector={groups}
-                    onSelect={() => { }} />
-                {displayErrors("groupId")}
-            </div>
+            {groups ?
+                <div className="mb-6">
+                    <label
+                        className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                        htmlFor="groupId"
+                    >
+                        Grup al curs actual</label>
+                    <SelectorComponent
+                        id="groupId"
+                        name="groupId"
+                        selector={groups}
+                        onSelect={() => { }} />
+                    {displayErrors("groupId")}
+                </div>
+                : null
+            }
             <div>
                 <label
                     className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
@@ -117,7 +118,7 @@ const PersonFields = ({ person, errors }: PersonComponentProps) => {
                     text="Matriculat"
                 />
             </div>
-            <div className="mt-5">                
+            <div className="mt-5">
                 <label htmlFor="subjectsInfo" className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">ASSIGNATURES <span className="lowercase">(una per línia)</span></label>
                 <textarea id="subjectsInfo"
                     name="subjectsInfo"
