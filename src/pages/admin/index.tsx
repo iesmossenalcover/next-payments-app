@@ -1,23 +1,13 @@
 import { Container } from "@/components/layout/SideBar";
 import Toggle from "@/components/Toggle";
-import { AdminInfo, AppConfig, getAdminInfo, setAppConfig } from "@/lib/apis/payments";
+import { AppConfig, getAdminInfo, setAppConfig } from "@/lib/apis/payments";
+import { useStartApiRequest } from "@/lib/hooks/useApiRequest";
 import Head from "next/head";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const Admin = () => {
-
-    const [data, setData] = useState<AdminInfo | undefined>(undefined);
     const [updatingConfig, setUpdatingConfig] = useState(false);
-    const [loading, setLoading] = useState(false)
-
-    useEffect(() => {
-        setLoading(true);
-        getAdminInfo()
-            .then(x => {
-                setData(x);
-            })
-            .finally(() => setLoading(false));
-    }, []);
+    const { data, isLoading } = useStartApiRequest(getAdminInfo);
 
 
     const onSubmitAppConfig = async (e: React.SyntheticEvent<HTMLFormElement>) => {
@@ -59,7 +49,7 @@ const Admin = () => {
         );
     }
 
-    if (loading || !data) {
+    if (isLoading || !data) {
         return null;
     }
 

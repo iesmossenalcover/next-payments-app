@@ -1,12 +1,13 @@
 import Head from 'next/head'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router';
 import { signin, signinOAuth, SigninResponse, SigninStatus } from '@/lib/apis/payments';
 import { CredentialResponse, GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
 import { DangerAlert } from '@/components/Alerts';
+import { useApiRequest } from '@/lib/hooks/useApiRequest';
 
 const Signin = () => {
-
+  const { data, executeRequest: signinRequest } = useApiRequest(signin);
   const [error, setError] = useState<string | undefined>()
   const [username, setUsername] = useState<string>("")
   const [password, setPassword] = useState<string>("")
@@ -14,9 +15,12 @@ const Signin = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const response = await signin(username, password)
-    handleSigninResponse(response);
+    signinRequest(username, password);
   }
+
+  useEffect(() => {
+    if (data) handleSigninResponse(data);
+  }, [data]);
 
   const onGoogleLogin = async (cr: CredentialResponse) => {
     const { credential } = cr;

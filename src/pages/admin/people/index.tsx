@@ -7,6 +7,7 @@ import { deletePerson, filterPeopleQuery } from '@/lib/apis/payments/client'
 import useDebounce from '@/lib/hooks/useDebounce'
 import { Spinner } from '@/components/Loading'
 import { useApiRequest } from '@/lib/hooks/useApiRequest'
+import { displayErrors } from '@/lib/utils'
 
 const tableHeaders = {
     id: "Id",
@@ -32,7 +33,7 @@ interface TableRow {
 
 const People = () => {
     const [filter, setFilter] = useState("");
-    const { data: people, error, isLoading, executeRequest } = useApiRequest(filterPeopleQuery);
+    const { data: people, errors, isLoading, executeRequest } = useApiRequest(filterPeopleQuery);
     const debouncedSearchTerm = useDebounce<string>(filter, 300);
 
     const mapToRow = (): TableRow[] => {
@@ -176,11 +177,7 @@ const People = () => {
                         rounded-lg
                         text-sm' href="/admin/tasks/upload">Carregar persones</Link>
                 </div>
-
-                {error ?
-                    <div>S&aposha produït un error recuperant la informació.</div> :
-                    listPeople()
-                }
+                {errors ? displayErrors(errors) : listPeople()}
             </main>
         </>
     )
