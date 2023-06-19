@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { getPersonById, updatePerson } from "@/lib/apis/payments";
 import { Container } from "@/components/layout/SideBar";
 import Head from "next/head";
-import { callGenerateEmail } from "@/lib/apis/payments/client";
+import { syncPersonToGoogleWorkspace } from "@/lib/apis/payments/client";
 
 const Update = () => {
     const router = useRouter()
@@ -68,7 +68,7 @@ const Update = () => {
 
     async function generateEmail(id: number): Promise<void> {
         setLoading(true);
-        const response = await callGenerateEmail(id);
+        const response = await syncPersonToGoogleWorkspace(id);
         setLoading(false);
         if (response.errors) {
             const errorMessage: string = Array.from(response.errors.values())

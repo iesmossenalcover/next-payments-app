@@ -71,9 +71,7 @@ const EventPayments = () => {
     const loadEventsPayments = () => {
         getEventPayments(id as string)
             .then(x => {
-                if (x.errors) {
-                    console.log(x.errors);
-                } else {
+                if (!x.errors || x.errors.size === 0) {
                     setData(x.data);
                 }
             })
@@ -88,14 +86,14 @@ const EventPayments = () => {
 
     const payment = async (id: number, v: boolean, di: string, n: string) => {
         let del = null;
-        if(v){
+        if (v) {
             del = confirm(`Marcar com a pagat l'alumne ${n} amb DNI: ${di} ?`);
 
         } else {
             del = confirm(`Desmarcar de pagats l'alumne ${n} amb DNI: ${di} ?`);
         }
         if (del) {
-        const result = await setPayment(id, v);
+            const result = await setPayment(id, v);
             if (!result.errors) {
                 loadEventsPayments();
             } else {
@@ -111,8 +109,8 @@ const EventPayments = () => {
 
                 {
                     x.paid ?
-                    <button onClick={() => payment(x.id, false, x.documentId, x.fullName)} className="absolute inset-y-0 right-0 text-red-600 font-bold">Desmarcar Pagat</button> :
-                    <button onClick={() => payment(x.id, true, x.documentId, x.fullName)} className="absolute inset-y-0 right-0 text-green-600 font-bold">Marcar Pagat</button>
+                        <button onClick={() => payment(x.id, false, x.documentId, x.fullName)} className="absolute inset-y-0 right-0 text-red-600 font-bold">Desmarcar Pagat</button> :
+                        <button onClick={() => payment(x.id, true, x.documentId, x.fullName)} className="absolute inset-y-0 right-0 text-green-600 font-bold">Marcar Pagat</button>
                 }
                 <hr className="h-px mt-1 mb-4 bg-gray-200 border-0"></hr>
             </li>
@@ -149,7 +147,7 @@ const EventPayments = () => {
                         <h4 className="font-bold text-3xl ml-3">{`${data.name} - ${displayDate(data.date)}`}</h4>
                     </div>
                     <div className="flex">
-                        <Link href={summaryURL()} target="_blank">{summaryURL()}</Link> 
+                        <Link href={summaryURL()} target="_blank">{summaryURL()}</Link>
                         <button
                             className="text-blue-600 font-bold pl-3"
                             onClick={copyToClipboard}>
