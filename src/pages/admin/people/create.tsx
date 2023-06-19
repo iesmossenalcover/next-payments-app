@@ -5,6 +5,7 @@ import { useState } from "react";
 import PersonFields from "@/components/people/PersonFields";
 import Head from "next/head";
 import { Container } from "@/components/layout/SideBar";
+import { useApiRequest } from "@/lib/hooks/useApiRequest";
 
 const defaultPerson: Person = {
     id: 0,
@@ -17,25 +18,14 @@ const defaultPerson: Person = {
 };
 
 const Create = () => {
-    const [loading, setLoading] = useState(false)
-    const [created, setCreated] = useState(false)
-    const [errors, setErrors] = useState<Map<string, string[]>>()
+    const { data, errors, isLoading, executeRequest } = useApiRequest(createPerson);
 
-    const onSubmit = async (p: Person) => {
-        setLoading(true);
-        const data = await createPerson(p);
-        if (data.errors) {
-            setErrors(data.errors);
-            setLoading(false);
-        }
-        else {
-            setCreated(true);
-        }
+    const submit = (p: Person) => {
+        executeRequest(p);
     }
 
     const onFormSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault();
-        setErrors(undefined);
         const form = e.currentTarget;
         const formData = new FormData(form);
         const p: Person = {
@@ -50,10 +40,10 @@ const Create = () => {
             enrolled: formData.get("enrolled") === "on" ? true : false,
             subjectsInfo: formData.get("subjectsInfo") as string ?? undefined,
         };
-        await onSubmit(p);
+        submit(p);
     }
 
-    const formDisabled = () => loading;
+    const formDisabled = () => isLoading;
 
     return (
         <>
@@ -66,22 +56,20 @@ const Create = () => {
             <main>
                 <div className="max-w-lg m-auto">
                     <div className="m-5">
-                        {created ?
-                            <SuccessAlert text="Persona afegida correctament" /> :
-                            <form action="#" method="post" onSubmit={onFormSubmit} autoComplete="off">
-                                <PersonFields
-                                    allowSetStudent={true}
-                                    errors={errors}
-                                    person={defaultPerson} />
-                                <div>
-                                    <input
-                                        disabled={formDisabled()}
-                                        className="w-full mt-6 bg-blue-500 hover:cursor-pointer hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed"
-                                        value="Afegir persona"
-                                        type="submit" />
-                                </div>
-                            </form>
-                        }
+                        {data ? <SuccessAlert text="Persona afegida correctament" /> : null }
+                        <form action="#" method="post" onSubmit={onFormSubmit} autoComplete="off">
+                            <PersonFields
+                                allowSetStudent={true}
+                                errors={errors}
+                                person={defaultPerson} />
+                            <div>
+                                <input
+                                    disabled={formDisabled()}
+                                    className="w-full mt-6 bg-blue-500 hover:cursor-pointer hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed"
+                                    value="Afegir persona"
+                                    type="submit" />
+                            </div>
+                        </form>
                     </div>
                 </div>
             </main>

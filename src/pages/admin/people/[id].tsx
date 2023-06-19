@@ -1,52 +1,32 @@
 import { SuccessAlert } from "@/components/Alerts";
-import { Person, SyncPersonResponse } from "@/lib/apis/payments/models";
+import { Person } from "@/lib/apis/payments/models";
 import { useEffect, useState } from "react";
 import PersonFields from "@/components/people/PersonFields";
 import { useRouter } from "next/router";
 import { getPersonById, updatePerson } from "@/lib/apis/payments";
 import { Container } from "@/components/layout/SideBar";
 import Head from "next/head";
+import { callGenerateEmail as syncPerson } from "@/lib/apis/payments/client";
+import { useApiRequest } from "@/lib/hooks/useApiRequest";
+import { displayErrors } from "@/lib/utils";
 import { syncPersonToGoogleWorkspace } from "@/lib/apis/payments/client";
 
 const Update = () => {
     const router = useRouter()
     const { id } = router.query
-    const [loading, setLoading] = useState(false)
-    const [updated, setUpdated] = useState(false)
-    const [errors, setErrors] = useState<Map<string, string[]>>()
-    const [person, setPerson] = useState<Person | undefined>(undefined)
-    const [syncResponse, setSyncResponse] = useState<SyncPersonResponse | undefined>(undefined)
 
+    const [showUpdated, setShowUpdated] = useState(false);
+    const { data: person, isLoading: isPersonLoading, executeRequest: getPersonRequest } = useApiRequest(getPersonById);
+    const { data: syncPersonResponse, errors: syncErrors, isLoading: isSyncLoading, executeRequest: syncPersonRequest } = useApiRequest(syncPerson);
+    const { errors: updateErrors, isLoading: isUpdateLoading, executeRequest: updatePersonRequest } = useApiRequest(updatePerson);
 
     useEffect(() => {
         if (!id) return;
+        getPersonRequest(parseInt(id as string))
+    }, [id]);
 
-        getPerson()
-
-    }, [id])
-    const getPerson = () => {
-        getPersonById(parseInt(id as string))
-            .then(x => setPerson(x.data));
-    }
-
-    const onSubmit = async (p: Person) => {
-        console.log("--");
-        setLoading(true);
-        setUpdated(false);
-        const data = await updatePerson(p);
-        if (data.errors) {
-            setErrors(data.errors);
-        }
-        else {
-            setUpdated(true);
-            setTimeout(() => setUpdated(false), 1500);
-        }
-        setLoading(false);
-    }
-
-    const onFormSubmit = (e: React.SyntheticEvent<HTMLFormElement>) => {
+    const onFormSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault();
-        setErrors(undefined);
         const form = e.currentTarget;
         const formData = new FormData(form);
         const p: Person = {
@@ -61,26 +41,15 @@ const Update = () => {
             enrolled: formData.get("enrolled") === "on" ? true : false,
             subjectsInfo: formData.get("subjectsInfo") as string ?? undefined,
         };
-        onSubmit(p);
-    }
-
-    const formDisabled = () => loading;
-
-    async function generateEmail(id: number): Promise<void> {
-        setLoading(true);
-        const response = await syncPersonToGoogleWorkspace(id);
-        setLoading(false);
-        if (response.errors) {
-            const errorMessage: string = Array.from(response.errors.values())
-                .flatMap((values: string[]) => values)
-                .join(", ");
-            alert(errorMessage);
-        }
-        else {
-            getPerson();
-            setSyncResponse(response.data);
+        
+        const ok = await updatePersonRequest(p);
+        if (ok) {
+            setShowUpdated(true);
+            setTimeout(() => setShowUpdated(false), 1500);
         }
     }
+
+    const formDisabled = () => isPersonLoading || isSyncLoading || isUpdateLoading;
 
     if (!person) return null;
 
@@ -95,11 +64,12 @@ const Update = () => {
             <main>
                 <div className="max-w-lg m-auto">
                     <div className="m-5">
-                        {updated ? <SuccessAlert text="Persona actualitzada correctament" /> : null}
+                        {syncErrors ? <div className=" text-red-500 italic">No s&apos;ha pogut sincronitzar: {displayErrors(syncErrors)}</div> : null}
+                        {showUpdated ? <SuccessAlert text="Persona actualitzada correctament" /> : null}
                         <form className="mt-5" action="#" method="post" onSubmit={onFormSubmit} autoComplete="off">
                             <PersonFields
                                 allowSetStudent={false}
-                                errors={errors}
+                                errors={updateErrors}
                                 person={person} />
 
                             <div className="mb-6">
@@ -116,15 +86,15 @@ const Update = () => {
                                         title="Generar Email"
                                         type="button"
                                         className='font-medium text-black-700 hover:underline ml-5 pr-1 disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed'
-                                        onClick={() => generateEmail(person.id)}>
+                                        onClick={() => syncPersonRequest(person.id)}>
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M9 3.75H6.912a2.25 2.25 0 00-2.15 1.588L2.35 13.177a2.25 2.25 0 00-.1.661V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 00-2.15-1.588H15M2.25 13.5h3.86a2.25 2.25 0 012.012 1.244l.256.512a2.25 2.25 0 002.013 1.244h3.218a2.25 2.25 0 002.013-1.244l.256-.512a2.25 2.25 0 012.013-1.244h3.859M12 3v8.25m0 0l-3-3m3 3l3-3" />
                                         </svg>
                                     </button>
                                 </div>
 
-                                {syncResponse && syncResponse.password ? <div>
-                                    <p>La contrasenya temporal és: {syncResponse.password}</p>
+                                {syncPersonResponse && syncPersonResponse.password ? <div>
+                                    <p>La contrasenya temporal és: {syncPersonResponse.password}</p>
                                 </div> : null
                                 }
                             </div>

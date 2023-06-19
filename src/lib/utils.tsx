@@ -8,3 +8,24 @@ export const displayTime = (date: Date) => parseDateIfNeeded(date).toLocaleTimeS
 export const displayDateTime = (date: Date) => `${displayDate(date)} - ${displayTime(date)}`;
 export const twoDigit = (n: number) => n < 10 ? '0' + n : '' + n;
 export const toInputDate = (d: Date): string => `${d.getFullYear()}-${twoDigit(d.getMonth() + 1)}-${twoDigit(d.getDate())}T${twoDigit(d.getHours())}:${twoDigit(d.getMinutes())}`;
+
+export const plainErrors = (errors?: Map<string, string[]>) => (
+    errors ? Array.from(errors.entries()).map(x => `${x[0]}: ${x[1].join(", ")}`) : ""
+)
+
+export const displayErrors = (errors?: Map<string, string[]>) => (
+    errors ? 
+    <ul>
+        {Array.from(errors.entries()).map((x, idx) => <li key={idx} className="text-red-500 italic">{x[0]}: {x[1].join(", ")}</li>)}
+    </ul> : null
+)
+
+export const displayKeyErrors = (key: string, errors?: Map<string, string[]>) => {
+    if (!errors || !errors.has(key)) return null;
+    const list = errors.get(key) as string[];
+    return (
+        <ul>
+            {list.map((x, idx) => <li key={idx} className="text-red-500 italic">{x}</li>)}
+        </ul>
+    )
+}
