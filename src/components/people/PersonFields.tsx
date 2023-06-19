@@ -8,8 +8,7 @@ import { displayKeyErrors } from "@/lib/utils";
 
 interface PersonComponentProps {
     errors?: Map<string, string[]>
-    person: Person,
-    allowSetStudent: boolean
+    person: Person
 }
 
 const

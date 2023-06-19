@@ -6,10 +6,9 @@ import { useRouter } from "next/router";
 import { getPersonById, updatePerson } from "@/lib/apis/payments";
 import { Container } from "@/components/layout/SideBar";
 import Head from "next/head";
-import { syncPersonGoogleWorkspace as syncPerson } from "@/lib/apis/payments/client";
 import { useApiRequest } from "@/lib/hooks/useApiRequest";
-import { displayErrors } from "@/lib/utils";
-import { syncPersonToGoogleWorkspace } from "@/lib/apis/payments/client";
+import { displayErrors, plainErrors } from "@/lib/utils";
+import { syncPersonGoogleWorkspace, updatePasswordGoogleWorkspace } from "@/lib/apis/payments/client";
 
 const Update = () => {
     const router = useRouter()
@@ -17,8 +16,9 @@ const Update = () => {
 
     const [showUpdated, setShowUpdated] = useState(false);
     const { data: person, isLoading: isPersonLoading, executeRequest: getPersonRequest } = useApiRequest(getPersonById);
-    const { data: syncPersonResponse, errors: syncErrors, isLoading: isSyncLoading, executeRequest: syncPersonRequest } = useApiRequest(syncPerson);
+    const { data: syncPersonResponse, errors: syncErrors, isLoading: isSyncLoading, executeRequest: syncPersonRequest } = useApiRequest(syncPersonGoogleWorkspace);
     const { errors: updateErrors, isLoading: isUpdateLoading, executeRequest: updatePersonRequest } = useApiRequest(updatePerson);
+    const { data: updatePasswordResponse, errors: updatePasswordErrors, isLoading: isUpdatingPasswordLoading, executeRequest: updatePassowrdRequest } = useApiRequest(updatePasswordGoogleWorkspace);
 
     useEffect(() => {
         if (!id) return;
@@ -41,7 +41,7 @@ const Update = () => {
             enrolled: formData.get("enrolled") === "on" ? true : false,
             subjectsInfo: formData.get("subjectsInfo") as string ?? undefined,
         };
-        
+
         const ok = await updatePersonRequest(p);
         if (ok) {
             setShowUpdated(true);
@@ -49,7 +49,20 @@ const Update = () => {
         }
     }
 
-    const formDisabled = () => isPersonLoading || isSyncLoading || isUpdateLoading;
+    const generateEmail = async () => {
+        if (!person) return;
+        const ok = await syncPersonRequest(person.id);
+        if (ok) getPersonRequest(person.id);
+    }
+
+    const updatePassowrd = () => {
+        const ok = confirm("Vols actualitzar la contrasenya?");
+        if (!ok || !person) return;
+
+        updatePassowrdRequest(person.id);
+    }
+
+    const formDisabled = () => isPersonLoading || isSyncLoading || isUpdateLoading || isUpdatingPasswordLoading;
 
     if (!person) return null;
 
@@ -64,11 +77,11 @@ const Update = () => {
             <main>
                 <div className="max-w-lg m-auto">
                     <div className="m-5">
-                        {syncErrors ? <div className=" text-red-500 italic">No s&apos;ha pogut sincronitzar: {displayErrors(syncErrors)}</div> : null}
+                        {syncErrors ? <div className=" text-red-500 italic">No s&apos;ha pogut sincronitzar: {plainErrors(syncErrors)}</div> : null}
+                        {updatePasswordErrors ? <div className=" text-red-500 italic">No s&apos;ha pogut canviar la contrassenya: {plainErrors(updatePasswordErrors)}</div> : null}
                         {showUpdated ? <SuccessAlert text="Persona actualitzada correctament" /> : null}
                         <form className="mt-5" action="#" method="post" onSubmit={onFormSubmit} autoComplete="off">
                             <PersonFields
-                                allowSetStudent={false}
                                 errors={updateErrors}
                                 person={person} />
 
@@ -86,15 +99,33 @@ const Update = () => {
                                         title="Generar Email"
                                         type="button"
                                         className='font-medium text-black-700 hover:underline ml-5 pr-1 disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed'
-                                        onClick={() => syncPersonRequest(person.id)}>
+                                        onClick={generateEmail}>
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M9 3.75H6.912a2.25 2.25 0 00-2.15 1.588L2.35 13.177a2.25 2.25 0 00-.1.661V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 00-2.15-1.588H15M2.25 13.5h3.86a2.25 2.25 0 012.012 1.244l.256.512a2.25 2.25 0 002.013 1.244h3.218a2.25 2.25 0 002.013-1.244l.256-.512a2.25 2.25 0 012.013-1.244h3.859M12 3v8.25m0 0l-3-3m3 3l3-3" />
                                         </svg>
+                                    </button>
+
+
+                                    <button
+                                        disabled={formDisabled()}
+                                        title="Actualitzar contrassenya"
+                                        type="button"
+                                        className='font-medium text-black-700 hover:underline ml-5 pr-1 disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed'
+                                        onClick={updatePassowrd}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                                        </svg>
+
                                     </button>
                                 </div>
 
                                 {syncPersonResponse && syncPersonResponse.password ? <div>
                                     <p>La contrasenya temporal és: {syncPersonResponse.password}</p>
+                                </div> : null
+                                }
+
+                                {updatePasswordResponse ? <div>
+                                    <p>La contrasenya temporal és: {updatePasswordResponse.password}</p>
                                 </div> : null
                                 }
                             </div>

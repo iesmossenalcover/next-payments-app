@@ -1,11 +1,11 @@
 import { SuccessAlert } from "@/components/Alerts";
 import { createPerson } from "@/lib/apis/payments/client";
 import { Person } from "@/lib/apis/payments/models";
-import { useState } from "react";
 import PersonFields from "@/components/people/PersonFields";
 import Head from "next/head";
 import { Container } from "@/components/layout/SideBar";
 import { useApiRequest } from "@/lib/hooks/useApiRequest";
+import { useState } from "react";
 
 const defaultPerson: Person = {
     id: 0,
@@ -18,10 +18,12 @@ const defaultPerson: Person = {
 };
 
 const Create = () => {
+    const [showSuccess, setShowSuccess] = useState(false);
     const { data, errors, isLoading, executeRequest } = useApiRequest(createPerson);
 
-    const submit = (p: Person) => {
-        executeRequest(p);
+    const submit = async (p: Person) => {
+        const ok = await executeRequest(p);
+        if (ok) setShowSuccess(true);
     }
 
     const onFormSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
@@ -56,20 +58,21 @@ const Create = () => {
             <main>
                 <div className="max-w-lg m-auto">
                     <div className="m-5">
-                        {data ? <SuccessAlert text="Persona afegida correctament" /> : null }
-                        <form action="#" method="post" onSubmit={onFormSubmit} autoComplete="off">
-                            <PersonFields
-                                allowSetStudent={true}
-                                errors={errors}
-                                person={defaultPerson} />
-                            <div>
-                                <input
-                                    disabled={formDisabled()}
-                                    className="w-full mt-6 bg-blue-500 hover:cursor-pointer hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed"
-                                    value="Afegir persona"
-                                    type="submit" />
-                            </div>
-                        </form>
+                        {
+                            data ? <SuccessAlert text="Persona afegida correctament" /> :
+                                <form action="#" method="post" onSubmit={onFormSubmit} autoComplete="off">
+                                    <PersonFields
+                                        errors={errors}
+                                        person={defaultPerson} />
+                                    <div>
+                                        <input
+                                            disabled={formDisabled()}
+                                            className="w-full mt-6 bg-blue-500 hover:cursor-pointer hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed"
+                                            value="Afegir persona"
+                                            type="submit" />
+                                    </div>
+                                </form>
+                        }
                     </div>
                 </div>
             </main>

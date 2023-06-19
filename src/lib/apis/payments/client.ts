@@ -1,4 +1,4 @@
-import { BatchUploadSummary, Identity, PersonActiveEventsVm, Person, PersonRow, Response, SigninResponse, CreateOrderResponse, EventRow, Event, GetOrderInfo, EventPeople, EventPayments, AdminInfo, AppConfig, EventSummaryVm, SyncPersonResponse } from "./models"
+import { BatchUploadSummary, Identity, PersonActiveEventsVm, Person, PersonRow, Response, SigninResponse, CreateOrderResponse, EventRow, Event, GetOrderInfo, EventPeople, EventPayments, AdminInfo, AppConfig, EventSummaryVm, SyncPersonResponse, UpdatePasswordResponse } from "./models"
 import { deleteJson, get, postJson, putJson } from "./baseclient"
 import { Selector } from "@/components/Selector"
 import { ApiResult } from "@/lib/hooks/useApiRequest"
@@ -97,8 +97,18 @@ export const deletePerson = async (id: number): Promise<Response<number>> => {
 }
 
 export const syncPersonGoogleWorkspace = async (id: number): Promise<Response<SyncPersonResponse>> => {
-    const response = await postJson(`${API_BASE_URL}/api/tasks/people/sync/${id}`, { });
+    const response = await postJson(`${API_BASE_URL}/api/googleworkspace/people/sync/${id}`, { });
     const data = await response.json() as Response<SyncPersonResponse>;
+
+    if (data.errors) {
+        data.errors = new Map(Object.entries(data.errors));
+    }
+    return data;
+}
+
+export const updatePasswordGoogleWorkspace = async (id: number): Promise<Response<UpdatePasswordResponse>> => {
+    const response = await postJson(`${API_BASE_URL}/api/googleworkspace/people/${id}/password`);
+    const data = await response.json() as Response<UpdatePasswordResponse>;
 
     if (data.errors) {
         data.errors = new Map(Object.entries(data.errors));
@@ -108,7 +118,7 @@ export const syncPersonGoogleWorkspace = async (id: number): Promise<Response<Sy
 
 // todo
 export const syncPeopleGoogleWorkspace = async (): Promise<Response<SyncPersonResponse>> => {
-    const response = await postJson(`${API_BASE_URL}/api/tasks/people/sync`);
+    const response = await postJson(`${API_BASE_URL}/api/googleworkspace/people/sync`);
     const data = await response.json() as Response<SyncPersonResponse>;
 
     if (data.errors) {

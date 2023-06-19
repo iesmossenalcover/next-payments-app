@@ -22,6 +22,7 @@ export {
   updatePerson,
   syncPeopleGoogleWorkspace,
   syncPersonGoogleWorkspace,
+  updatePasswordGoogleWorkspace
 } from "./client";
 
 export type {
@@ -46,6 +47,7 @@ export type {
   Response,
   SigninResponse,
   SyncPersonResponse,
+  UpdatePasswordResponse
 } from "./models";
 
 export { SigninStatus } from "./models";

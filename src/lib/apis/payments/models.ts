@@ -72,6 +72,10 @@ export interface SyncPersonResponse {
     password?: string,
 }
 
+export interface UpdatePasswordResponse {
+    password: string,
+}
+
 export interface GetOrderInfo {
     events: GetOrderInfoEvent[];
 }

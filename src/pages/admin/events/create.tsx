@@ -6,6 +6,7 @@ import EventFields from "@/components/events/EventFields";
 import { Container } from "@/components/layout/SideBar";
 import Head from "next/head";
 import { toInputDate } from "@/lib/utils";
+import { useApiRequest } from "@/lib/hooks/useApiRequest";
 
 const defaultEvent: Event = {
     id: 0,
@@ -23,21 +24,12 @@ const defaultEvent: Event = {
 
 
 const Create = () => {
-    const [loading, setLoading] = useState(false)
-    const [created, setCreated] = useState(false)
-    const [codeCreated, setCodeCreated] = useState("")
-    const [errors, setErrors] = useState<Map<string, string[]>>()
+    const [created, setCreated] = useState(false);
+    const { data: code, errors, isLoading, executeRequest } = useApiRequest(createEvent);
 
     const onSubmit = async (e: Event) => {
-        setLoading(true);
-        const data = await createEvent(e);
-        if (data.errors) {
-            setErrors(data.errors);
-            setLoading(false);
-        }
-        else {
-            const code = data.data as string;
-            setCodeCreated(code);
+        const ok = await executeRequest(e);
+        if (ok) {
             setCreated(true);
         }
     }
@@ -47,7 +39,6 @@ const Create = () => {
 
         const form = e.currentTarget;
         const formData = new FormData(form);
-
         const date = formData.get("date") as string;
         const start = formData.get("start") as string;
         const end = formData.get("end") as string;
@@ -66,11 +57,11 @@ const Create = () => {
             amipa: formData.get("amipa") === "on" ? true : false,
 
         };
-
-        await onSubmit(event);
+        
+        onSubmit(event);
     }
 
-    const formDisabled = () => loading;
+    const formDisabled = () => isLoading;
 
     return (
         <>
@@ -84,7 +75,7 @@ const Create = () => {
                 <div className="max-w-lg m-auto">
                     <div className="m-5">
                         {created ?
-                            <SuccessAlert text={`Event afegit correctament el codi de l'event és: ${codeCreated}`} /> :
+                            <SuccessAlert text={`Event afegit correctament el codi de l'event és: ${code}`} /> :
                             <form action="#" method="post" onSubmit={onFormSubmit} autoComplete="off">
                                 <EventFields
                                     errors={errors}

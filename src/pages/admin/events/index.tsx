@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { deleteEvent } from '@/lib/apis/payments/client'
 import { displayDate, displayDateTime } from "@/lib/utils";
+import { useApiRequest, useStartApiRequest } from "@/lib/hooks/useApiRequest";
 
 const tableHeaders = {
     id: "Id",
@@ -36,17 +37,11 @@ interface TableRow {
 
 const Events = () => {
 
-    const [events, setEvents] = useState<EventsRow[]>([])
-    const [loadingEvents, setLoadingEvents] = useState(false)
-
-    useEffect(() => {
-        setLoadingEvents(true);
-        getEventsView()
-            .then(x => setEvents(x))
-            .finally(() => setLoadingEvents(false));
-    }, []);
+    const { data: events, executeRequest } = useStartApiRequest(getEventsView);
 
     const mapToRow = (): TableRow[] => {
+        if (!events) return [];
+
         return events.map(x => {
             const date = new Date(x.date);
             const from = new Date(x.publishDate);
@@ -100,17 +95,6 @@ const Events = () => {
         },
     }
 
-    const loadEvents = () => {
-        setLoadingEvents(true);
-        getEventsView()
-            .then(x => setEvents(x))
-            .finally(() => setLoadingEvents(false));
-    }
-
-    useEffect(() => {
-        loadEvents();
-    }, []);
-
     const onDeleteEvent = async (item: TableRow) => {
         const del = confirm(`Eliminar esdeveniment codi: ${item.code}, nom: ${item.name} ?`);
         if (del) {
@@ -119,13 +103,12 @@ const Events = () => {
                 alert("No s'ha pogut eliminar.")
             }
             else {
-                loadEvents();
+                executeRequest();
             }
         }
     }
 
     const listEvents = () => {
-        if (loadingEvents) return null;
         return (
             <div className='overflow-x-auto'>
                 <Table
@@ -153,10 +136,6 @@ const Events = () => {
         )
     }
 
-    if (loadingEvents) {
-        return null
-    }
-
     return (
 
         <>
@@ -170,10 +149,6 @@ const Events = () => {
 
 
                 <div className='flex justify-between mb-4'>
-                    <div className='flex justify-start items-center'>
-                        {loadingEvents ? <Spinner /> : null}
-                        {loadingEvents ? <p>Carregant Informació</p> : null}
-                    </div>
                     <div>
                         <Link className='
                                 inline-block
