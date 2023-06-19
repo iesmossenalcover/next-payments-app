@@ -1,17 +1,19 @@
 import { Container } from "@/components/layout/SideBar"
-import { useSyncPeopleToGoogleWorkspace } from "@/lib/apis/payments"
+import { syncPeopleGoogleWorkspace } from "@/lib/apis/payments"
+import { useApiRequest } from "@/lib/hooks/useApiRequest";
+import { plainErrors } from "@/lib/utils";
 
 const SyncPeopleToWorkspace = () => {
 
-    const { data, error, isLoading, syncData } = useSyncPeopleToGoogleWorkspace();
+    const { data, errors, isLoading, executeRequest } = useApiRequest(syncPeopleGoogleWorkspace);
 
-    if (error) return <>{error}</>;
+    if (errors) return <>{plainErrors(errors)}</>;
 
     if (isLoading) return <>Carregant</>;
 
     return <>
-        <button onClick={syncData}>Sync</button>
-        {data ? <p>{data.data?.email}</p> : null}
+        <button onClick={executeRequest}>Sync</button>
+        {data ? <p>{data.email}</p> : null}
     </>
 }
 

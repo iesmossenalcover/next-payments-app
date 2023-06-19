@@ -9,7 +9,7 @@ export const putJson = (url: string, body: any, headers: any = {}): Promise<Resp
     return apiFetch(url, "PUT", body, headers)
 }
 
-export const postJson = (url: string, body: any, headers: any = {}): Promise<Response> => {
+export const postJson = (url: string, body: any = {}, headers: any = {}): Promise<Response> => {
     headers = { "Content-Type": "application/json", ...headers }
     return apiFetch(url, "POST", body, headers)
 }

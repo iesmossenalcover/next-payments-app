@@ -96,10 +96,21 @@ export const deletePerson = async (id: number): Promise<Response<number>> => {
     return data;
 }
 
-export const callGenerateEmail = async (id: number): Promise<Response<SyncPersonResponse>> => {
-    const response = await postJson(`${API_BASE_URL}/api/tasks/sync/${id}`, { });
+export const syncPersonGoogleWorkspace = async (id: number): Promise<Response<SyncPersonResponse>> => {
+    const response = await postJson(`${API_BASE_URL}/api/tasks/people/sync/${id}`, { });
     const data = await response.json() as Response<SyncPersonResponse>;
-    console.log(data);
+
+    if (data.errors) {
+        data.errors = new Map(Object.entries(data.errors));
+    }
+    return data;
+}
+
+// todo
+export const syncPeopleGoogleWorkspace = async (): Promise<Response<SyncPersonResponse>> => {
+    const response = await postJson(`${API_BASE_URL}/api/tasks/people/sync`);
+    const data = await response.json() as Response<SyncPersonResponse>;
+
     if (data.errors) {
         data.errors = new Map(Object.entries(data.errors));
     }

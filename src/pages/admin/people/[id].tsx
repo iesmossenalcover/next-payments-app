@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { getPersonById, updatePerson } from "@/lib/apis/payments";
 import { Container } from "@/components/layout/SideBar";
 import Head from "next/head";
-import { callGenerateEmail as syncPerson } from "@/lib/apis/payments/client";
+import { syncPersonGoogleWorkspace as syncPerson } from "@/lib/apis/payments/client";
 import { useApiRequest } from "@/lib/hooks/useApiRequest";
 import { displayErrors } from "@/lib/utils";
 import { syncPersonToGoogleWorkspace } from "@/lib/apis/payments/client";

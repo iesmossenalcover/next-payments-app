@@ -20,6 +20,8 @@ export {
   signin,
   signinOAuth,
   updatePerson,
+  syncPeopleGoogleWorkspace,
+  syncPersonGoogleWorkspace,
 } from "./client";
 
 export type {
