@@ -10,7 +10,7 @@ export const twoDigit = (n: number) => n < 10 ? '0' + n : '' + n;
 export const toInputDate = (d: Date): string => `${d.getFullYear()}-${twoDigit(d.getMonth() + 1)}-${twoDigit(d.getDate())}T${twoDigit(d.getHours())}:${twoDigit(d.getMinutes())}`;
 
 export const plainErrors = (errors?: Map<string, string[]>) => (
-    errors ? Array.from(errors.entries()).map(x => `${x[0]}: ${x[1].join(", ")}`) : ""
+    errors ? Array.from(errors.entries()).map(x => `${x[1].join(", ")}`) : ""
 )
 
 export const displayErrors = (errors?: Map<string, string[]>) => (

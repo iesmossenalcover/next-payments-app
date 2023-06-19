@@ -7,7 +7,7 @@ const SyncPeopleToWorkspace = () => {
 
     const { data, errors, isLoading, executeRequest } = useApiRequest(syncPeopleGoogleWorkspace);
 
-    if (errors) return <>{plainErrors(errors)}</>;
+    if (errors) return <div className="text-red-500 italic">{plainErrors(errors)}</div>;
 
     if (isLoading) return <>Carregant</>;
 
