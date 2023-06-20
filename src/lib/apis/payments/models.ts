@@ -77,7 +77,9 @@ export interface UpdatePasswordResponse {
 }
 
 export interface GetOrderInfo {
-    events: GetOrderInfoEvent[];
+    events: GetOrderInfoEvent[],
+    displayEnrollment: boolean,
+    enrollmentSubjectsInfo?: string,
 }
 
 export interface GetOrderInfoEvent {
