@@ -1,4 +1,4 @@
-import { BatchUploadSummary, Identity, PersonActiveEventsVm, Person, PersonRow, Response, SigninResponse, CreateOrderResponse, EventRow, Event, GetOrderInfo, EventPeople, EventPayments, AdminInfo, AppConfig, EventSummaryVm, SyncPersonResponse, UpdatePasswordResponse } from "./models"
+import { BatchUploadSummary, Identity, PersonActiveEventsVm, Person, PersonRow, Response, SigninResponse, CreateOrderResponse, EventRow, Event, GetOrderInfo, EventPeople, EventPayments, AdminInfo, AppConfig, EventSummaryVm, SyncPersonResponse, UpdatePasswordResponse, GroupRow, Group } from "./models"
 import { deleteJson, get, postJson, putJson } from "./baseclient"
 import { Selector } from "@/components/Selector"
 import { ApiResult } from "@/lib/hooks/useApiRequest"
@@ -173,6 +173,46 @@ export const createOrder = async (documentId: string, eventCodes: string[]): Pro
         data.errors = new Map(Object.entries(data.errors));
     }
 
+    return data;
+}
+
+export const getGroupsView = async (): Promise<GroupRow[]> => {
+
+    let query = `${API_BASE_URL}/api/groups`;
+    const response = await get(query)
+    if (response.ok) {
+        return await response.json() as GroupRow[]
+    }
+
+    return [];
+}
+
+export const createGroup = async (group: Group): Promise<ApiResult<number>> => {
+    const response = await postJson(`${API_BASE_URL}/api/groups`, group);
+    const data = await response.json() as ApiResult<number>;
+
+    if (data.errors) {
+        data.errors = new Map(Object.entries(data.errors));
+    }
+    return data;
+}
+
+export const updateGroup = async (group: Group): Promise<Response<number>> => {
+    const response = await putJson(`${API_BASE_URL}/api/groups/${group.id}`, group);
+    const data = await response.json() as Response<number>;
+
+    if (data.errors) {
+        data.errors = new Map(Object.entries(data.errors));
+    }
+    return data;
+}
+
+export const getGroupById = async (id: number): Promise<ApiResult<Group>> => {
+    const response = await get(`${API_BASE_URL}/api/groups/${id}`);
+    const data = await response.json() as Response<Group>;
+    if (data.errors) {
+        data.errors = new Map(Object.entries(data.errors));
+    }
     return data;
 }
 

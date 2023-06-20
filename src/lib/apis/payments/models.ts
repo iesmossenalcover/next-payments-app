@@ -88,6 +88,13 @@ export interface GetOrderInfoEvent {
 }
 
 
+
+export interface Group {
+    id: number,
+    name: string,
+    description?: string,
+}
+
 export interface Person {
     id: number,
     name: string,
@@ -121,6 +128,12 @@ export interface EventRow {
     isActive: boolean,
     enrollment: boolean,
     amipa: boolean
+}
+
+export interface GroupRow {
+    id: number,
+    name: string,
+    description: string,
 }
 
 export interface AdminInfo {
