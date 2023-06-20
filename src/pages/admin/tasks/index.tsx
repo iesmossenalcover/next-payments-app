@@ -55,7 +55,7 @@ const SyncPeopleToWorkspace = () => {
                         px-3
                         rounded-lg
                         text-sm
-                        mr-5' onClick={updatePassword}>Sync users with google G</button>
+                        mr-5' onClick={updatePassword}>Sync users with google</button>
             {data ? <p>{data.email}</p> : null}
         </div>
     </>)
