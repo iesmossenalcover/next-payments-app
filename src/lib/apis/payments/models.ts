@@ -72,6 +72,10 @@ export interface SyncPersonResponse {
     password?: string,
 }
 
+export interface SyncPepoleResponse {
+    ok: boolean
+}
+
 export interface UpdatePasswordResponse {
     password: string,
 }

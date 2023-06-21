@@ -1,4 +1,4 @@
-import { BatchUploadSummary, Identity, PersonActiveEventsVm, Person, PersonRow, Response, SigninResponse, CreateOrderResponse, EventRow, Event, GetOrderInfo, EventPeople, EventPayments, AdminInfo, AppConfig, EventSummaryVm, SyncPersonResponse, UpdatePasswordResponse, GroupRow, Group } from "./models"
+import { BatchUploadSummary, Identity, PersonActiveEventsVm, Person, PersonRow, Response, SigninResponse, CreateOrderResponse, EventRow, Event, GetOrderInfo, EventPeople, EventPayments, AdminInfo, AppConfig, EventSummaryVm, SyncPersonResponse, UpdatePasswordResponse, GroupRow, Group, SyncPepoleResponse } from "./models"
 import { deleteJson, get, postJson, putJson } from "./baseclient"
 import { Selector } from "@/components/Selector"
 import { ApiResult } from "@/lib/hooks/useApiRequest"
@@ -117,9 +117,19 @@ export const updatePasswordGoogleWorkspace = async (id: number): Promise<Respons
 }
 
 // todo
-export const syncPeopleGoogleWorkspace = async (): Promise<Response<SyncPersonResponse>> => {
+export const syncPeopleGoogleWorkspace = async (): Promise<Response<SyncPepoleResponse>> => {
     const response = await postJson(`${API_BASE_URL}/api/googleworkspace/people/sync`);
-    const data = await response.json() as Response<SyncPersonResponse>;
+    const data = await response.json() as Response<SyncPepoleResponse>;
+
+    if (data.errors) {
+        data.errors = new Map(Object.entries(data.errors));
+    }
+    return data;
+}
+
+export const SuspendPeopleGoogleWorkspace = async (path: string): Promise<Response<SyncPepoleResponse>> => {
+    const response = await postJson(`${API_BASE_URL}/api/googleworkspace/people/suspend`, {path});
+    const data = await response.json() as Response<SyncPepoleResponse>;
 
     if (data.errors) {
         data.errors = new Map(Object.entries(data.errors));

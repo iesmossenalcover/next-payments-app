@@ -23,7 +23,8 @@ export {
   updatePerson,
   syncPeopleGoogleWorkspace,
   syncPersonGoogleWorkspace,
-  updatePasswordGoogleWorkspace
+  updatePasswordGoogleWorkspace,
+  SuspendPeopleGoogleWorkspace
 } from "./client";
 
 export type {
