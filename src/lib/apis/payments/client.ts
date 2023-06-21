@@ -127,6 +127,16 @@ export const syncPeopleGoogleWorkspace = async (): Promise<Response<SyncPepoleRe
     return data;
 }
 
+export const exportPeopleGoogleWorkspace = async (): Promise<Response<boolean>> => {
+    const response = await postJson(`${API_BASE_URL}/api/googleworkspace/people/export`);
+    const data = await response.json() as Response<boolean>;
+
+    if (data.errors) {
+        data.errors = new Map(Object.entries(data.errors));
+    }
+    return data;
+}
+
 export const SuspendPeopleGoogleWorkspace = async (path: string): Promise<Response<SyncPepoleResponse>> => {
     const response = await postJson(`${API_BASE_URL}/api/googleworkspace/people/suspend`, {path});
     const data = await response.json() as Response<SyncPepoleResponse>;

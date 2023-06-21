@@ -1,5 +1,5 @@
 import { Container } from "@/components/layout/SideBar"
-import { syncPeopleGoogleWorkspace, SuspendPeopleGoogleWorkspace } from "@/lib/apis/payments"
+import { exportPeopleGoogleWorkspace, SuspendPeopleGoogleWorkspace } from "@/lib/apis/payments"
 import { useApiRequest } from "@/lib/hooks/useApiRequest";
 import { displayErrors, plainErrors } from "@/lib/utils";
 import React, { useState, useEffect } from 'react';
@@ -22,35 +22,34 @@ const SyncPeopleToWorkspace = () => {
         };
     }, []);
 
-    const { data, errors, isLoading, executeRequest: syncUsersRequest } = useApiRequest(syncPeopleGoogleWorkspace);
+    // const { data, errors, isLoading, executeRequest: syncUsersRequest } = useApiRequest(syncPeopleGoogleWorkspace);
+    const { data, errors, isLoading, executeRequest: exportUsersRequest } = useApiRequest(exportPeopleGoogleWorkspace);
 
 
-    const updatePassword = () => {
-        const ok = confirm("Executar aquesta acció tardarà temps?");
-        if (!ok) return;
+    // const updatePassword = () => {
+    //     const ok = confirm("Executar aquesta acció tardarà temps?");
+    //     if (!ok) return;
 
-        syncUsersRequest();
-    }
+    //     syncUsersRequest();
+    // }
 
     if (errors) return <div className=" mt-4 ml-4 text-red-500 italic">{plainErrors(errors)}</div>;
-
-    if (isLoading) return (<>
-        <div className="mt-4 ml-4">
-            <p>Hora Inici: {initialTime}</p>
-            <p>Hora Actual: {currentTime.toLocaleTimeString()}</p>
-            <p>Hora Fi: {finalTime === null ? "--:--:--" : finalTime}</p>
-        </div>
-    </>);
 
     return (<>
         <div className="max-w-lg m-auto">
             <div className="m-5">
-                <div className="mb-6">
+                {/* <div className="mb-6">
                     <button className='"w-full mt-6 bg-blue-500 hover:cursor-pointer hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed'
                         onClick={updatePassword}>Sync users with google</button>
-                </div>
-                <hr/>
+                </div> */}
+
                 <SuspendUsers />
+                <div className="mb-6">
+                    <button 
+                    disabled={isLoading}
+                    className='"w-full mt-6 bg-blue-500 hover:cursor-pointer hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed'
+                        onClick={exportUsersRequest}>Exportar CSV</button>
+                </div>
 
             </div>
         </div>
@@ -89,7 +88,7 @@ const SuspendUsers = () => {
                 <input
                     disabled={isLoading}
                     className="w-full mt-6 bg-blue-500 hover:cursor-pointer hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed"
-                    value="Executar Suspensió grup"
+                    value="Executar Suspensió OU"
                     type="submit" />
             </div>
         </form>
