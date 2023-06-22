@@ -127,14 +127,11 @@ export const syncPeopleGoogleWorkspace = async (): Promise<Response<SyncPepoleRe
     return data;
 }
 
-export const exportPeopleGoogleWorkspace = async (): Promise<Response<boolean>> => {
-    const response = await postJson(`${API_BASE_URL}/api/googleworkspace/people/export`);
-    const data = await response.json() as Response<boolean>;
-
-    if (data.errors) {
-        data.errors = new Map(Object.entries(data.errors));
-    }
-    return data;
+export const exportPeopleGoogleWorkspace = async () => {
+    const response = await get(`${API_BASE_URL}/api/googleworkspace/people/export`);
+    const blob = await response.blob();
+    var file =  window.URL.createObjectURL(blob);
+    window.location.assign(file);
 }
 
 export const movePeopleGoogleWorkspace = async (): Promise<Response<SyncPepoleResponse>> => {
@@ -157,14 +154,11 @@ export const addPeopleToGroupsGoogleWorkspace = async (): Promise<Response<SyncP
     return data;
 }
 
-export const exportSummaryRequest = async (): Promise<Response<SyncPepoleResponse>> => {
-    const response = await postJson(`${API_BASE_URL}/api/events/export`);
-    const data = await response.json() as Response<SyncPepoleResponse>;
-
-    if (data.errors) {
-        data.errors = new Map(Object.entries(data.errors));
-    }
-    return data;
+export const exportSummaryRequest = async () => {
+    const response = await get(`${API_BASE_URL}/api/events/export`);
+    const blob = await response.blob();
+    var file =  window.URL.createObjectURL(blob);
+    window.location.assign(file);
 }
 
 export const suspendPeopleGoogleWorkspace = async (): Promise<Response<SyncPepoleResponse>> => {
@@ -177,14 +171,11 @@ export const suspendPeopleGoogleWorkspace = async (): Promise<Response<SyncPepol
     return data;
 }
 
-export const exportWifiUsers = async (): Promise<Response<SyncPepoleResponse>> => {
-    const response = await postJson(`${API_BASE_URL}/api/wifi/export`);
-    const data = await response.json() as Response<SyncPepoleResponse>;
-
-    if (data.errors) {
-        data.errors = new Map(Object.entries(data.errors));
-    }
-    return data;
+export const exportWifiUsers = async () => {
+    const response = await get(`${API_BASE_URL}/api/wifi/export`);
+    const blob = await response.blob();
+    var file =  window.URL.createObjectURL(blob);
+    window.location.assign(file);
 }
 
 export const updatePerson = async (person: Person): Promise<Response<number>> => {
