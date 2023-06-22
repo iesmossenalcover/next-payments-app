@@ -1,12 +1,10 @@
 import { Container } from "@/components/layout/SideBar";
-import { Spinner } from "@/components/Loading";
 import { Table } from "@/components/table";
-import { EventsRow, getEventsView } from "@/lib/apis/payments";
+import { getEventsView } from "@/lib/apis/payments";
 import Head from "next/head";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { deleteEvent } from '@/lib/apis/payments/client'
-import { displayDate, displayDateTime } from "@/lib/utils";
+import { deleteEvent, exportSummaryRequest } from '@/lib/apis/payments/client'
+import { displayDate, displayDateTime, plainErrors } from "@/lib/utils";
 import { useApiRequest, useStartApiRequest } from "@/lib/hooks/useApiRequest";
 
 const tableHeaders = {
@@ -148,28 +146,41 @@ const Events = () => {
             <main className="mt-5 mx-2">
 
 
-                <div className='flex justify-between mb-4'>
+                <div className='flex justify-start mb-4'>
                     <div>
-                        <Link className='
-                                inline-block
-                                text-white 
-                                bg-green-700 
-                                hover:bg-green-800
-                                focus:ring-4 
-                                focus:ring-blue-300
-                                font-medium
-                                py-3
-                                px-3
-                                rounded-lg
-                                text-sm
-                                mr-5' href="/admin/events/create">Nou esdeveniment</Link>
+                        <Link className=' inline-block text-white  bg-green-700  hover:bg-green-800 focus:ring-4  focus:ring-blue-300 font-medium py-3 px-3 rounded-lg text-sm mr-5' href="/admin/events/create">Nou esdeveniment</Link>
                     </div>
+                    <ExportSummary />
+
                 </div>
 
                 {listEvents()}
             </main>
         </>
     );
+}
+
+const ExportSummary = () => {
+    const { data, errors, isLoading, executeRequest } = useApiRequest(exportSummaryRequest);
+
+    const submit = async () => {
+        const ok = await executeRequest();
+
+    }
+
+    if (errors) return <div className=" mt-4 ml-4 text-red-500 italic">{plainErrors(errors)}</div>;
+    if (data) return <div className=" mt-4 ml-4 text-green-700 italic">Executat Correctament</div>;
+
+    return (
+        <div>
+
+            <button
+                disabled={isLoading}
+                className=' inline-block text-white  bg-blue-700  hover:bg-blue-800 focus:ring-4  focus:ring-blue-300 font-medium py-3 px-3 rounded-lg text-sm mr-5'
+                onClick={submit}>Exportar Estadistiques
+            </button>
+        </div>
+    )
 }
 
 export default function EventsPage() {

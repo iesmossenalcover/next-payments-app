@@ -137,8 +137,48 @@ export const exportPeopleGoogleWorkspace = async (): Promise<Response<boolean>> 
     return data;
 }
 
-export const SuspendPeopleGoogleWorkspace = async (path: string): Promise<Response<SyncPepoleResponse>> => {
-    const response = await postJson(`${API_BASE_URL}/api/googleworkspace/people/suspend`, {path});
+export const movePeopleGoogleWorkspace = async (): Promise<Response<SyncPepoleResponse>> => {
+    const response = await postJson(`${API_BASE_URL}/api/googleworkspace/people/move`);
+    const data = await response.json() as Response<SyncPepoleResponse>;
+
+    if (data.errors) {
+        data.errors = new Map(Object.entries(data.errors));
+    }
+    return data;
+}
+
+export const addPeopleToGroupsGoogleWorkspace = async (): Promise<Response<SyncPepoleResponse>> => {
+    const response = await postJson(`${API_BASE_URL}/api/googleworkspace/people/groups`);
+    const data = await response.json() as Response<SyncPepoleResponse>;
+
+    if (data.errors) {
+        data.errors = new Map(Object.entries(data.errors));
+    }
+    return data;
+}
+
+export const exportSummaryRequest = async (): Promise<Response<SyncPepoleResponse>> => {
+    const response = await postJson(`${API_BASE_URL}/api/events/export`);
+    const data = await response.json() as Response<SyncPepoleResponse>;
+
+    if (data.errors) {
+        data.errors = new Map(Object.entries(data.errors));
+    }
+    return data;
+}
+
+export const suspendPeopleGoogleWorkspace = async (): Promise<Response<SyncPepoleResponse>> => {
+    const response = await postJson(`${API_BASE_URL}/api/googleworkspace/people/suspend`);
+    const data = await response.json() as Response<SyncPepoleResponse>;
+
+    if (data.errors) {
+        data.errors = new Map(Object.entries(data.errors));
+    }
+    return data;
+}
+
+export const exportWifiUsers = async (): Promise<Response<SyncPepoleResponse>> => {
+    const response = await postJson(`${API_BASE_URL}/api/wifi/export`);
     const data = await response.json() as Response<SyncPepoleResponse>;
 
     if (data.errors) {

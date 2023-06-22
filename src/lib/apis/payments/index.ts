@@ -25,7 +25,10 @@ export {
   syncPersonGoogleWorkspace,
   updatePasswordGoogleWorkspace,
   exportPeopleGoogleWorkspace,
-  SuspendPeopleGoogleWorkspace
+  movePeopleGoogleWorkspace,
+  suspendPeopleGoogleWorkspace,
+  addPeopleToGroupsGoogleWorkspace,
+  exportWifiUsers
 } from "./client";
 
 export type {

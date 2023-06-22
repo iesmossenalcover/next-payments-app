@@ -1,99 +1,142 @@
 import { Container } from "@/components/layout/SideBar"
-import { exportPeopleGoogleWorkspace, SuspendPeopleGoogleWorkspace } from "@/lib/apis/payments"
+import { addPeopleToGroupsGoogleWorkspace, exportPeopleGoogleWorkspace, exportWifiUsers, movePeopleGoogleWorkspace, suspendPeopleGoogleWorkspace } from "@/lib/apis/payments"
 import { useApiRequest } from "@/lib/hooks/useApiRequest";
-import { displayErrors, plainErrors } from "@/lib/utils";
-import React, { useState, useEffect } from 'react';
+import { plainErrors } from "@/lib/utils";
 
 
 
 const SyncPeopleToWorkspace = () => {
 
-    const finalTime = null;
-    const [initialTime] = useState(new Date().toLocaleTimeString());
-    const [currentTime, setCurrentTime] = useState(new Date());
-
-    useEffect(() => {
-        const timer = setInterval(() => {
-            setCurrentTime(new Date());
-        }, 1000);
-
-        return () => {
-            clearInterval(timer);
-        };
-    }, []);
-
-    // const { data, errors, isLoading, executeRequest: syncUsersRequest } = useApiRequest(syncPeopleGoogleWorkspace);
-    const { data, errors, isLoading, executeRequest: exportUsersRequest } = useApiRequest(exportPeopleGoogleWorkspace);
-
-
-    // const updatePassword = () => {
-    //     const ok = confirm("Executar aquesta acció tardarà temps?");
-    //     if (!ok) return;
-
-    //     syncUsersRequest();
-    // }
-
-    if (errors) return <div className=" mt-4 ml-4 text-red-500 italic">{plainErrors(errors)}</div>;
 
     return (<>
         <div className="max-w-lg m-auto">
             <div className="m-5">
-                {/* <div className="mb-6">
-                    <button className='"w-full mt-6 bg-blue-500 hover:cursor-pointer hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed'
-                        onClick={updatePassword}>Sync users with google</button>
-                </div> */}
-
+                <hr />
+                <label
+                    className="mt-5 block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                    htmlFor="name">Google
+                </label>
+                <MoveUsers />
                 <SuspendUsers />
-                <div className="mb-6">
-                    <button 
-                    disabled={isLoading}
-                    className='"w-full mt-6 bg-blue-500 hover:cursor-pointer hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed'
-                        onClick={exportUsersRequest}>Exportar CSV</button>
-                </div>
-
+                <ExportUsers />
+                <AddUsersToGroups />
+                <hr />
+                <label
+                    className="mt-5 block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                    htmlFor="name">Wifi
+                </label>
+                <ExportUsersWifi />
             </div>
         </div>
     </>)
 }
+const ExportUsersWifi = () => {
+    const { data, errors, isLoading, executeRequest } = useApiRequest(exportWifiUsers);
 
-const SuspendUsers = () => {
-    const { data, errors, isLoading, executeRequest: executeRequest } = useApiRequest(SuspendPeopleGoogleWorkspace);
+    const submit = async () => {
+        const ok = await executeRequest();
 
-    const submit = async (path: string) => {
-        executeRequest(path);
     }
 
-    const onFormSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        const form = e.currentTarget;
-        const formData = new FormData(form);
-        const path = formData.get("path") as string;
-        submit(path);
-    }
-
-    if (errors) {
-        return displayErrors(errors);
-    }
+    if (errors) return <div className=" mt-4 ml-4 text-red-500 italic">{plainErrors(errors)}</div>;
+    if (data) return <div className=" mt-4 ml-4 text-green-700 italic">Executat Correctament</div>;
 
     return (
-        <form action="#" method="post" onSubmit={onFormSubmit} autoComplete="off">
-            {data && data.ok ? <span className="text-green-700">Executat correctament</span> : null}
-            <div className="mb-6">
-                <label
-                    className="mt-6 block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                    htmlFor="path">Path</label>
-                <input
-                    className="px-4 appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 leading-tight focus:outline-none focus:bg-white"
-                    id="path" name="path" />
-                <input
-                    disabled={isLoading}
-                    className="w-full mt-6 bg-blue-500 hover:cursor-pointer hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed"
-                    value="Executar Suspensió OU"
-                    type="submit" />
-            </div>
-        </form>
+        <div className="mb-6">
+            <button
+                disabled={isLoading}
+                className='flex items-center justify-center w-full mt-6 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed'
+                onClick={submit}>Exportar Usuaris Wifi CSV</button>
+        </div>
     )
 }
+
+
+const MoveUsers = () => {
+    const { data, errors, isLoading, executeRequest } = useApiRequest(movePeopleGoogleWorkspace);
+
+    const submit = async () => {
+        const ok = await executeRequest();
+
+    }
+
+    if (errors) return <div className=" mt-4 ml-4 text-red-500 italic">{plainErrors(errors)}</div>;
+    if (data) return <div className=" mt-4 ml-4 text-green-700 italic">Executat Correctament</div>;
+
+    return (
+        <div className="mb-6">
+            <button
+                disabled={isLoading}
+                className='flex items-center justify-center w-full mt-6 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed'
+                onClick={submit}>Moure Usuaris a old OU</button>
+        </div>
+    )
+}
+
+
+const SuspendUsers = () => {
+    const { data, errors, isLoading, executeRequest } = useApiRequest(suspendPeopleGoogleWorkspace);
+
+    const submit = async () => {
+        const ok = await executeRequest();
+
+    }
+
+    if (errors) return <div className=" mt-4 ml-4 text-red-500 italic">{plainErrors(errors)}</div>;
+    if (data) return <div className=" mt-4 ml-4 text-green-700 italic">Executat Correctament</div>;
+
+    return (
+        <div className="mb-6">
+            <button
+                disabled={isLoading}
+                className='flex items-center justify-center w-full mt-6 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed'
+                onClick={submit}>Suspendre Usuaris</button>
+        </div>
+    )
+}
+
+const ExportUsers = () => {
+    const { data, errors, isLoading, executeRequest } = useApiRequest(exportPeopleGoogleWorkspace);
+
+    const submit = async () => {
+        const ok = await executeRequest();
+
+    }
+
+    if (errors) return <div className=" mt-4 ml-4 text-red-500 italic">{plainErrors(errors)}</div>;
+    if (data) return <div className=" mt-4 ml-4 text-green-700 italic">Executat Correctament</div>;
+
+    return (
+        <div className="mb-6">
+            <button
+                disabled={isLoading}
+                className='flex items-center justify-center w-full mt-6 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed'
+                onClick={submit}>Exportar Usuaris CSV</button>
+        </div>
+    )
+}
+
+const AddUsersToGroups = () => {
+    const { data, errors, isLoading, executeRequest } = useApiRequest(addPeopleToGroupsGoogleWorkspace);
+
+    const submit = async () => {
+        const ok = await executeRequest();
+
+    }
+
+    if (errors) return <div className=" mt-4 ml-4 text-red-500 italic">{plainErrors(errors)}</div>;
+    if (data) return <div className=" mt-4 ml-4 text-green-700 italic">Executat Correctament</div>;
+
+    return (
+        <div className="mb-6">
+            <button
+                disabled={isLoading}
+                className='flex items-center justify-center w-full mt-6 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed'
+                onClick={submit}>Afegir usuaris a grups</button>
+        </div>
+    )
+}
+
 
 export default function SyncPeopleToWorkspacePage() {
     return (
