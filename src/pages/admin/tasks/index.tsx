@@ -33,15 +33,19 @@ const SyncPeopleToWorkspace = () => {
 const ExportUsersWifi = () => {
     const { data, errors, isLoading, executeRequest } = useApiRequest(exportWifiUsers);
 
+    const submit = () => {
+        confirmAction("Confirma que vols exportar les dades Wifi dels usuaris?", executeRequest);
+    }
+
     if (errors) return <div className=" mt-4 ml-4 text-red-500 italic">{plainErrors(errors)}</div>;
-    if (data) return <div className=" mt-4 ml-4 text-green-700 italic">Executat Correctament</div>;
+    if (data) return <div className=" mt-4 ml-4 text-green-700 italic">Executat Correctament</div>;   
 
     return (
         <div className="mb-6">
             <button
                 disabled={isLoading}
                 className='flex items-center justify-center w-full mt-6 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed'
-                onClick={executeRequest}>Exportar Usuaris Wifi CSV</button>
+                onClick={submit}>Exportar Usuaris Wifi CSV</button>
         </div>
     )
 }
@@ -50,9 +54,8 @@ const ExportUsersWifi = () => {
 const MoveUsers = () => {
     const { data, errors, isLoading, executeRequest } = useApiRequest(movePeopleGoogleWorkspace);
 
-    const submit = async () => {
-        const ok = await executeRequest();
-
+    const submit = () => {
+        confirmAction("Confirma que vols moure els usuaris d'OU?", executeRequest);
     }
 
     if (errors) return <div className=" mt-4 ml-4 text-red-500 italic">{plainErrors(errors)}</div>;
@@ -72,9 +75,8 @@ const MoveUsers = () => {
 const SuspendUsers = () => {
     const { data, errors, isLoading, executeRequest } = useApiRequest(suspendPeopleGoogleWorkspace);
 
-    const submit = async () => {
-        const ok = await executeRequest();
-
+    const submit = () => {
+        confirmAction("Confirma que vols suspendre els usuaris?", executeRequest);
     }
 
     if (errors) return <div className=" mt-4 ml-4 text-red-500 italic">{plainErrors(errors)}</div>;
@@ -93,9 +95,8 @@ const SuspendUsers = () => {
 const ExportUsers = () => {
     const { data, errors, isLoading, executeRequest } = useApiRequest(exportPeopleGoogleWorkspace);
 
-    const submit = async () => {
-        const ok = await executeRequest();
-
+    const submit = () => {
+        confirmAction("Confirma que vols exportar i actualitzar el correu dels usuaris?", executeRequest);
     }
 
     if (errors) return <div className=" mt-4 ml-4 text-red-500 italic">{plainErrors(errors)}</div>;
@@ -114,8 +115,8 @@ const ExportUsers = () => {
 const AddUsersToGroups = () => {
     const { data, errors, isLoading, executeRequest } = useApiRequest(addPeopleToGroupsGoogleWorkspace);
 
-    const submit = async () => {
-        const ok = await executeRequest();
+    const submit = () => {
+        confirmAction("Confirma que vols afegir els usuaris al grup?", executeRequest);
 
     }
 
@@ -130,6 +131,13 @@ const AddUsersToGroups = () => {
                 onClick={submit}>Afegir usuaris a grups</button>
         </div>
     )
+}
+
+const confirmAction = (message: string, request: () => unknown) => {
+    const result = confirm(message);
+    if (result) {
+        request();
+    }
 }
 
 
