@@ -62,46 +62,48 @@ const Admin = () => {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <main className="text-center mt-10">
+            <main className="text-center pt-10 flex flex-col min-h-screen justify-between mx-6">
 
-                <h1 className='text-2xl ml-3 mb-3 tracking-wide font-bold text-left text-black'>Curs: {data?.currentCurs}</h1>
-                <h1 className='text-lg mb-3 tracking-wide font-bold text-center text-gray-500 text-md'>Tauler Administratiu</h1>
+                <div>
+                    <h1 className='text-2xl ml-3 mb-3 tracking-wide font-bold text-left text-black'>Curs: {data?.currentCurs}</h1>
+                    <h1 className='text-lg mb-3 tracking-wide font-bold text-center text-gray-500 text-md'>Tauler Administratiu</h1>
 
-                <hr className="h-px mb-5 mt-5 border-2 bg-gray-700" />
+                    <hr className="h-px mb-5 mt-5 border-2 bg-gray-700" />
 
-                <div className="flex flex-wrap">
-                    {box("Total Esdeveniments", data.events)}
-                    {box("Total Esdeveniments Actius", data.activeEvents)}
-                    {box("Total Esdeveniments que acaben avui", data.eventsEndToday)}
-                    {box("Total Grups", data.grups)}
-                    {box("Total Persones", data.people)}
-                    {box("Total pagaments fets avui", data.todayPayments)}
+                    <div className="flex flex-wrap">
+                        {box("Total Esdeveniments", data.events)}
+                        {box("Total Esdeveniments Actius", data.activeEvents)}
+                        {box("Total Esdeveniments que acaben avui", data.eventsEndToday)}
+                        {box("Total Grups", data.grups)}
+                        {box("Total Persones", data.people)}
+                        {box("Total pagaments fets avui", data.todayPayments)}
 
-                </div>
-                <hr className="h-px mb-5 mt-5 border-2 bg-gray-700" />
-                <form action="#" onSubmit={onSubmitAppConfig}>
-                    <div className="flex flex-wrap mt-5 p-3">
+                    </div>
+                    <hr className="h-px mb-5 mt-5 border-2 bg-gray-700" />
+                    <form className="flex items-center justify-between" action="#" onSubmit={onSubmitAppConfig}>
                         <Toggle
                             name="displayEnrollment"
                             id="displayEnrollment"
                             value={data.appConfig.displayEnrollment}
                             text="Visualitzar al portal de pagaments les assignatures a les que s'han matriculat els alumnes"
                         />
-                    </div>
-                    <div className="relative">
-                        <div className="absolute inset-y-0 right-0 mb-5 mt-5 mr-6">
-                            <input
-                                disabled={updatingConfig}
-                                className="bg-blue-500 hover:cursor-pointer hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed"
-                                value="Guardar"
-                                type="submit"
-                            />
-
-                        </div>
-                    </div>
+                        <input
+                            disabled={updatingConfig}
+                            className="bg-blue-500 hover:cursor-pointer hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed"
+                            value="Guardar"
+                            type="submit"
+                        />
 
 
-                </form>
+                    </form>
+                </div>
+
+                <div className="pb-5 font-semibold flex justify-end">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" />
+                    </svg>
+                    <span className="ml-4">IES Mossèn Alcover, Autors: Sebastià Sansó Barceló & Joan Barceló Moragues</span>
+                </div>
 
             </main>
         </>
