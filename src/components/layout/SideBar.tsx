@@ -69,6 +69,7 @@ export const SideBar = ({ identity }: SideBarPropos) => {
                             : null}
                     </ul>
                 </div>
+
             </div>
         </nav>
 
