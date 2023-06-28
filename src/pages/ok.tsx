@@ -1,9 +1,10 @@
 import Head from "next/head";
 import { Noto_Sans } from '@next/font/google';
 import { SuccessAlert } from "@/components/Alerts";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/router";
-import { GetOrderInfo, getOrderInfo, GetOrderInfoEvent } from "@/lib/apis/payments";
+import { getOrderInfo, GetOrderInfoEvent } from "@/lib/apis/payments";
+import { useApiRequest } from "@/lib/hooks/useApiRequest";
 
 const font = Noto_Sans({ weight: '400', subsets: ['devanagari'] })
 
@@ -12,39 +13,36 @@ const Ok = () => {
     const signatureVersion = router.query["Ds_SignatureVersion"] as string;
     const merchantParameters = router.query["Ds_MerchantParameters"] as string;
     const signature = router.query["Ds_Signature"] as string;
-    const [loading, setLoading] = useState(true);
-    const [orderInfo, setOrderInfo] = useState<GetOrderInfo | undefined>(undefined)
+    const { data: orderInfo, isLoading, executeRequest } = useApiRequest(getOrderInfo);
 
     useEffect(() => {
         if (signature && merchantParameters && signatureVersion) {
-            getOrderInfo(merchantParameters, signature, signatureVersion)
-                .then(x => {
-                    if (x.errors) {
-
-                    }
-                    else {
-                        setOrderInfo(x.data)
-                    }
-                })
-                .finally(() => setLoading(false))
+            executeRequest(merchantParameters, signature, signatureVersion);
         }
     }, [signatureVersion, merchantParameters, signature])
 
 
-    if (loading || orderInfo == null) return null;
+    if (isLoading || orderInfo == null) return null;
 
-    const enrollmentInfo = () => orderInfo.displayEnrollment && orderInfo.enrollmentSubjectsInfo ?
-        (
-            <div className="mt-10">
-                <h3 className="font-bold mb-2">Assignatures a les que s&apos;ha matriculat:</h3>
-                <hr />
-                <ul>
-                    {orderInfo.enrollmentSubjectsInfo.split("\n").map((x, idx) => (
-                        <li key={idx} className="mt-3">{x}</li>
-                    ))}
-                </ul>
-            </div>
-        ) : null;
+    const enrollmentInfo = () => {
+
+        if (!orderInfo.displayEnrollment) return null;
+
+        return <div className="mt-10">
+            {orderInfo.groupDescription ? <h3 className='pb-4 font-semibold'>Curs: {orderInfo.groupDescription}</h3> : null}
+            {orderInfo.enrollmentSubjectsInfo ?
+                <>
+                    <h3 className='underline mb-2'>Assignatures a les que s&apos;ha matriculat</h3>
+                    <hr />
+                    <ul className='pl-5 list-disc'>
+                        {orderInfo.enrollmentSubjectsInfo.trim().split("\n").map((x, idx) => (
+                            <li key={idx} className="mt-3">{x}</li>
+                        ))}
+                    </ul>
+                </> : null
+            }
+        </div>
+    };
 
     const total = () => {
         if (orderInfo.events.length === 0) return null;

@@ -305,14 +305,21 @@ const SecondStep = ({ data }: SecondStepProps) => {
         );
 
     const renderEnrollment = () => {
+        if (!person.enrolled) return null;
+
         return (
             <>
-                <h3>Assignatures a les que s&apos;ha matriculat:</h3>
-                <ul>
-                    {person.enrollmentSubjectsInfo.split("\n").map((x, idx) => (
-                        <li key={idx} className="mt-3">{x}</li>
-                    ))}
-                </ul>
+                {person.groupDescription ? <h3 className='pb-4 font-semibold'>Curs: {person.groupDescription}</h3> : null}
+                {
+                    person.enrollmentSubjectsInfo ? <>
+                        <h3 className='underline'>Assignatures a les que s&apos;ha matriculat:</h3>
+                        <ul className='pl-5 list-disc'>
+                            {person.enrollmentSubjectsInfo.trim().split("\n").map((x, idx) => (
+                                <li key={idx} className="mt-3">{x}</li>
+                            ))}
+                        </ul>
+                    </> : null
+                }
             </>
         )
     }

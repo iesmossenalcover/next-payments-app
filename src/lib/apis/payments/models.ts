@@ -47,7 +47,8 @@ export interface PersonActiveEventsVm {
         documentId: string,
         fullName: string,
         enrolled: boolean,
-        enrollmentSubjectsInfo: string,
+        enrollmentSubjectsInfo?: string,
+        groupDescription?: string,
     }
 }
 
@@ -84,6 +85,7 @@ export interface GetOrderInfo {
     events: GetOrderInfoEvent[],
     displayEnrollment: boolean,
     enrollmentSubjectsInfo?: string,
+    groupDescription?: string,
 }
 
 export interface GetOrderInfoEvent {

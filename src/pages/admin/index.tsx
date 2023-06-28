@@ -85,7 +85,7 @@ const Admin = () => {
                             name="displayEnrollment"
                             id="displayEnrollment"
                             value={data.appConfig.displayEnrollment}
-                            text="Visualitzar al portal de pagaments les assignatures a les que s'han matriculat els alumnes"
+                            text="Visualitzar al portal de pagaments les assignatures i el grup dels alumnes."
                         />
                         <input
                             disabled={updatingConfig}
