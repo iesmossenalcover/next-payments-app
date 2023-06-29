@@ -1,5 +1,5 @@
 import { BatchUploadSummary, Identity, PersonActiveEventsVm, Person, PersonRow, Response, SigninResponse, CreateOrderResponse, EventRow, Event, GetOrderInfo, EventPeople, EventPayments, AdminInfo, AppConfig, EventSummaryVm, SyncPersonResponse, UpdatePasswordResponse, GroupRow, Group, SyncPepoleResponse } from "./models"
-import { deleteJson, get, postJson, putJson } from "./baseclient"
+import { deleteJson, get, postJson, putJson, toFile } from "./baseclient"
 import { Selector } from "@/components/Selector"
 import { ApiResult } from "@/lib/hooks/useApiRequest"
 
@@ -117,6 +117,12 @@ export const updatePasswordGoogleWorkspace = async (id: number): Promise<Respons
 }
 
 // todo
+export const exportPeople = async () => {
+    const response = await get(`${API_BASE_URL}/api/people/export`);
+    await toFile(response);
+}
+
+
 export const syncPeopleGoogleWorkspace = async (): Promise<Response<SyncPepoleResponse>> => {
     const response = await postJson(`${API_BASE_URL}/api/googleworkspace/people/sync`);
     const data = await response.json() as Response<SyncPepoleResponse>;
@@ -129,9 +135,7 @@ export const syncPeopleGoogleWorkspace = async (): Promise<Response<SyncPepoleRe
 
 export const exportPeopleGoogleWorkspace = async () => {
     const response = await get(`${API_BASE_URL}/api/googleworkspace/people/export`);
-    const blob = await response.blob();
-    var file =  window.URL.createObjectURL(blob);
-    window.location.assign(file);
+    await toFile(response);
 }
 
 export const movePeopleGoogleWorkspace = async (): Promise<Response<SyncPepoleResponse>> => {
@@ -156,9 +160,7 @@ export const addPeopleToGroupsGoogleWorkspace = async (): Promise<Response<SyncP
 
 export const exportSummaryRequest = async () => {
     const response = await get(`${API_BASE_URL}/api/events/export`);
-    const blob = await response.blob();
-    var file =  window.URL.createObjectURL(blob);
-    window.location.assign(file);
+    await toFile(response);
 }
 
 export const suspendPeopleGoogleWorkspace = async (): Promise<Response<SyncPepoleResponse>> => {
@@ -173,9 +175,7 @@ export const suspendPeopleGoogleWorkspace = async (): Promise<Response<SyncPepol
 
 export const exportWifiUsers = async () => {
     const response = await get(`${API_BASE_URL}/api/wifi/export`);
-    const blob = await response.blob();
-    var file =  window.URL.createObjectURL(blob);
-    window.location.assign(file);
+    await toFile(response);
 }
 
 export const updatePerson = async (person: Person): Promise<Response<number>> => {

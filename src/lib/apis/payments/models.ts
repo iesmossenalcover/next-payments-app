@@ -77,6 +77,12 @@ export interface SyncPepoleResponse {
     ok: boolean
 }
 
+
+export interface FileResponse {
+    fileType: string,
+    fileName: string
+}
+
 export interface UpdatePasswordResponse {
     password: string,
 }

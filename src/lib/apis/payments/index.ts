@@ -28,7 +28,8 @@ export {
   movePeopleGoogleWorkspace,
   suspendPeopleGoogleWorkspace,
   addPeopleToGroupsGoogleWorkspace,
-  exportWifiUsers
+  exportWifiUsers,
+  exportPeople
 } from "./client";
 
 export type {

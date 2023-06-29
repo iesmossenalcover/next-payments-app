@@ -3,11 +3,11 @@ import { useEffect, useState } from 'react'
 import { Table } from '@/components/table'
 import { Container } from '@/components/layout/SideBar'
 import Link from 'next/link'
-import { deletePerson, filterPeopleQuery } from '@/lib/apis/payments/client'
+import { deletePerson, exportPeople, filterPeopleQuery } from '@/lib/apis/payments/client'
 import useDebounce from '@/lib/hooks/useDebounce'
 import { Spinner } from '@/components/Loading'
 import { useApiRequest } from '@/lib/hooks/useApiRequest'
-import { displayErrors } from '@/lib/utils'
+import { displayErrors, plainErrors } from '@/lib/utils'
 
 const tableHeaders = {
     id: "Id",
@@ -151,8 +151,8 @@ const People = () => {
             </Head>
             <main className='mt-5 mx-10'>
                 <div className='flex mb-4'>
+                    <ExportPeople />
                     <Link className='
-                        inline-block
                         text-white 
                         bg-blue-700 
                         hover:bg-blue-800 
@@ -165,7 +165,6 @@ const People = () => {
                         text-sm
                         mr-5' href="/admin/people/create">Afegir persona</Link>
                     <Link className='
-                        inline-block
                         text-white 
                         bg-blue-700 
                         hover:bg-blue-800 
@@ -190,3 +189,34 @@ export default function PeoplePage() {
         </Container>
     )
 };
+
+const ExportPeople = () => {
+    const { data, errors, isLoading, executeRequest } = useApiRequest(exportPeople);
+
+    const submit = async () => {
+        const ok = await executeRequest();
+
+    }
+
+    if (errors) return <div className=" mt-4 ml-4 text-red-500 italic">{plainErrors(errors)}</div>;
+    if (data) return <div className=" mt-4 ml-4 text-green-700 italic">Executat Correctament</div>;
+
+    return (
+            <button
+                disabled={isLoading}
+                className='
+                    mr-5
+                    text-white 
+                    bg-blue-700 
+                    hover:bg-blue-800 
+                    focus:ring-4 
+                    focus:ring-blue-300
+                    font-medium
+                    py-3
+                    px-3
+                    rounded-lg
+                    text-sm'
+                onClick={submit}>Exportar persones
+            </button>
+    )
+}
