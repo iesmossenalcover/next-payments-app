@@ -154,10 +154,10 @@ const People = () => {
                     <ExportPeople />
                     <Link className='
                         text-white 
-                        bg-blue-700 
-                        hover:bg-blue-800 
+                        bg-green-700 
+                        hover:bg-green-800 
                         focus:ring-4 
-                        focus:ring-blue-300
+                        focus:ring-green-300
                         font-medium
                         py-3
                         px-3
@@ -207,10 +207,10 @@ const ExportPeople = () => {
                 className='
                     mr-5
                     text-white 
-                    bg-blue-700 
-                    hover:bg-blue-800 
+                    bg-yellow-600 
+                    hover:bg-yellow-700 
                     focus:ring-4 
-                    focus:ring-blue-300
+                    focus:ring-yellow-300
                     font-medium
                     py-3
                     px-3

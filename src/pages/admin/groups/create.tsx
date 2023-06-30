@@ -56,7 +56,7 @@ const Create = () => {
                                     <div>
                                         <input
                                             disabled={formDisabled()}
-                                            className="w-full mt-6 bg-blue-500 hover:cursor-pointer hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed"
+                                            className="w-full mt-6 bg-green-700 hover:cursor-pointer hover:bg-green-800 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed"
                                             value="Afegir grup"
                                             type="submit" />
                                     </div>

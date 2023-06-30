@@ -44,7 +44,7 @@ const ExportUsersWifi = () => {
         <div className="mb-6">
             <button
                 disabled={isLoading}
-                className='flex items-center justify-center w-full mt-6 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed'
+                className='flex items-center justify-center w-full mt-6 bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed'
                 onClick={submit}>Exportar Usuaris Wifi CSV</button>
         </div>
     )
@@ -106,7 +106,7 @@ const ExportUsers = () => {
         <div className="mb-6">
             <button
                 disabled={isLoading}
-                className='flex items-center justify-center w-full mt-6 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed'
+                className='flex items-center justify-center w-full mt-6 bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed'
                 onClick={submit}>Exportar Usuaris CSV</button>
         </div>
     )

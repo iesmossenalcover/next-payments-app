@@ -176,7 +176,7 @@ const ExportSummary = () => {
 
             <button
                 disabled={isLoading}
-                className=' inline-block text-white  bg-blue-700  hover:bg-blue-800 focus:ring-4  focus:ring-blue-300 font-medium py-3 px-3 rounded-lg text-sm mr-5'
+                className=' inline-block text-white  bg-yellow-600  hover:bg-yellow-700 focus:ring-4  focus:ring-yellow-300 font-medium py-3 px-3 rounded-lg text-sm mr-5'
                 onClick={submit}>Exportar Estadistiques
             </button>
         </div>
