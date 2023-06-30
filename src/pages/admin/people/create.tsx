@@ -6,6 +6,7 @@ import Head from "next/head";
 import { Container } from "@/components/layout/SideBar";
 import { useApiRequest } from "@/lib/hooks/useApiRequest";
 import { useState } from "react";
+import Link from "next/link";
 
 const defaultPerson: Person = {
     id: 0,
@@ -59,7 +60,12 @@ const Create = () => {
                 <div className="max-w-lg m-auto">
                     <div className="m-5">
                         {
-                            data ? <SuccessAlert text="Persona afegida correctament" /> :
+                            data ?
+                                <SuccessAlert text="Persona afegida correctament">
+                                    <Link
+                                        className="inline-block font-bold underline mt-3"
+                                        href={`/admin/people/${data}`}>{`Editar la persona creada`}</Link>
+                                </SuccessAlert> :
                                 <form action="#" method="post" onSubmit={onFormSubmit} autoComplete="off">
                                     <PersonFields
                                         errors={errors}

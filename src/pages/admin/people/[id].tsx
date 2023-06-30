@@ -46,6 +46,7 @@ const Update = () => {
         if (ok) {
             setShowUpdated(true);
             setTimeout(() => setShowUpdated(false), 1500);
+            getPersonRequest(parseInt(id as string));
         }
     }
 
@@ -64,7 +65,7 @@ const Update = () => {
 
     const formDisabled = () => isPersonLoading || isSyncLoading || isUpdateLoading || isUpdatingPasswordLoading;
 
-    if (!person) return null;
+    if (isUpdateLoading || !person) return null;
 
     return (
         <>
