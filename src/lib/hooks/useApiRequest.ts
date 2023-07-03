@@ -34,6 +34,7 @@ export const useApiRequest = <T, U extends any[]>(
     try {
       const response = await apiCall(...args);
       const result = response as ApiResult<T>;
+
       if (result && result.errors && result.errors.size > 0) {
         setErrors(result.errors);
         return false;
@@ -46,7 +47,7 @@ export const useApiRequest = <T, U extends any[]>(
         return true;
       }
     } catch (error) {
-      const errors = new Map([ ["error", ["Unhandled error"]] ]);
+      const errors = new Map([["error", ["Unhandled error"]]]);
       setErrors(errors);
       return false;
     } finally {

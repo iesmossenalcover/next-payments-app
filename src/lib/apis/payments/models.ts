@@ -30,6 +30,14 @@ export interface Identity {
     role?: string,
 }
 
+export interface Course {
+    id: number,
+    name: string,
+    startDate: string,
+    endDate: string,
+    active: boolean,
+}
+
 export interface PersonRow {
     id: number,
     documentId: string,
@@ -159,7 +167,7 @@ export interface AdminInfo {
     people: number,
     todayPayments: number,
     appConfig: AppConfig
-   
+
 }
 
 export interface AppConfig {

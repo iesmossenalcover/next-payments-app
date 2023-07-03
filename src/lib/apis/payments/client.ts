@@ -1,4 +1,4 @@
-import { BatchUploadSummary, Identity, PersonActiveEventsVm, Person, PersonRow, Response, SigninResponse, CreateOrderResponse, EventRow, Event, GetOrderInfo, EventPeople, EventPayments, AdminInfo, AppConfig, EventSummaryVm, SyncPersonResponse, UpdatePasswordResponse, GroupRow, Group, SyncPepoleResponse } from "./models"
+import { BatchUploadSummary, Identity, PersonActiveEventsVm, Person, PersonRow, Response, SigninResponse, CreateOrderResponse, EventRow, Event, GetOrderInfo, EventPeople, EventPayments, AdminInfo, AppConfig, EventSummaryVm, SyncPersonResponse, UpdatePasswordResponse, GroupRow, Group, SyncPepoleResponse, Course } from "./models"
 import { deleteJson, get, postJson, putJson, toFile } from "./baseclient"
 import { Selector } from "@/components/Selector"
 import { ApiResult } from "@/lib/hooks/useApiRequest"
@@ -43,6 +43,22 @@ export const getPeopleView = async (courseId?: number): Promise<PersonRow[]> => 
 export const filterPeopleQuery = async (q: string): Promise<PersonRow[]> => {
     const response = await get(`${API_BASE_URL}/api/people/filter?query=${q}`)
     return await response.json() as PersonRow[];
+}
+
+export const getCourses = async (): Promise<Course[]> => {
+    const query = `${API_BASE_URL}/api/courses`;
+    const response = await get(query)
+    return await response.json() as Course[];
+}
+
+export const setActiveCourse = async (id: number): Promise<Response<void>> => {
+    const query = `${API_BASE_URL}/api/courses/${id}/active`;
+    const response = await putJson(query, {})
+    const data = await response.json() as Response<void>;
+    if (data.errors) {
+        data.errors = new Map(Object.entries(data.errors));
+    }
+    return data;
 }
 
 export const getCoursesSelector = async (): Promise<Selector | undefined> => {
@@ -97,7 +113,7 @@ export const deletePerson = async (id: number): Promise<Response<number>> => {
 }
 
 export const syncPersonGoogleWorkspace = async (id: number): Promise<Response<SyncPersonResponse>> => {
-    const response = await postJson(`${API_BASE_URL}/api/googleworkspace/people/sync/${id}`, { });
+    const response = await postJson(`${API_BASE_URL}/api/googleworkspace/people/sync/${id}`, {});
     const data = await response.json() as Response<SyncPersonResponse>;
 
     if (data.errors) {

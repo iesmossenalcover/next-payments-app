@@ -5,6 +5,7 @@ export {
   createOrder,
   filterPeopleQuery,
   getAdminInfo,
+  getCourses,
   getCoursesSelector,
   getEventPayments,
   getEventPeople,
@@ -29,10 +30,12 @@ export {
   suspendPeopleGoogleWorkspace,
   addPeopleToGroupsGoogleWorkspace,
   exportWifiUsers,
-  exportPeople
+  exportPeople,
+  setActiveCourse
 } from "./client";
 
 export type {
+  Course,
   AdminInfo,
   AppConfig,
   BatchUploadSummary,
