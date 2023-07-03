@@ -57,7 +57,7 @@ export const createCourse = async (c: Course): Promise<ApiResult<number>> => {
 }
 
 export const updateCourse = async (c: Course): Promise<Response<void>> => {
-    const response = await putJson(`${API_BASE_URL}/api/groups/${c.id}`, c);
+    const response = await putJson(`${API_BASE_URL}/api/courses/${c.id}`, c);
     const data = await response.json() as Response<void>;
 
     if (data.errors) {
