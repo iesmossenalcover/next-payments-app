@@ -45,16 +45,46 @@ export const filterPeopleQuery = async (q: string): Promise<PersonRow[]> => {
     return await response.json() as PersonRow[];
 }
 
+export const createCourse = async (c: Course): Promise<ApiResult<number>> => {
+    const response = await postJson(`${API_BASE_URL}/api/courses`, c);
+    const data = await response.json() as ApiResult<number>;
+
+    if (data.errors) {
+        data.errors = new Map(Object.entries(data.errors));
+    }
+    
+    return data;
+}
+
+export const updateCourse = async (c: Course): Promise<Response<void>> => {
+    const response = await putJson(`${API_BASE_URL}/api/groups/${c.id}`, c);
+    const data = await response.json() as Response<void>;
+
+    if (data.errors) {
+        data.errors = new Map(Object.entries(data.errors));
+    }
+    return data;
+}
+
+export const getCourseById = async (id: number): Promise<ApiResult<Course>> => {
+    const response = await get(`${API_BASE_URL}/api/courses/${id}`);
+    const data = await response.json() as ApiResult<Course>;
+    if (data.errors) {
+        data.errors = new Map(Object.entries(data.errors));
+    }
+    return data;
+}
+
 export const getCourses = async (): Promise<Course[]> => {
     const query = `${API_BASE_URL}/api/courses`;
     const response = await get(query)
     return await response.json() as Course[];
 }
 
-export const setActiveCourse = async (id: number): Promise<Response<void>> => {
+export const setActiveCourse = async (id: number): Promise<ApiResult<void>> => {
     const query = `${API_BASE_URL}/api/courses/${id}/active`;
     const response = await putJson(query, {})
-    const data = await response.json() as Response<void>;
+    const data = await response.json() as ApiResult<void>;
     if (data.errors) {
         data.errors = new Map(Object.entries(data.errors));
     }

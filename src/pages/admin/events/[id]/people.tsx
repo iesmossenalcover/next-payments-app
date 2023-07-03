@@ -23,7 +23,6 @@ const PeopleToEvent = () => {
         getEventPeople(id as string)
             .then(x => {
                 if (x.errors) {
-                    console.log(x.errors);
                 } else {
                     if (!x.data) return;
                     var s = new Set<number>();

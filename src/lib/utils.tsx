@@ -7,7 +7,8 @@ export const displayDate = (date: Date | string) => parseDateIfNeeded(date).toLo
 export const displayTime = (date: Date) => parseDateIfNeeded(date).toLocaleTimeString([], dateTimeDisplayOptions);
 export const displayDateTime = (date: Date) => `${displayDate(date)} - ${displayTime(date)}`;
 export const twoDigit = (n: number) => n < 10 ? '0' + n : '' + n;
-export const toInputDate = (d: Date): string => `${d.getFullYear()}-${twoDigit(d.getMonth() + 1)}-${twoDigit(d.getDate())}T${twoDigit(d.getHours())}:${twoDigit(d.getMinutes())}`;
+export const toInputDateTime = (d: Date): string => `${d.getFullYear()}-${twoDigit(d.getMonth() + 1)}-${twoDigit(d.getDate())}T${twoDigit(d.getHours())}:${twoDigit(d.getMinutes())}`;
+export const toInputDate = (d: Date): string => `${d.getFullYear()}-${twoDigit(d.getMonth() + 1)}-${twoDigit(d.getDate())}`;
 
 export const plainErrors = (errors?: Map<string, string[]>) => (
     errors ? Array.from(errors.entries()).map(x => `${x[1].join(", ")}`) : ""

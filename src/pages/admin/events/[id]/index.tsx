@@ -6,7 +6,7 @@ import EventFields from "@/components/events/EventFields";
 import { Container } from "@/components/layout/SideBar";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { toInputDate } from "@/lib/utils";
+import { toInputDateTime } from "@/lib/utils";
 
 const Update = () => {
     const router = useRouter()
@@ -26,9 +26,9 @@ const Update = () => {
                 }
                 const date = new Date(x.data.date);
                 const publish = new Date(x.data.publishDate);
-                x.data.date = toInputDate(date);
-                x.data.publishDate = toInputDate(publish);
-                x.data.unpublishDate = x.data.unpublishDate ? toInputDate(new Date(x.data.unpublishDate)) : "";
+                x.data.date = toInputDateTime(date);
+                x.data.publishDate = toInputDateTime(publish);
+                x.data.unpublishDate = x.data.unpublishDate ? toInputDateTime(new Date(x.data.unpublishDate)) : "";
                 setEvent(x.data)
 
             });

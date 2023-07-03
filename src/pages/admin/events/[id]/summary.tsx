@@ -16,10 +16,8 @@ const EventSummaries = () => {
         getEventSummary(id as string)
             .then(x => {
                 if (x.errors) {
-                    console.log(x.errors);
                 } else {
                     setData(x.data);
-                    console.log(x.data);
                 }
             })
             

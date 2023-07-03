@@ -5,7 +5,7 @@ import { useState } from "react";
 import EventFields from "@/components/events/EventFields";
 import { Container } from "@/components/layout/SideBar";
 import Head from "next/head";
-import { toInputDate } from "@/lib/utils";
+import { toInputDateTime } from "@/lib/utils";
 import { useApiRequest } from "@/lib/hooks/useApiRequest";
 
 const defaultEvent: Event = {
@@ -13,10 +13,10 @@ const defaultEvent: Event = {
     code: "",
     name: "",
     description: "",
-    date: toInputDate(new Date()),
+    date: toInputDateTime(new Date()),
     price: 0,
     amipaPrice: 0,
-    publishDate: toInputDate(new Date()),
+    publishDate: toInputDateTime(new Date()),
     unpublishDate: undefined,
     enrollment: false,
     amipa: false

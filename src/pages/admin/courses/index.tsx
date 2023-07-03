@@ -85,7 +85,7 @@ const Courses = () => {
 
 
 
-    const listGroups = () => {
+    const listCourses = () => {
         return (
             <div className='overflow-x-auto'>
                 {setActiveErrors ? <div className="mt-2 text-red-500 italic">{plainErrors(setActiveErrors)}</div> : null}
@@ -136,11 +136,11 @@ const Courses = () => {
                             rounded-lg
                             text-sm
                             mr-5'
-                            href="/admin/groups/create">Nou curs</Link>
+                            href="/admin/courses/create">Nou curs</Link>
                     </div>
                 </div>
 
-                {listGroups()}
+                {listCourses()}
             </main>
         </>
     );

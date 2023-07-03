@@ -6,7 +6,7 @@ import { Container } from "@/components/layout/SideBar";
 import Head from "next/head";
 import { useApiRequest } from "@/lib/hooks/useApiRequest";
 import { getGroupById, updateGroup } from "@/lib/apis/payments/client";
-import GroupFields from "@/components/groups/GroupsFields";
+import GroupFields from "@/components/groups/GroupFields";
 
 const Update = () => {
     const router = useRouter()

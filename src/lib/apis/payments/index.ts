@@ -31,7 +31,10 @@ export {
   addPeopleToGroupsGoogleWorkspace,
   exportWifiUsers,
   exportPeople,
-  setActiveCourse
+  setActiveCourse,
+  createCourse,
+  getCourseById,
+  updateCourse
 } from "./client";
 
 export type {
