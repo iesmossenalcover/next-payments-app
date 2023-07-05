@@ -49,7 +49,7 @@ const PeopleToEvent = () => {
                 if (x.code === 0) {
                     alert("Actualitzat correctament")
                 } else {
-                    alert("S&apos;ha produït un error")
+                    alert("No es pot guardar. Una o més persones que vols llevar ja han pagat.")
                 }
             })
             .finally(() => setSaving(false));
