@@ -1,7 +1,7 @@
 import { getGroupsSelector } from "@/lib/apis/payments/client";
 import { Person } from "@/lib/apis/payments/models";
-import { useState, useEffect, Dispatch } from "react";
-import { Selector, SelectorComponent } from "../Selector";
+import { Dispatch } from "react";
+import { SelectorComponent } from "../Selector";
 import Toggle from "../Toggle";
 import { useStartApiRequest } from "@/lib/hooks/useApiRequest";
 import { displayKeyErrors } from "@/lib/utils";

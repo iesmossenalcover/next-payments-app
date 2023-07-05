@@ -42,7 +42,9 @@ const People = () => {
         return people
             .map(x => {
                 const academicRecordNumber = x.academicRecordNumber ? x.academicRecordNumber.toString() : "-";
-                return { id: x.id, documentId: x.documentId, firstName: x.firstName, lastName: x.lastName, academicRecordNumber: academicRecordNumber, group: x.groupName, amipa: x.amipa ? "Si" : "No", actions: "" };
+                const group = x.groupName ? x.groupName : "-";
+                const amipa = x.amipa ? "Si" : "No";
+                return { id: x.id, documentId: x.documentId, firstName: x.firstName, lastName: x.lastName, academicRecordNumber: academicRecordNumber, group, amipa, actions: "" };
             });
     }
 
@@ -202,9 +204,9 @@ const ExportPeople = () => {
     if (data) return <div className=" mt-4 ml-4 text-green-700 italic">Executat Correctament</div>;
 
     return (
-            <button
-                disabled={isLoading}
-                className='
+        <button
+            disabled={isLoading}
+            className='
                     mr-5
                     text-white 
                     bg-yellow-600 
@@ -216,7 +218,7 @@ const ExportPeople = () => {
                     px-3
                     rounded-lg
                     text-sm'
-                onClick={submit}>Exportar persones
-            </button>
+            onClick={submit}>Exportar persones
+        </button>
     )
 }
