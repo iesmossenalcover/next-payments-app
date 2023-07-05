@@ -55,5 +55,5 @@ export const useApiRequest = <T, U extends any[]>(
     }
   };
 
-  return { data, errors, isLoading, executeRequest };
+  return { data, errors, isLoading, executeRequest, setData };
 };

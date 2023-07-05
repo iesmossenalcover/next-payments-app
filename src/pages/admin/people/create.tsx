@@ -5,8 +5,8 @@ import PersonFields from "@/components/people/PersonFields";
 import Head from "next/head";
 import { Container } from "@/components/layout/SideBar";
 import { useApiRequest } from "@/lib/hooks/useApiRequest";
-import { useState } from "react";
 import Link from "next/link";
+import { useState } from "react";
 
 const defaultPerson: Person = {
     id: 0,
@@ -19,31 +19,17 @@ const defaultPerson: Person = {
 };
 
 const Create = () => {
-    const [showSuccess, setShowSuccess] = useState(false);
+    const [person, setPerson] = useState(defaultPerson);
     const { data, errors, isLoading, executeRequest } = useApiRequest(createPerson);
 
     const submit = async (p: Person) => {
-        const ok = await executeRequest(p);
-        if (ok) setShowSuccess(true);
+        await executeRequest(p);
     }
 
     const onFormSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const form = e.currentTarget;
-        const formData = new FormData(form);
-        const p: Person = {
-            id: 0,
-            name: formData.get("name") as string,
-            surname1: formData.get("surname1") as string,
-            surname2: formData.get("surname2") as string,
-            documentId: formData.get("documentId") as string,
-            groupId: parseInt(formData.get("groupId") as string),
-            academicRecordNumber: parseInt(formData.get("academicRecordNumber") as string) ?? undefined,
-            amipa: formData.get("amipa") === "on" ? true : false,
-            enrolled: formData.get("enrolled") === "on" ? true : false,
-            subjectsInfo: formData.get("subjectsInfo") as string ?? undefined,
-        };
-        submit(p);
+        if (!person) return;
+        submit(person);
     }
 
     const formDisabled = () => isLoading;
@@ -69,7 +55,8 @@ const Create = () => {
                                 <form action="#" method="post" onSubmit={onFormSubmit} autoComplete="off">
                                     <PersonFields
                                         errors={errors}
-                                        person={defaultPerson} />
+                                        person={person}
+                                        setPerson={setPerson} />
                                     <div>
                                         <input
                                             disabled={formDisabled()}
