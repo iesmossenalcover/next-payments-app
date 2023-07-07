@@ -24,6 +24,7 @@ const defaultEvent: Event = {
 
 
 const Create = () => {
+    const [event, setEvent] = useState(defaultEvent);
     const [created, setCreated] = useState(false);
     const { data: code, errors, isLoading, executeRequest } = useApiRequest(createEvent);
 
@@ -37,27 +38,11 @@ const Create = () => {
     const onFormSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        const form = e.currentTarget;
-        const formData = new FormData(form);
-        const date = formData.get("date") as string;
-        const start = formData.get("start") as string;
-        const end = formData.get("end") as string;
-
-        const event: Event = {
-            id: 0,
-            code: formData.get("code") as string,
-            name: formData.get("name") as string,
-            date: date ? new Date(date).toJSON() : new Date().toJSON(),
-            description: formData.get("description") as string,
-            price: parseFloat(formData.get("price") as string),
-            amipaPrice: parseFloat(formData.get("amipaPrice") as string),
-            publishDate: start ? new Date(start).toJSON() : new Date().toJSON(),
-            unpublishDate: end ? new Date(end).toJSON() : undefined,
-            enrollment: formData.get("enrollment") === "on" ? true : false,
-            amipa: formData.get("amipa") === "on" ? true : false,
-
-        };
-        
+        // const form = e.currentTarget;
+        // const formData = new FormData(form);
+        // const date = formData.get("date") as string;
+        // const start = formData.get("start") as string;
+        // const end = formData.get("end") as string;
         onSubmit(event);
     }
 
@@ -79,7 +64,8 @@ const Create = () => {
                             <form action="#" method="post" onSubmit={onFormSubmit} autoComplete="off">
                                 <EventFields
                                     errors={errors}
-                                    event={defaultEvent} />
+                                    event={event}
+                                    setEvent={setEvent} />
                                 <div>
                                     <input
                                         disabled={formDisabled()}

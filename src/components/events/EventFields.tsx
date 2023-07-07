@@ -1,16 +1,14 @@
 import { Event } from "@/lib/apis/payments/models";
-import { useState } from "react";
+import { Dispatch, useState } from "react";
 import Toggle from "../Toggle";
 
 interface EventComponentProps {
     errors?: Map<string, string[]>
     event: Event,
+    setEvent: Dispatch<Event>
 }
 
-const EventFields = ({ event, errors }: EventComponentProps) => {
-
-    const [isEnrollment, setIsEnrollment] = useState(!!event.enrollment)
-    const [isAmpipa, setIsAmpipa] = useState(!!event.amipa)
+const EventFields = ({ event, errors, setEvent }: EventComponentProps) => {
 
     const displayErrors = (key: string) => {
         if (!errors || !errors.has(key)) return null;
@@ -31,7 +29,9 @@ const EventFields = ({ event, errors }: EventComponentProps) => {
                     htmlFor="name">Nom</label>
                 <input
                     className="px-4 appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 leading-tight focus:outline-none focus:bg-white"
-                    id="name" name="name" defaultValue={event.name} />
+                    id="name" name="name"
+                    value={event.name}
+                    onChange={(e) => setEvent({ ...event, name: e.target.value })} />
                 {displayErrors("name")}
             </div>
 
@@ -44,8 +44,9 @@ const EventFields = ({ event, errors }: EventComponentProps) => {
                     id="description"
                     name="description"
                     rows={5}
-                    defaultValue={event.description}
-                    className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500">
+                    className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                    value={event.description}
+                    onChange={(e) => setEvent({ ...event, description: e.target.value })}>
                 </textarea>
 
                 {displayErrors("description")}
@@ -57,7 +58,9 @@ const EventFields = ({ event, errors }: EventComponentProps) => {
                     htmlFor="date">Data esdeveniment</label>
                 <input
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Data esdeveniment"
-                    name="date" id="date" type="datetime-local" defaultValue={event.date} />
+                    name="date" id="date" type="datetime-local"
+                    value={event.date}
+                    onChange={(e) => setEvent({ ...event, date: e.target.value })} />
 
                 {displayErrors("description")}
             </div>
@@ -71,7 +74,9 @@ const EventFields = ({ event, errors }: EventComponentProps) => {
                     id="price"
                     type="number"
                     step="any"
-                    name="price" defaultValue={event.price} />
+                    name="price"
+                    value={event.price}
+                    onChange={(e) => setEvent({ ...event, price: parseFloat(e.target.value) })} />
                 {displayErrors("price")}
             </div>
 
@@ -83,18 +88,22 @@ const EventFields = ({ event, errors }: EventComponentProps) => {
                     className="px-4 appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 leading-tight focus:outline-none focus:bg-white"
                     type="number"
                     step="any"
-                    id="amipaPrice" name="amipaPrice" defaultValue={event.amipaPrice} />
+                    id="amipaPrice" name="amipaPrice"
+                    value={event.amipaPrice}
+                    onChange={(e) => setEvent({ ...event, amipaPrice: parseFloat(e.target.value) })} />
                 {displayErrors("amipaPrice")}
             </div>
 
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex justify-between items-center">
                 <div>
                     <label
                         className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                         htmlFor="start">Publicar</label>
                     <input
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Data finalització"
-                        name="start" id="start" type="datetime-local" defaultValue={event.publishDate} />
+                        name="start" id="start" type="datetime-local"
+                        value={event.publishDate}
+                        onChange={(e) => setEvent({ ...event, publishDate: e.target.value })} />
                 </div>
                 <span className="mx-2 pt-7 text-gray-500 uppercase tracking-wide text-lg font-bold mb-2">fins</span>
                 <div>
@@ -104,28 +113,34 @@ const EventFields = ({ event, errors }: EventComponentProps) => {
                     <input
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                         placeholder="Data finalització"
-                        name="end" id="end" type="datetime-local" defaultValue={event.unpublishDate} />
+                        name="end" id="end" type="datetime-local"
+                        value={event.unpublishDate ?? ""}
+                        onChange={(e) => setEvent({ ...event, unpublishDate: e.target.value })} />
                 </div>
+            </div>
+            <div className="mb-6">
+                {displayErrors("publishDate")}
+                {displayErrors("unpublishDate")}
             </div>
             <div className="mb-6">
                 <Toggle
                     name="enrollment"
                     id="enrollment"
                     className="text-green-600"
-                    value={isEnrollment}
                     text="És un event de matricula?"
-                    onToggled={x => setIsEnrollment(x)}
+                    onToggled={val => setEvent({ ...event, enrollment: val })}
+                    value={event.enrollment}
                 />
             </div>
 
             <div className="mb-6">
                 <Toggle
                     name="amipa"
-                    value={isAmpipa}
                     id="amipa"
                     className="text-orange-600"
                     text="És un event per ser soci d'AMIPA?"
-                    onToggled={x => setIsAmpipa(x)}
+                    onToggled={val => setEvent({ ...event, amipa: val })}
+                    value={event.amipa}
                 />
             </div>
 

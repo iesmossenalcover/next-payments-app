@@ -65,7 +65,7 @@ const Admin = () => {
             <main className="text-center pt-10 flex flex-col min-h-screen justify-between mx-6">
 
                 <div>
-                    <h1 className='text-2xl ml-3 mb-3 tracking-wide font-bold text-left text-black'>Curs: {data?.currentCurs}</h1>
+                    <h1 className='text-2xl ml-3 mb-3 tracking-wide font-bold text-left text-green-600'>Curs: {data?.currentCurs}</h1>
                     <h1 className='text-lg mb-3 tracking-wide font-bold text-center text-gray-500 text-md'>Tauler Administratiu</h1>
 
                     <hr className="h-px mb-5 mt-5 border-2 bg-gray-700" />

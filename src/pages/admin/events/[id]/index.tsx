@@ -53,29 +53,7 @@ const Update = () => {
     const onFormSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault();
         setErrors(undefined);
-
-        const form = e.currentTarget;
-        const formData = new FormData(form);
-
-        const date = formData.get("date") as string;
-        const start = formData.get("start") as string;
-        const end = formData.get("end") as string;
-
-        const event: Event = {
-            id: parseInt(id as string),
-            code: formData.get("code") as string,
-            name: formData.get("name") as string,
-            date: date ? new Date(date).toJSON() : new Date().toJSON(),
-            description: formData.get("description") as string,
-            price: parseFloat(formData.get("price") as string),
-            amipaPrice: parseFloat(formData.get("amipaPrice") as string),
-            publishDate: start ? new Date(start).toJSON() : new Date().toJSON(),
-            unpublishDate: end ? new Date(end).toJSON() : undefined,
-            enrollment: formData.get("enrollment") == null ? false : true,
-            amipa: formData.get("amipa") == null ? false : true,
-
-        };
-
+        if (!event) return;
         await onSubmit(event);
     }
 
@@ -98,7 +76,8 @@ const Update = () => {
                         <form className="mt-5" action="#" method="post" onSubmit={onFormSubmit} autoComplete="off">
                             <EventFields
                                 errors={errors}
-                                event={event} />
+                                event={event}
+                                setEvent={setEvent} />
                             <div>
                                 <input
                                     disabled={formDisabled()}
