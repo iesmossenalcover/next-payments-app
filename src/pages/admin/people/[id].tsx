@@ -80,9 +80,12 @@ const Update = () => {
                                     htmlFor="mail">Correu
                                 </label>
                                 <div className="flex justify-between items-center">
-                                    <input disabled
+                                    <input
                                         className="px-4 appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 leading-tight focus:outline-none focus:bg-white"
-                                        id="mail" name="mail" defaultValue={person.email} />
+                                        id="mail" name="mail"
+                                        type="email"
+                                        value={person.email ?? ""}
+                                        onChange={(e) => setPerson({ ...person, email: e.target.value ? e.target.value : undefined })} />
                                     <button
                                         disabled={formDisabled()}
                                         title="Generar Email"
