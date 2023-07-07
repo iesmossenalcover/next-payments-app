@@ -7,7 +7,7 @@ import { getPersonById, updatePerson } from "@/lib/apis/payments";
 import { Container } from "@/components/layout/SideBar";
 import Head from "next/head";
 import { useApiRequest } from "@/lib/hooks/useApiRequest";
-import { plainErrors } from "@/lib/utils";
+import { displayKeyErrors, plainErrors } from "@/lib/utils";
 import { syncPersonGoogleWorkspace, updatePasswordGoogleWorkspace } from "@/lib/apis/payments/client";
 
 const Update = () => {
@@ -28,7 +28,7 @@ const Update = () => {
     const onFormSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (!person) return;
-        
+
         const ok = await updatePersonRequest(person);
         if (ok) {
             setShowUpdated(true);
@@ -86,6 +86,7 @@ const Update = () => {
                                         type="email"
                                         value={person.email ?? ""}
                                         onChange={(e) => setPerson({ ...person, email: e.target.value ? e.target.value : undefined })} />
+
                                     <button
                                         disabled={formDisabled()}
                                         title="Generar Email"
@@ -120,6 +121,8 @@ const Update = () => {
                                     <p>La contrasenya temporal és: {updatePasswordResponse.password}</p>
                                 </div> : null
                                 }
+
+                                {displayKeyErrors("email", updateErrors)}
                             </div>
 
                             <div>
