@@ -30,7 +30,6 @@ const Update = () => {
                 x.data.publishDate = toInputDateTime(publish);
                 x.data.unpublishDate = x.data.unpublishDate ? toInputDateTime(new Date(x.data.unpublishDate)) : undefined;
                 setEvent(x.data)
-
             });
     }, [id])
 
@@ -59,6 +58,8 @@ const Update = () => {
 
     const formDisabled = () => loading;
     if (!event) return null;
+
+    console.log(event.unpublishDate)
 
     return (
         <>

@@ -1,6 +1,7 @@
 import { Event } from "@/lib/apis/payments/models";
 import { Dispatch, useState } from "react";
 import Toggle from "../Toggle";
+import { toInputDateTime } from "@/lib/utils";
 
 interface EventComponentProps {
     errors?: Map<string, string[]>
@@ -103,7 +104,7 @@ const EventFields = ({ event, errors, setEvent }: EventComponentProps) => {
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Data finalització"
                         name="start" id="start" type="datetime-local"
                         value={event.publishDate}
-                        onChange={(e) => setEvent({ ...event, publishDate: e.target.value })} />
+                        onChange={(e) => setEvent({ ...event, publishDate: e.target.value ? e.target.value : toInputDateTime(new Date()) })} />
                 </div>
                 <span className="mx-2 pt-7 text-gray-500 uppercase tracking-wide text-lg font-bold mb-2">fins</span>
                 <div>
@@ -115,7 +116,7 @@ const EventFields = ({ event, errors, setEvent }: EventComponentProps) => {
                         placeholder="Data finalització"
                         name="end" id="end" type="datetime-local"
                         value={event.unpublishDate ?? ""}
-                        onChange={(e) => setEvent({ ...event, unpublishDate: e.target.value })} />
+                        onChange={(e) => setEvent({ ...event, unpublishDate: e.target.value ? e.target.value : undefined })} />
                 </div>
             </div>
             <div className="mb-6">
