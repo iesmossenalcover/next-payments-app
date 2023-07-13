@@ -58,7 +58,7 @@ const Create = () => {
             </Head>
             <main>
                 <div className="max-w-lg m-auto">
-                    <div className="m-5">
+                    <div className="mx-2 my-5">
                         {created ?
                             <SuccessAlert text={`Event afegit correctament el codi de l'event és: ${code}`} /> :
                             <form action="#" method="post" onSubmit={onFormSubmit} autoComplete="off">

@@ -59,8 +59,6 @@ const Update = () => {
     const formDisabled = () => loading;
     if (!event) return null;
 
-    console.log(event.unpublishDate)
-
     return (
         <>
             <Head>
@@ -71,7 +69,7 @@ const Update = () => {
             </Head>
             <main>
                 <div className="max-w-lg m-auto">
-                    <div className="m-5">
+                    <div className="mx-2 my-5">
                         {updated ? <SuccessAlert text="Event editat correctament." /> : null}
 
                         <form className="mt-5" action="#" method="post" onSubmit={onFormSubmit} autoComplete="off">

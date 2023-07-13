@@ -95,32 +95,27 @@ const EventFields = ({ event, errors, setEvent }: EventComponentProps) => {
                 {displayErrors("amipaPrice")}
             </div>
 
-            <div className="flex justify-between items-center">
-                <div>
-                    <label
-                        className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                        htmlFor="start">Publicar</label>
-                    <input
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Data finalització"
-                        name="start" id="start" type="datetime-local"
-                        value={event.publishDate}
-                        onChange={(e) => setEvent({ ...event, publishDate: e.target.value ? e.target.value : toInputDateTime(new Date()) })} />
-                </div>
-                <span className="mx-2 pt-7 text-gray-500 uppercase tracking-wide text-lg font-bold mb-2">fins</span>
-                <div>
-                    <label
-                        className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                        htmlFor="end">Retirar</label>
-                    <input
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                        placeholder="Data finalització"
-                        name="end" id="end" type="datetime-local"
-                        value={event.unpublishDate ?? ""}
-                        onChange={(e) => setEvent({ ...event, unpublishDate: e.target.value ? e.target.value : undefined })} />
-                </div>
+            <div className="mb-6">
+                <label
+                    className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                    htmlFor="start">Publicar</label>
+                <input
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Data finalització"
+                    name="start" id="start" type="datetime-local"
+                    value={event.publishDate}
+                    onChange={(e) => setEvent({ ...event, publishDate: e.target.value ? e.target.value : toInputDateTime(new Date()) })} />
+                {displayErrors("publishDate")}
             </div>
             <div className="mb-6">
-                {displayErrors("publishDate")}
+                <label
+                    className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                    htmlFor="end">Retirar</label>
+                <input
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                    placeholder="Data finalització"
+                    name="end" id="end" type="datetime-local"
+                    value={event.unpublishDate ?? ""}
+                    onChange={(e) => setEvent({ ...event, unpublishDate: e.target.value ? e.target.value : undefined })} />
                 {displayErrors("unpublishDate")}
             </div>
             <div className="mb-6">
