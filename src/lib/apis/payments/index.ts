@@ -34,7 +34,8 @@ export {
   setActiveCourse,
   createCourse,
   getCourseById,
-  updateCourse
+  updateCourse,
+  downloadTemplate
 } from "./client";
 
 export type {

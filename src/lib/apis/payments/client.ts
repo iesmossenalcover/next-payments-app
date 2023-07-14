@@ -168,6 +168,11 @@ export const exportPeople = async () => {
     await toFile(response);
 }
 
+export const downloadTemplate = async () => {
+    const response = await get(`${API_BASE_URL}/api/tasks/people`);
+    await toFile(response);
+}
+
 
 export const syncPeopleGoogleWorkspace = async (): Promise<Response<SyncPepoleResponse>> => {
     const response = await postJson(`${API_BASE_URL}/api/googleworkspace/people/sync`);
