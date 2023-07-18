@@ -36,7 +36,7 @@ export const SelectorComponent = ({ id, name, selector, onSelect, className = de
             value={value}
             onChange={onSelected}
             className={className}>
-            {selected === "" ? <option key={""} value={""}>-</option> : null}
+            {/* {selected === "" ? <option key={""} value={""}>-</option> : null} */}
             {options.map(x => <option key={x.key} value={x.key}>{x.value}</option>)}
         </select>
     );

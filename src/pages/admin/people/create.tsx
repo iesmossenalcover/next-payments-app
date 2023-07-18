@@ -13,7 +13,7 @@ const defaultPerson: Person = {
     name: "",
     surname1: "",
     documentId: "",
-    groupId: 0,
+    groupId: undefined,
     amipa: false,
     enrolled: false,
 };
