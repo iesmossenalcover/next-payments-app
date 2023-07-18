@@ -45,7 +45,7 @@ export interface PersonRow {
     lastName: string,
     groupId?: number,
     groupName?: string,
-    amipa: boolean,
+    amipa?: boolean,
     academicRecordNumber?: number
 }
 

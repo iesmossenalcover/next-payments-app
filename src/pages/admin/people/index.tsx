@@ -43,7 +43,7 @@ const People = () => {
             .map(x => {
                 const academicRecordNumber = x.academicRecordNumber ? x.academicRecordNumber.toString() : "-";
                 const group = x.groupName ? x.groupName : "-";
-                const amipa = x.amipa ? "Si" : "No";
+                const amipa = x.amipa === undefined ? "-" : x.amipa ? "Si" : "No";
                 return { id: x.id, documentId: x.documentId, firstName: x.firstName, lastName: x.lastName, academicRecordNumber: academicRecordNumber, group, amipa, actions: "" };
             });
     }

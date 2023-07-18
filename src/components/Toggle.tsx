@@ -18,7 +18,7 @@ const Toggle = ({ id, name, text, onToggled, value, className }: ToggleProps) =>
                     name={name}
                     type="checkbox"
                     className="sr-only peer"
-                    defaultChecked={value}
+                    checked={value}
                     onChange={onToggled ? e => onToggled(e.currentTarget.checked) : undefined} />
 
                 <div className="
