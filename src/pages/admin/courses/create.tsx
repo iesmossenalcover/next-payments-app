@@ -30,8 +30,8 @@ const Create = () => {
         const c: Course = {
             id: 0,
             name: formData.get("name") as string,
-            startDate: start ? new Date(start).toJSON() : new Date().toJSON(),
-            endDate: end ? new Date(end).toJSON() : new Date().toJSON(),
+            startDate: start ? new Date(start).toJSON() : undefined,
+            endDate: end ? new Date(end).toJSON() : undefined,
             active: false,
         };
         submit(c);

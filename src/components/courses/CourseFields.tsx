@@ -8,8 +8,8 @@ interface CourseComponentProps {
 
 const CourseFields = ({ course, errors }: CourseComponentProps) => {
     
-    const start = new Date(course.startDate);
-    const end = new Date(course.endDate);
+    const start = course.startDate ? new Date(course.startDate) : new Date();
+    const end = course.endDate ? new Date(course.endDate) : new Date();
 
     return (
         <>

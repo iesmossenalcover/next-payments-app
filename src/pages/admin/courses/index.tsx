@@ -40,8 +40,8 @@ const Courses = () => {
                 name: x.name,
                 active: x.active,
                 activeText: x.active ? "Sí" : "No",
-                startDate: displayDate(x.startDate),
-                endDate: displayDate(x.endDate),
+                startDate: x.startDate ? displayDate(x.startDate) : "",
+                endDate: x.endDate ? displayDate(x.endDate) : "",
                 actions: ""
             };
         });
