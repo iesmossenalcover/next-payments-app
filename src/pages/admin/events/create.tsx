@@ -38,11 +38,12 @@ const Create = () => {
     const onFormSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        // const form = e.currentTarget;
-        // const formData = new FormData(form);
-        // const date = formData.get("date") as string;
-        // const start = formData.get("start") as string;
-        // const end = formData.get("end") as string;
+        event.date = new Date(new Date(event.date).toUTCString()).toISOString();
+        event.publishDate = new Date(new Date(event.publishDate).toUTCString()).toISOString();
+        if (event.unpublishDate) {
+            event.unpublishDate = new Date(new Date(event.unpublishDate).toUTCString()).toISOString();
+        }
+        
         onSubmit(event);
     }
 
