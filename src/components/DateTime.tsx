@@ -7,10 +7,11 @@ interface DateTimeProps {
     placeholder?: string,
     initialValue: string,
     type: "datetime-local" | "date"
-    onDateChanged: (date: Date) => void,
+    required: boolean,
+    onDateChanged: (date: Date | undefined) => void,
 }
 
-const DateTime = ({ onDateChanged, placeholder, initialValue, className, name, id, type }: DateTimeProps) => {
+const DateTime = ({ onDateChanged, placeholder, initialValue, className, name, id, type, required }: DateTimeProps) => {
 
     const [value, setValue] = useState(initialValue);
 
@@ -21,11 +22,14 @@ const DateTime = ({ onDateChanged, placeholder, initialValue, className, name, i
         try {
             const date = new Date(inputValue);
             onDateChanged(date);
-        } catch { }
+        } catch {
+            onDateChanged(undefined);
+        }
     }
 
 
     return <input
+        required={required}
         className={className}
         placeholder={placeholder}
         name={name}

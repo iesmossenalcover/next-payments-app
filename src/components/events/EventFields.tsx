@@ -64,7 +64,8 @@ const EventFields = ({ event, errors, setEvent }: EventComponentProps) => {
                     name="date"
                     type="datetime-local"
                     initialValue={event.date}
-                    onDateChanged={date => setEvent({ ...event, date: date.toISOString() })} />
+                    required={true}
+                    onDateChanged={date => setEvent({ ...event, date: date ? date.toISOString() : new Date().toISOString() })} />
 
                 {displayErrors("description")}
             </div>
@@ -107,8 +108,9 @@ const EventFields = ({ event, errors, setEvent }: EventComponentProps) => {
                     id="start"
                     name="start"
                     type="datetime-local"
+                    required={true}
                     initialValue={event.publishDate}
-                    onDateChanged={date => setEvent({ ...event, publishDate: date.toISOString() })}
+                    onDateChanged={date => setEvent({ ...event, publishDate: date ? date.toISOString() : new Date().toISOString() })}
                 />
                 {displayErrors("publishDate")}
             </div>
@@ -121,8 +123,9 @@ const EventFields = ({ event, errors, setEvent }: EventComponentProps) => {
                     id="end"
                     name="end"
                     type="datetime-local"
-                    initialValue={event.unpublishDate ? event.unpublishDate : "pato"}
-                    onDateChanged={date => setEvent({ ...event, unpublishDate: date.toISOString() })}
+                    required={false}
+                    initialValue={event.unpublishDate ? event.unpublishDate : ""}
+                    onDateChanged={date => setEvent({ ...event, unpublishDate: date ? date.toISOString() : undefined })}
                 />
                 {/* <input
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"

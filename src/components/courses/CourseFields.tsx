@@ -33,6 +33,7 @@ const CourseFields = ({ course, errors }: CourseComponentProps) => {
                     id="startDate"
                     name="startDate"
                     type="date"
+                    required={true}
                     initialValue={toInputDate(start)}
                     onDateChanged={() => { }} />
                 {displayKeyErrors("startDate", errors)}
@@ -48,6 +49,7 @@ const CourseFields = ({ course, errors }: CourseComponentProps) => {
                     id="endDate"
                     name="endDate"
                     type="date"
+                    required={true}
                     initialValue={toInputDate(end)}
                     onDateChanged={() => { }} />
                 {displayKeyErrors("endDate", errors)}
