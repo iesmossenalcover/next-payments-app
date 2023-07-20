@@ -52,14 +52,7 @@ const Update = () => {
     const onFormSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault();
         setErrors(undefined);
-        if (!event) return; 
-
-        event.date = new Date(new Date(event.date).toUTCString()).toISOString();
-        event.publishDate = new Date(new Date(event.publishDate).toUTCString()).toISOString();
-        if (event.unpublishDate) {
-            event.unpublishDate = new Date(new Date(event.unpublishDate).toUTCString()).toISOString();
-        }
-
+        if (!event) return;
         await onSubmit(event);
     }
 

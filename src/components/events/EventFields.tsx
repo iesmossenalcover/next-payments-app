@@ -1,7 +1,7 @@
 import { Event } from "@/lib/apis/payments/models";
-import { Dispatch, useState } from "react";
+import { Dispatch } from "react";
 import Toggle from "../Toggle";
-import { toInputDateTime } from "@/lib/utils";
+import DateTime from "../DateTime";
 
 interface EventComponentProps {
     errors?: Map<string, string[]>
@@ -57,11 +57,14 @@ const EventFields = ({ event, errors, setEvent }: EventComponentProps) => {
                 <label
                     className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                     htmlFor="date">Data esdeveniment</label>
-                <input
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Data esdeveniment"
-                    name="date" id="date" type="datetime-local"
-                    value={toInputDateTime(new Date(event.date))}
-                    onChange={(e) => setEvent({ ...event, date: e.target.value ? e.target.value : toInputDateTime(new Date()) })} />
+
+                <DateTime
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                    id="date"
+                    name="date"
+                    type="datetime-local"
+                    initialValue={event.date}
+                    onDateChanged={date => setEvent({ ...event, date: date.toISOString() })} />
 
                 {displayErrors("description")}
             </div>
@@ -99,23 +102,34 @@ const EventFields = ({ event, errors, setEvent }: EventComponentProps) => {
                 <label
                     className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                     htmlFor="start">Publicar</label>
-                <input
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Data finalització"
-                    name="start" id="start" type="datetime-local"
-                    value={toInputDateTime(new Date(event.publishDate))}
-                    onChange={(e) => setEvent({ ...event, publishDate: e.target.value ? e.target.value : toInputDateTime(new Date()) })} />
+                <DateTime
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                    id="start"
+                    name="start"
+                    type="datetime-local"
+                    initialValue={event.publishDate}
+                    onDateChanged={date => setEvent({ ...event, publishDate: date.toISOString() })}
+                />
                 {displayErrors("publishDate")}
             </div>
             <div className="mb-6">
                 <label
                     className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                     htmlFor="end">Retirar</label>
-                <input
+                <DateTime
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                    id="end"
+                    name="end"
+                    type="datetime-local"
+                    initialValue={event.unpublishDate ? event.unpublishDate : "pato"}
+                    onDateChanged={date => setEvent({ ...event, unpublishDate: date.toISOString() })}
+                />
+                {/* <input
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                     placeholder="Data finalització"
                     name="end" id="end" type="datetime-local"
                     value={event.unpublishDate ? toInputDateTime(new Date(event.unpublishDate)) : ""}
-                    onChange={(e) => setEvent({ ...event, unpublishDate: e.target.value ? e.target.value : undefined })} />
+                    onChange={(e) => setEvent({ ...event, unpublishDate: e.target.value ? e.target.value : undefined })} /> */}
                 {displayErrors("unpublishDate")}
             </div>
             <div className="mb-6">

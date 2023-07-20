@@ -1,5 +1,6 @@
 import { Course } from "@/lib/apis/payments/models";
 import { displayKeyErrors, toInputDate } from "@/lib/utils";
+import DateTime from "../DateTime";
 
 interface CourseComponentProps {
     errors?: Map<string, string[]>
@@ -7,7 +8,7 @@ interface CourseComponentProps {
 }
 
 const CourseFields = ({ course, errors }: CourseComponentProps) => {
-    
+
     const start = course.startDate ? new Date(course.startDate) : new Date();
     const end = course.endDate ? new Date(course.endDate) : new Date();
 
@@ -27,10 +28,13 @@ const CourseFields = ({ course, errors }: CourseComponentProps) => {
                 <label
                     className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                     htmlFor="startDate">Data inici</label>
-                <input
+                <DateTime
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                    placeholder="Data inici"
-                    name="startDate" id="startDate" type="date" defaultValue={toInputDate(start)} />
+                    id="startDate"
+                    name="startDate"
+                    type="date"
+                    initialValue={toInputDate(start)}
+                    onDateChanged={() => { }} />
                 {displayKeyErrors("startDate", errors)}
             </div>
 
@@ -38,10 +42,14 @@ const CourseFields = ({ course, errors }: CourseComponentProps) => {
                 <label
                     className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                     htmlFor="endDate">Data fi</label>
-                <input
+
+                <DateTime
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                    placeholder="Data fi"
-                    name="endDate" id="endDate" type="date" defaultValue={toInputDate(end)} />
+                    id="endDate"
+                    name="endDate"
+                    type="date"
+                    initialValue={toInputDate(end)}
+                    onDateChanged={() => { }} />
                 {displayKeyErrors("endDate", errors)}
             </div>
         </>
