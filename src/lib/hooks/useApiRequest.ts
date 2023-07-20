@@ -11,13 +11,13 @@ export const useStartApiRequest = <T, U extends any[]>(
   apiCall: ApiCallType<T, U>,
   ...args: U
 ) => {
-  const { data, errors, isLoading, executeRequest } = useApiRequest(apiCall);
+  const { data, errors, isLoading, executeRequest, setData } = useApiRequest(apiCall);
 
   useEffect(() => {
     executeRequest(...args);
   }, []);
 
-  return { data, errors, isLoading, executeRequest };
+  return { data, errors, isLoading, executeRequest, setData };
 };
 
 export const useApiRequest = <T, U extends any[]>(
