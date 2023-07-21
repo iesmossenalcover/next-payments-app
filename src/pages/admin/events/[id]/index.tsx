@@ -1,12 +1,11 @@
 import { SuccessAlert } from "@/components/Alerts";
-import { createEvent, getEventById, updateEvent } from "@/lib/apis/payments/client";
+import { getEventById, updateEvent } from "@/lib/apis/payments/client";
 import { Event } from "@/lib/apis/payments/models";
 import { useEffect, useState } from "react";
 import EventFields from "@/components/events/EventFields";
 import { Container } from "@/components/layout/SideBar";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { toInputDateTime } from "@/lib/utils";
 
 const Update = () => {
     const router = useRouter()
@@ -24,11 +23,6 @@ const Update = () => {
                 if (!x.data) {
                     return;
                 }
-                const date = new Date(x.data.date);
-                const publish = new Date(x.data.publishDate);
-                x.data.date = toInputDateTime(date);
-                x.data.publishDate = toInputDateTime(publish);
-                x.data.unpublishDate = x.data.unpublishDate ? toInputDateTime(new Date(x.data.unpublishDate)) : undefined;
                 setEvent(x.data)
             });
     }, [id])
@@ -53,6 +47,9 @@ const Update = () => {
         e.preventDefault();
         setErrors(undefined);
         if (!event) return;
+
+        console.log(event)
+
         await onSubmit(event);
     }
 

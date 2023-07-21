@@ -2,6 +2,7 @@ import { Event } from "@/lib/apis/payments/models";
 import { Dispatch } from "react";
 import Toggle from "../Toggle";
 import { DateTime } from "@/components/form";
+import { toInputDateTime } from "@/lib/utils";
 
 interface EventComponentProps {
     errors?: Map<string, string[]>
@@ -63,7 +64,7 @@ const EventFields = ({ event, errors, setEvent }: EventComponentProps) => {
                     id="date"
                     name="date"
                     type="datetime-local"
-                    initialValue={event.date}
+                    initialValue={toInputDateTime(new Date(event.date))}
                     required={true}
                     onDateChanged={date => setEvent({ ...event, date: date ? date.toISOString() : new Date().toISOString() })} />
 
@@ -109,7 +110,7 @@ const EventFields = ({ event, errors, setEvent }: EventComponentProps) => {
                     name="start"
                     type="datetime-local"
                     required={true}
-                    initialValue={event.publishDate}
+                    initialValue={toInputDateTime(new Date(event.publishDate))}
                     onDateChanged={date => setEvent({ ...event, publishDate: date ? date.toISOString() : new Date().toISOString() })}
                 />
                 {displayErrors("publishDate")}
@@ -124,7 +125,7 @@ const EventFields = ({ event, errors, setEvent }: EventComponentProps) => {
                     name="end"
                     type="datetime-local"
                     required={false}
-                    initialValue={event.unpublishDate ? event.unpublishDate : ""}
+                    initialValue={event.unpublishDate ? toInputDateTime(new Date(event.unpublishDate)) : ""}
                     onDateChanged={date => setEvent({ ...event, unpublishDate: date ? date.toISOString() : undefined })}
                 />
                 {displayErrors("unpublishDate")}
