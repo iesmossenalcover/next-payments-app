@@ -1,7 +1,7 @@
 import { Event } from "@/lib/apis/payments/models";
 import { Dispatch } from "react";
 import Toggle from "../Toggle";
-import DateTime from "../DateTime";
+import { DateTime } from "@/components/form";
 
 interface EventComponentProps {
     errors?: Map<string, string[]>
@@ -127,12 +127,6 @@ const EventFields = ({ event, errors, setEvent }: EventComponentProps) => {
                     initialValue={event.unpublishDate ? event.unpublishDate : ""}
                     onDateChanged={date => setEvent({ ...event, unpublishDate: date ? date.toISOString() : undefined })}
                 />
-                {/* <input
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                    placeholder="Data finalització"
-                    name="end" id="end" type="datetime-local"
-                    value={event.unpublishDate ? toInputDateTime(new Date(event.unpublishDate)) : ""}
-                    onChange={(e) => setEvent({ ...event, unpublishDate: e.target.value ? e.target.value : undefined })} /> */}
                 {displayErrors("unpublishDate")}
             </div>
             <div className="mb-6">

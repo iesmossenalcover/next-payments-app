@@ -18,7 +18,6 @@ const DateTime = ({ onDateChanged, placeholder, initialValue, className, name, i
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         const inputValue = e.target.value;
         setValue(inputValue);
-
         try {
             const date = new Date(inputValue);
             onDateChanged(date);

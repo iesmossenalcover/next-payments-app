@@ -1,6 +1,6 @@
 import { Course } from "@/lib/apis/payments/models";
 import { displayKeyErrors, toInputDate } from "@/lib/utils";
-import DateTime from "../DateTime";
+import { DateTime } from "@/components/form";
 
 interface CourseComponentProps {
     errors?: Map<string, string[]>
