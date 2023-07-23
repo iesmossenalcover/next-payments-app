@@ -63,6 +63,7 @@ export type {
   SigninResponse,
   SyncPersonResponse,
   UpdatePasswordResponse,
+  CreateOrderCommand
 } from "./models";
 
 export { SigninStatus } from "./models";

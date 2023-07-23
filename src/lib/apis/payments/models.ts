@@ -71,6 +71,16 @@ export interface PersonActiveEvent {
     selectable: boolean,
 }
 
+export interface SelectedEvent {
+    code: string;
+    quantity?: number;
+}
+
+export interface CreateOrderCommand {
+    documentId: string,
+    events: SelectedEvent[]
+}
+
 export interface CreateOrderResponse {
     url: string,
     merchantParameters: string,

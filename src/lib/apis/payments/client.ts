@@ -1,4 +1,4 @@
-import { BatchUploadSummary, Identity, PersonActiveEventsVm, Person, PersonRow, Response, SigninResponse, CreateOrderResponse, EventRow, Event, GetOrderInfo, EventPeople, EventPayments, AdminInfo, AppConfig, EventSummaryVm, SyncPersonResponse, UpdatePasswordResponse, GroupRow, Group, SyncPepoleResponse, Course } from "./models"
+import { BatchUploadSummary, Identity, PersonActiveEventsVm, Person, PersonRow, Response, SigninResponse, CreateOrderResponse, EventRow, Event, GetOrderInfo, EventPeople, EventPayments, AdminInfo, AppConfig, EventSummaryVm, SyncPersonResponse, UpdatePasswordResponse, GroupRow, Group, SyncPepoleResponse, Course, CreateOrderCommand } from "./models"
 import { deleteJson, get, postJson, putJson, toFile } from "./baseclient"
 import { Selector } from "@/components/Selector"
 import { ApiResult } from "@/lib/hooks/useApiRequest"
@@ -52,7 +52,7 @@ export const createCourse = async (c: Course): Promise<ApiResult<number>> => {
     if (data.errors) {
         data.errors = new Map(Object.entries(data.errors));
     }
-    
+
     return data;
 }
 
@@ -267,8 +267,8 @@ export const getPersonActiveEvents = async (documentId: string): Promise<Respons
     return data;
 }
 
-export const createOrder = async (documentId: string, eventCodes: string[]): Promise<Response<CreateOrderResponse>> => {
-    const response = await postJson(`${API_BASE_URL}/api/orders`, { documentId, eventCodes });
+export const createOrder = async (cmd: CreateOrderCommand): Promise<Response<CreateOrderResponse>> => {
+    const response = await postJson(`${API_BASE_URL}/api/orders`, cmd);
     const data = await response.json() as Response<CreateOrderResponse>;
 
     if (data.errors) {

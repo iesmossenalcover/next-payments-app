@@ -167,7 +167,16 @@ const SecondStep = ({ data }: SecondStepProps) => {
     const handlePayClick = async () => {
         setLoading(true);
         const selectedEvents = getSelectedEvents();
-        const response = await createOrder(person.documentId, selectedEvents.map(x => x.event.code));
+        const cmd = {
+            documentId: person.documentId,
+            events: selectedEvents.map(x => (
+                {
+                    code: x.event.code,
+                    quantity: x.event.displayQuantitySelector ? x.quantity : undefined
+                }
+            ))
+        };
+        const response = await createOrder(cmd);
         if (response.errors) {
             setErrors(response.errors)
         } else {
