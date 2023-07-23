@@ -65,8 +65,17 @@ export interface PersonActiveEvent {
     name: string,
     date: string,
     price: number,
+    displayQuantitySelector: boolean,
+    maxQuantity: number,
     currencySymbol: string,
     selectable: boolean,
+}
+
+export interface SelectEvent {
+    code: string,
+    quantity: number,
+    selected: boolean,
+    price: number,
 }
 
 export interface CreateOrderResponse {

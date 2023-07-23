@@ -62,7 +62,8 @@ export type {
   Response,
   SigninResponse,
   SyncPersonResponse,
-  UpdatePasswordResponse
+  UpdatePasswordResponse,
+  SelectEvent as SelectedEvent
 } from "./models";
 
 export { SigninStatus } from "./models";
