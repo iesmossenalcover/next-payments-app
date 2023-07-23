@@ -2,7 +2,7 @@ import Head from 'next/head'
 import { Noto_Sans } from '@next/font/google';
 import { useEffect, useRef, useState } from 'react';
 import { createOrder, getPersonActiveEvents, PersonActiveEvent, PersonActiveEventsVm } from '@/lib/apis/payments';
-import { CreateOrderResponse, SelectEvent } from '@/lib/apis/payments/models';
+import { CreateOrderResponse } from '@/lib/apis/payments/models';
 import { displayDate } from '@/lib/utils';
 import { SelectorComponent } from '@/components/Selector';
 
@@ -129,6 +129,13 @@ const FirstStep = ({ onLoaded }: FirstStepProps) => {
     )
 }
 
+interface Item {
+    event: PersonActiveEvent,
+    selected: boolean,
+    quantity: number
+}
+
+
 interface SecondStepProps {
     data: PersonActiveEventsVm
 }
@@ -136,7 +143,9 @@ interface SecondStepProps {
 const SecondStep = ({ data }: SecondStepProps) => {
     const { events, person } = data;
     const [loading, setLoading] = useState(false);
-    const [selected, setSelected] = useState<SelectEvent[]>(events.map(x => ({ code: x.code, quantity: 0, selected: false, price: x.price })));
+
+    const [eventItems, setEventItems] = useState<Item[]>(events.map(x => ({ event: x, quantity: 0, selected: false })));
+
     const [errors, setErrors] = useState<Map<string, string[]>>();
     const [paymentForm, setPaymentForm] = useState<CreateOrderResponse | undefined>(undefined);
     const [displayEnrollment, setDisplayEnrollment] = useState(false)
@@ -148,18 +157,17 @@ const SecondStep = ({ data }: SecondStepProps) => {
         }
     }, [paymentForm]);
 
-    const toogleEvent = (idx: number, check: boolean, quantity: number) => {
-        selected[idx].selected = check;
-        selected[idx].quantity = quantity;
-        setSelected([...selected]);
+    const setEventItem = (idx: number, eventItem: Item) => {
+        eventItems[idx] = eventItem;
+        setEventItems([...eventItems]);
     }
 
-    const getSelectedEvents = () => selected.filter((_, idx) => selected[idx].selected);
+    const getSelectedEvents = () => eventItems.filter(x => x.selected);
 
     const handlePayClick = async () => {
         setLoading(true);
         const selectedEvents = getSelectedEvents();
-        const response = await createOrder(person.documentId, selectedEvents.map(x => x.code));
+        const response = await createOrder(person.documentId, selectedEvents.map(x => x.event.code));
         if (response.errors) {
             setErrors(response.errors)
         } else {
@@ -231,7 +239,7 @@ const SecondStep = ({ data }: SecondStepProps) => {
             return null
         }
 
-        let total = selectedEvents.reduce((part, x) => part + x.price * Math.max(x.quantity, 1), 0);
+        let total = selectedEvents.reduce((part, x) => part + x.event.price * Math.max(x.quantity, 1), 0);
 
         return (
             <>
@@ -264,13 +272,12 @@ const SecondStep = ({ data }: SecondStepProps) => {
                         font-bold
                         mb-10">Selecciona els esdeveniments a pagar</span>
                 <ul>
-                    {events.map((x, idx) =>
-                        <li key={x.code} className="w-full mb-5 py-4 px-2 md:text-lg border-solid border-[1px] border-slate-300">
-                            <Event
-                                event={x}
+                    {eventItems.map((x, idx) =>
+                        <li key={x.event.code} className="w-full mb-5 py-4 px-2 md:text-lg border-solid border-[1px] border-slate-300">
+                            <EventLine
+                                item={x}
                                 idx={idx}
-                                selectedEvents={selected}
-                                toogleEvent={toogleEvent} />
+                                setEventItem={setEventItem} />
                         </li>
                     )}
                 </ul>
@@ -335,98 +342,72 @@ const SecondStep = ({ data }: SecondStepProps) => {
 
 interface EventProps {
     idx: number,
-    event: PersonActiveEvent,
-    selectedEvents: SelectEvent[],
-    toogleEvent: (idx: number, check: boolean, quantity: number) => void,
+    item: Item,
+    setEventItem: (idx: number, event: Item) => void,
 }
 
-const Event = ({ idx, event, selectedEvents, toogleEvent }: EventProps) => {
+const EventLine = ({ idx, item, setEventItem: setEvent }: EventProps) => {
+    const { event, selected, quantity } = item;
+    const options = Array.from(Array(item.event.maxQuantity + 1), (_, x) => ({ key: x.toString(), value: x }));
+
+    const onSelectQuantity = (q: string) => {
+        const quantity = parseInt(q);
+        item.selected = quantity > 0;
+        item.quantity = quantity;
+        setEvent(idx, item);
+    }
+
     const onSelectEvent = (checked: boolean) => {
-        toogleEvent(idx, checked, selectedEvents[idx].quantity);
+        const quantity = checked ? Math.max(item.quantity, 1) : 0;
+        item.selected = checked;
+        item.quantity = quantity;
+        setEvent(idx, item);
     }
 
-    const renderEventQuantity = () => {
-        const options = Array.from(Array(event.maxQuantity), (_, x) => ({ key: x.toString(), value: x }));
-
-        const onSelectQuantity = (q: string) => {
-            const quantity = parseInt(q);
-            toogleEvent(idx, quantity > 0, quantity);
-        }
-
-        const onSelectEventWithQuantity = (checked: boolean) => {
-            if (checked) {
-                toogleEvent(idx, true, Math.max(selectedEvents[idx].quantity, 1));
-            }
-            else {
-                toogleEvent(idx, false, 0);
-            }
-        }
-
-        return (
-            <div className=''>
-                <div className="w-full flex justify-between items-center ">
-                    <div className="flex items-center ">
-                        <input id={`event_${event.code}`}
-                            aria-describedby="helper-checkbox-text"
-                            type="checkbox"
-                            disabled={!event.selectable}
-                            className="w-5 h-5
-                                text-blue-600
-                                bg-gray-100
-                                border-gray-300
-                                rounded
-                                focus:ring-2"
-                            checked={selectedEvents[idx].selected}
-                            onChange={(e) => onSelectEventWithQuantity(e.target.checked)}
-                        />
-                        <div>
-                            <label htmlFor={`event_${event.code}`} className="ml-2 select-none text-gray-900">
-                                {event.name}
-                                <span className='hidden md:inline-block'>&nbsp;- {displayDate(event.date)}</span>
-                            </label>
-                            <div className='ml-2 text-sm text-slate-700 italic'>Preu unitat: {event.price} {event.currencySymbol}</div>
-                        </div>
-                    </div>
-                    <SelectorComponent
-                        id={`"quantity_"${event.code}`}
-                        name={`"quantity_"${event.code}`}
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 py-1 px-2.5"
-                        selector={{ selected: selectedEvents[idx].quantity.toString(), options }}
-                        onSelect={onSelectQuantity} />
-                        <div className='hidden md:inline-block'>{event.price * selectedEvents[idx].quantity} {event.currencySymbol}</div>
-                </div>
-            </div>
-        )
-    }
-
-    const renderEvent = () => {
-        return (
-            <div className='flex items-center '>
+    return (
+        <div className="w-full flex justify-between items-center ">
+            <div className="flex items-center ">
                 <input id={`event_${event.code}`}
                     aria-describedby="helper-checkbox-text"
                     type="checkbox"
                     disabled={!event.selectable}
-                    className=" w-5 h-5
-                                text-blue-600
-                                bg-gray-100
-                                border-gray-300
-                                rounded
-                                focus:ring-2"
-                    checked={selectedEvents[idx].selected}
+                    className="w-5 h-5
+                    text-blue-600
+                    bg-gray-100
+                    border-gray-300
+                    rounded
+                    focus:ring-2"
+                    checked={selected}
                     onChange={(e) => onSelectEvent(e.target.checked)}
                 />
-                <div className="ml-2 w-full flex justify-between">
-                    <div>
-                        <label htmlFor={`event_${event.code}`}
-                            className="select-none font-medium text-gray-900">{`${event.name} - ${displayDate(event.date)}`}</label>
-                    </div>
-                    <div>{event.price} {event.currencySymbol}</div>
+                <div>
+                    <label htmlFor={`event_${event.code}`} className="ml-2 select-none text-gray-900">
+                        {event.name}
+                        <span className='hidden md:inline-block'>&nbsp;- {displayDate(event.date)}</span>
+                    </label>
+                    {
+                        event.displayQuantitySelector ?
+                            <div className='ml-2 text-sm text-slate-700 italic'>Preu individual: {event.price} {event.currencySymbol}</div>
+                            : null
+                    }
                 </div>
             </div>
-        )
-    }
-
-    return <>
-        {event.displayQuantitySelector ? renderEventQuantity() : renderEvent()}
-    </>;
+            {
+                event.displayQuantitySelector ?
+                    <SelectorComponent
+                        id={`"quantity_"${event.code}`}
+                        name={`"quantity_"${event.code}`}
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 py-1 px-2.5"
+                        selector={{ selected: quantity.toString(), options }}
+                        onSelect={onSelectQuantity} /> : null
+            }
+            <div className={`${event.displayQuantitySelector ? 'hidden' : ''} md:inline-block`}>
+                {
+                    event.displayQuantitySelector ?
+                        <>{event.price * quantity} {event.currencySymbol}</> :
+                        <>{event.price} {event.currencySymbol}</>
+                }
+            </div>
+        </div>
+    );
 }
