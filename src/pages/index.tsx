@@ -26,7 +26,7 @@ const Home = () => {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <main className={`${font.className} container mx-auto px-5 mt-10  max-w-2xl`}>
+            <main className={`${font.className} container mx-auto px-1 mt-10  max-w-2xl`}>
                 {step === 1 ? <FirstStep onLoaded={onEventsLoaded} /> : null}
                 {step === 2 && viewModel ? <SecondStep data={viewModel} /> : null}
             </main>
@@ -265,7 +265,7 @@ const SecondStep = ({ data }: SecondStepProps) => {
                         mb-10">Selecciona els esdeveniments a pagar</span>
                 <ul>
                     {events.map((x, idx) =>
-                        <li key={x.code} className="w-full mb-7 md:text-lg">
+                        <li key={x.code} className="w-full mb-5 py-4 px-2 md:text-lg border-solid border-[1px] border-slate-300">
                             <Event
                                 event={x}
                                 idx={idx}
