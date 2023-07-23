@@ -276,5 +276,6 @@ export interface EventSummary {
     fullName: string,
     groupName: string,
     groupId: number,
-    paid: boolean
+    paid: boolean,
+    quantity?: number,
 }

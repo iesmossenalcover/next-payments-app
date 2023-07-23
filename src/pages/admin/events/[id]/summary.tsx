@@ -20,8 +20,8 @@ const EventSummaries = () => {
                     setData(x.data);
                 }
             })
-            
-        }, [id])
+
+    }, [id])
 
     if (!data) return null;
 
@@ -56,7 +56,6 @@ const EventSummaries = () => {
                         <h4 className="font-bold text-3xl ml-3">{`${data.name} - ${displayDate(data.date)}`}</h4>
                     </div>
                 </div>
-                {/* <button onClick={print}>Imprimir</button> */}
                 <hr className="h-px mt-3 mb-8 bg-gray-300 border-0" />
                 <div className="flex print:hidden">
                     <SelectorComponent
@@ -64,7 +63,7 @@ const EventSummaries = () => {
                         name='course'
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
                         onSelect={val => setSelectedGroup(parseInt(val))}
-                        selector={{ selected: `${selectedGroup}`, options: [ { key: "0", value: "Tots" }, ...data.groups ] }} />
+                        selector={{ selected: `${selectedGroup}`, options: [{ key: "0", value: "Tots" }, ...data.groups] }} />
 
                     <button
                         onClick={() => window.print()}
@@ -79,16 +78,16 @@ const EventSummaries = () => {
                             rounded-lg
                             ml-5
                             text-sm px-2 py-1 text-center'>
-                            Imprimir
-                        </button>
+                        Imprimir
+                    </button>
                 </div>
 
                 <h3 className="mt-4 text-lg font-bold text-green-700">Pagat: {displayPaidEvents.length}</h3>
                 <ul>
                     {
-                        displayPaidEvents.map(x => 
+                        displayPaidEvents.map(x =>
                             <li key={x.id} className="mt-3 font-semibold">
-                                {x.groupName} - {x.fullName}
+                                {x.groupName} - {x.fullName} {x.quantity ? ` - x${x.quantity}` : null}
                             </li>
                         )
                     }
@@ -97,7 +96,7 @@ const EventSummaries = () => {
                 <h3 className="mt-4 text-lg font-bold text-red-700">No Pagat: {displayUnpaidEvents.length}</h3>
                 <ul>
                     {
-                        displayUnpaidEvents.map(x => 
+                        displayUnpaidEvents.map(x =>
                             <li key={x.id} className="mt-3 font-semibol">
                                 {x.groupName} - {x.fullName}
                             </li>
@@ -114,6 +113,6 @@ export default function EventSummaryPage() {
 
 
     return (
-            <EventSummaries />
+        <EventSummaries />
     )
 };
