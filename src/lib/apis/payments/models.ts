@@ -231,6 +231,8 @@ export interface EventPayments {
     code: string
     name: string,
     date: string,
+    quantitySelector: boolean,
+    maxQuantity?: number,
     summary: PaymentSummary
     paidEvents: EventPayment[]
     unPaidEvents: EventPayment[]
@@ -243,9 +245,6 @@ export interface PaymentSummary {
     totalPaidCount: number
     amipaPaidCount: number
     paidCount: number
-    total: number
-    amipa: number
-    noAmipa: number
     totalPaid: number
     amipaPaid: number
     noAmipaPaid: number
@@ -258,7 +257,9 @@ export interface EventPayment {
     amipa: boolean,
     price: number,
     group: string,
-    paid: boolean
+    paid: boolean,
+    quantity: number,
+
 }
 
 export interface EventSummaryVm {

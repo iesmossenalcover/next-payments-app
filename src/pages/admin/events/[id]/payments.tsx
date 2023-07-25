@@ -6,13 +6,13 @@ import { Table } from "@/components/table";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { displayDate } from "@/lib/utils";
+import { SelectorComponent, SelectorOption } from "@/components/Selector";
 
 
 const tableHeaders = {
     id: "",
     personesTotal: "Recompte Total",
     personesActual: "Recompte Actual",
-    dinersTotal: "Diners Totals",
     dinersActual: "Diners Actuals"
 };
 
@@ -20,13 +20,12 @@ interface TableRow {
     id: string,
     personesTotal: string,
     personesActual: string,
-    dinersTotal: string,
     dinersActual: string
 };
 
 const EventPayments = () => {
     const router = useRouter()
-    const [data, setData] = useState<EventPayments | undefined>(undefined)
+    const [data, setData] = useState<EventPayments | undefined>(undefined);
 
     const { id } = router.query
 
@@ -37,21 +36,18 @@ const EventPayments = () => {
                 id: "No Amipa",
                 personesTotal: data.summary.noAmipaCount,
                 personesActual: data.summary.paidCount,
-                dinersTotal: data.summary.noAmipa + " €",
                 dinersActual: data.summary.noAmipaPaid + " €"
             },
             {
                 id: "Amipa",
                 personesTotal: data.summary.amipaCount,
                 personesActual: data.summary.amipaPaidCount,
-                dinersTotal: data.summary.amipa + " €",
                 dinersActual: data.summary.amipaPaid + " €"
             },
             {
                 id: "Total",
                 personesTotal: data.summary.totalCount,
                 personesActual: data.summary.totalPaidCount,
-                dinersTotal: data.summary.total + " €",
                 dinersActual: data.summary.totalPaid + " €"
             }
         ];
@@ -63,7 +59,6 @@ const EventPayments = () => {
             id: x.id,
             personesTotal: x.personesTotal.toString() || '',
             personesActual: x.personesActual.toString() || '',
-            dinersTotal: x.dinersTotal.toString() || '',
             dinersActual: x.dinersActual.toString() || '',
         }));
     };
@@ -83,35 +78,15 @@ const EventPayments = () => {
 
     if (!data) return null;
 
-
-    const payment = async (id: number, v: boolean, di: string, n: string) => {
-        let del = null;
-        if (v) {
-            del = confirm(`Marcar com a pagat l'alumne ${n} amb DNI: ${di} ?`);
-
-        } else {
-            del = confirm(`Desmarcar de pagats l'alumne ${n} amb DNI: ${di} ?`);
-        }
-        if (del) {
-            const result = await setPayment(id, v);
-            if (!result.errors) {
-                loadEventsPayments();
-            } else {
-                alert("No s'ha pogut actualitzar")
-            }
-        }
-    }
+    const options = Array.from(Array(data.maxQuantity ?? 0), (_, x) => ({ key: (x + 1).toString(), value: x + 1 }));
 
     const displayEvents = (events: EventPayment[]) => {
         return events.map(x => (
-            <li key={x.id} className="relative hover:text-blue-900 hover:font-bold">
-                {x.group} - {x.documentId} - {x.fullName}
-
-                {
-                    x.paid ?
-                        <button onClick={() => payment(x.id, false, x.documentId, x.fullName)} className="absolute inset-y-0 right-0 text-red-600 font-bold">Desmarcar Pagat</button> :
-                        <button onClick={() => payment(x.id, true, x.documentId, x.fullName)} className="absolute inset-y-0 right-0 text-green-600 font-bold">Marcar Pagat</button>
-                }
+            <li key={x.id} className="hover:text-blue-900 hover:font-bold">
+                <div className="flex justify-between">
+                    <div>{x.group} - {x.documentId} - {x.fullName} {x.paid && data.quantitySelector ? `- x${x.quantity}` : ''}</div>
+                    <SetPaid event={data} payment={x} options={options} setPaidCallback={loadEventsPayments} />
+                </div>
                 <hr className="h-px mt-1 mb-4 bg-gray-200 border-0"></hr>
             </li>
         ))
@@ -121,14 +96,12 @@ const EventPayments = () => {
     const unPaidEvents = displayEvents(data.unPaidEvents)
 
 
-    const summaryURL = () => `${window.location.protocol}//${window.location.hostname}/admin/events/${data.code}/summary`;
+    const summaryURL = () => `${window.location.protocol}//${window.location.host}/admin/events/${data.code}/summary`;
 
     const copyToClipboard = () => {
         navigator.clipboard.writeText(summaryURL());
         alert("Copiat al porta-retalls");
     }
-
-
 
     return (
 
@@ -181,6 +154,78 @@ const EventPayments = () => {
             </main>
         </>
     );
+}
+
+interface SetPaidProps {
+    event: EventPayments,
+    payment: EventPayment,
+    options: SelectorOption[],
+    setPaidCallback: () => void,
+}
+
+const SetPaid = ({ event, payment, options, setPaidCallback }: SetPaidProps) => {
+
+    const [quantity, setQuantity] = useState(Math.max(1, payment.quantity));
+
+    const setPaid = async (id: number, v: boolean, di: string, n: string) => {
+        let del = null;
+        if (v) {
+            del = confirm(`Marcar com a pagat l'alumne ${n} amb DNI: ${di} ?`);
+
+        } else {
+            del = confirm(`Desmarcar de pagats l'alumne ${n} amb DNI: ${di} ?`);
+        }
+        if (del) {
+            const result = await setPayment(id, v, quantity);
+            if (!result.errors) {
+                setPaidCallback();
+            } else {
+                alert("No s'ha pogut actualitzar")
+            }
+        }
+    }
+
+    if (payment.paid) {
+        return (
+            <button
+                onClick={() => setPaid(payment.id, false, payment.documentId, payment.fullName)}
+                className="text-red-600 font-bold">
+                Desmarcar Pagat
+            </button>
+        )
+
+    }
+    else {
+
+        return (
+            <div>
+                {event.quantitySelector ?
+                    <SelectorComponent
+                        id={`set_${payment.id}`}
+                        name={`set_${payment.id}`}
+                        className="
+                            bg-gray-50 border
+                            border-gray-300
+                            text-gray-900
+                            text-sm
+                            rounded-lg
+                            focus:ring-blue-500
+                            focus:border-blue-500
+                            py-1
+                            px-2.5
+                            mr-4"
+                        onSelect={(x) => setQuantity(parseInt(x))}
+                        selector={{ selected: `${quantity}`, options }}
+                    />
+                    : null}
+                <button
+                    onClick={() => setPaid(payment.id, true, payment.documentId, payment.fullName)}
+                    className="text-green-600 font-bold">
+                    Marcar Pagat
+                </button>
+            </div>
+        )
+    }
 }
 
 export default function EventPaymentsPage() {
