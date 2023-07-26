@@ -195,6 +195,7 @@ export interface Event {
     date: string,
     price: number,
     amipaPrice: number,
+    maxQuantity: number,
     publishDate: string,
     unpublishDate?: string,
     enrollment: boolean,

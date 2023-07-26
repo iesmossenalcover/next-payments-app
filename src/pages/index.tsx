@@ -401,21 +401,23 @@ const EventLine = ({ idx, item, setEventItem: setEvent }: EventProps) => {
                     }
                 </div>
             </div>
-            {
-                event.displayQuantitySelector ?
-                    <SelectorComponent
-                        id={`"quantity_"${event.code}`}
-                        name={`"quantity_"${event.code}`}
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 py-1 px-2.5"
-                        selector={{ selected: quantity.toString(), options }}
-                        onSelect={onSelectQuantity} /> : null
-            }
-            <div className={`${event.displayQuantitySelector ? 'hidden' : ''} md:inline-block`}>
+            <div>
                 {
                     event.displayQuantitySelector ?
-                        <>{event.price * quantity} {event.currencySymbol}</> :
-                        <>{event.price} {event.currencySymbol}</>
+                        <SelectorComponent
+                            id={`"quantity_"${event.code}`}
+                            name={`"quantity_"${event.code}`}
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 py-1 px-2.5 mr-5"
+                            selector={{ selected: quantity.toString(), options }}
+                            onSelect={onSelectQuantity} /> : null
                 }
+                <div className={`${event.displayQuantitySelector ? 'hidden' : ''} md:inline-block`}>
+                    {
+                        event.displayQuantitySelector ?
+                            <>{event.price * quantity} {event.currencySymbol}</> :
+                            <>{event.price} {event.currencySymbol}</>
+                    }
+                </div>
             </div>
         </div>
     );

@@ -15,6 +15,7 @@ const defaultEvent: Event = {
     date: new Date().toISOString(),
     price: 0,
     amipaPrice: 0,
+    maxQuantity: 1,
     publishDate: new Date().toISOString(),
     unpublishDate: undefined,
     enrollment: false,
