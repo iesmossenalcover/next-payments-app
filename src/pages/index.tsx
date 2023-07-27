@@ -390,10 +390,11 @@ const EventLine = ({ idx, item, setEventItem: setEvent }: EventProps) => {
                     onChange={(e) => onSelectEvent(e.target.checked)}
                 />
                 <div>
-                    <label htmlFor={`event_${event.code}`} className="ml-2 select-none text-gray-900">
+                    <div
+                        className="ml-2 select-none text-gray-900">
                         {event.name}
                         <span className='hidden md:inline-block'>&nbsp;- {displayDate(event.date)}</span>
-                    </label>
+                    </div>
                     {
                         event.displayQuantitySelector ?
                             <div className='ml-2 text-sm text-slate-700 italic'>Preu individual: {event.price} {event.currencySymbol}</div>
@@ -407,7 +408,7 @@ const EventLine = ({ idx, item, setEventItem: setEvent }: EventProps) => {
                         <SelectorComponent
                             id={`"quantity_"${event.code}`}
                             name={`"quantity_"${event.code}`}
-                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 py-1 px-2.5 mr-5"
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 py-1 px-2.5 mr-0 md:mr-5"
                             selector={{ selected: quantity.toString(), options }}
                             onSelect={onSelectQuantity} /> : null
                 }
