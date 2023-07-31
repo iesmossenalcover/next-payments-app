@@ -8,7 +8,7 @@ interface SideBarPropos {
 
 export const SideBar = ({ identity }: SideBarPropos) => {
     return (
-        <nav className="min-h-screen bg-gray-800">
+        <nav className="absolute min-h-screen bg-gray-800 z-10">
             <div className="sidebar min-h-screen w-14 overflow-hidden border-r hover:w-56 hover:shadow-lg transition-all duration-100 ease-linear">
                 <div className="flex h-screen flex-col justify-between pt-2 pb-6">
                     <ul className="mt-6 space-y-2 tracking-wide text-white px-4">
@@ -97,7 +97,7 @@ export const Container = ({ children }: ContainerPropos) => {
     return (
         <div className="min-h-screen flex">
             <SideBar identity={user} />
-            <div className="flex-1 min-w-0 max-h-screen overflow-y-auto">
+            <div className="flex-1 min-w-0 max-h-screen overflow-y-auto ml-14">
                 {children}
             </div>
         </div>

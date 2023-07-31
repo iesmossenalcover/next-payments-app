@@ -64,7 +64,7 @@ const Update = () => {
             </Head>
             <main>
                 <div className="max-w-lg m-auto">
-                    <div className="m-5">
+                    <div className="my-5 mx-1 md:mx-4 lg:mx-6">
                         {syncErrors ? <div className=" text-red-500 italic">No s&apos;ha pogut sincronitzar: {plainErrors(syncErrors)}</div> : null}
                         {updatePasswordErrors ? <div className=" text-red-500 italic">No s&apos;ha pogut canviar la contrassenya: {plainErrors(updatePasswordErrors)}</div> : null}
                         {showUpdated ? <SuccessAlert text="Persona actualitzada correctament" /> : null}

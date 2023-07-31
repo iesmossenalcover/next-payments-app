@@ -44,7 +44,7 @@ const Create = () => {
             </Head>
             <main>
                 <div className="max-w-lg m-auto">
-                    <div className="m-5">
+                    <div className="my-5 mx-1 md:mx-4 lg:mx-6">
                         {
                             data ?
                                 <SuccessAlert text="Persona afegida correctament">

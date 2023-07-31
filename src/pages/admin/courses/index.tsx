@@ -119,7 +119,7 @@ const Courses = () => {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <main className="mt-5 mx-10">
+            <main className="mt-5 mx-1 md:mx-4 lg:mx-6">
 
                 <div className='flex justify-between mb-4'>
                     <div>

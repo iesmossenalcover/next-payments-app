@@ -48,8 +48,6 @@ const Update = () => {
         setErrors(undefined);
         if (!event) return;
 
-        console.log(event)
-
         await onSubmit(event);
     }
 
@@ -66,7 +64,7 @@ const Update = () => {
             </Head>
             <main>
                 <div className="max-w-lg m-auto">
-                    <div className="mx-2 my-5">
+                    <div className="mt-5 mx-1 md:mx-4 lg:mx-6">
                         {updated ? <SuccessAlert text="Event editat correctament." /> : null}
 
                         <form className="mt-5" action="#" method="post" onSubmit={onFormSubmit} autoComplete="off">
