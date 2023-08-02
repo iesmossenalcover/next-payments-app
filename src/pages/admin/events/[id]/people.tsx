@@ -128,7 +128,7 @@ const PeopleToEvent = () => {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <main className="px-10">
-                <div className="sticky top-0 z-50 bg-white pt-10">
+                <div className="sticky top-0 bg-white pt-10">
                     <div className="flex justify-between items-center ">
                         <div className="flex items-baseline">
                             <h4 className="font-bold text-3xl">{eventData.code}</h4>
