@@ -173,17 +173,6 @@ export const downloadTemplate = async () => {
     await toFile(response);
 }
 
-
-export const syncPeopleGoogleWorkspace = async (): Promise<Response<SyncPepoleResponse>> => {
-    const response = await postJson(`${API_BASE_URL}/api/googleworkspace/people/sync`);
-    const data = await response.json() as Response<SyncPepoleResponse>;
-
-    if (data.errors) {
-        data.errors = new Map(Object.entries(data.errors));
-    }
-    return data;
-}
-
 export const exportPeopleGoogleWorkspace = async () => {
     const response = await get(`${API_BASE_URL}/api/googleworkspace/people/export`);
     await toFile(response);
