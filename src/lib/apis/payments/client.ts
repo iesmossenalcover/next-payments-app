@@ -162,6 +162,16 @@ export const updatePasswordGoogleWorkspace = async (id: number): Promise<Respons
     return data;
 }
 
+export const updateUOGoogleWorkspace = async (id: number): Promise<Response<UpdatePasswordResponse>> => {
+    const response = await postJson(`${API_BASE_URL}/api/googleworkspace/people/${id}/ou`);
+    const data = await response.json() as Response<UpdatePasswordResponse>;
+
+    if (data.errors) {
+        data.errors = new Map(Object.entries(data.errors));
+    }
+    return data;
+}
+
 // todo
 export const exportPeople = async () => {
     const response = await get(`${API_BASE_URL}/api/people/export`);

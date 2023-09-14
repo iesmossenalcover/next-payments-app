@@ -8,7 +8,7 @@ import { Container } from "@/components/layout/SideBar";
 import Head from "next/head";
 import { useApiRequest } from "@/lib/hooks/useApiRequest";
 import { displayKeyErrors, plainErrors } from "@/lib/utils";
-import { syncPersonGoogleWorkspace, updatePasswordGoogleWorkspace } from "@/lib/apis/payments/client";
+import { syncPersonGoogleWorkspace, updatePasswordGoogleWorkspace, updateUOGoogleWorkspace } from "@/lib/apis/payments/client";
 
 const Update = () => {
     const router = useRouter()
@@ -19,6 +19,7 @@ const Update = () => {
     const { data: syncPersonResponse, errors: syncErrors, isLoading: isSyncLoading, executeRequest: syncPersonRequest } = useApiRequest(syncPersonGoogleWorkspace);
     const { errors: updateErrors, isLoading: isUpdateLoading, executeRequest: updatePersonRequest } = useApiRequest(updatePerson);
     const { data: updatePasswordResponse, errors: updatePasswordErrors, isLoading: isUpdatingPasswordLoading, executeRequest: updatePassowrdRequest } = useApiRequest(updatePasswordGoogleWorkspace);
+    const { errors: updateUOErrors, isLoading: isUpdatingUO, executeRequest: updateUORequest } = useApiRequest(updateUOGoogleWorkspace);
 
     useEffect(() => {
         if (!id) return;
@@ -50,7 +51,20 @@ const Update = () => {
         updatePassowrdRequest(person.id);
     }
 
-    const formDisabled = () => isPersonLoading || isSyncLoading || isUpdateLoading || isUpdatingPasswordLoading;
+    const updateUOAndGroup = async () => {
+        const ok = confirm("Vols actualitzar la UO i el grup?");
+        if (!ok || !person) return;
+
+        const res = await updateUORequest(person.id);
+        
+        if (res) {
+            alert("Actualitzat correctament.");
+        } else {
+            alert("No s'ha pogut actualitzar.");
+        }
+    }
+
+    const formDisabled = () => isPersonLoading || isSyncLoading || isUpdateLoading || isUpdatingPasswordLoading || isUpdatingUO;
 
     if (!person) return null;
 
@@ -94,8 +108,9 @@ const Update = () => {
                                         className='font-medium text-black-700 hover:underline ml-5 pr-1 disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed'
                                         onClick={generateEmail}>
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 3.75H6.912a2.25 2.25 0 00-2.15 1.588L2.35 13.177a2.25 2.25 0 00-.1.661V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 00-2.15-1.588H15M2.25 13.5h3.86a2.25 2.25 0 012.012 1.244l.256.512a2.25 2.25 0 002.013 1.244h3.218a2.25 2.25 0 002.013-1.244l.256-.512a2.25 2.25 0 012.013-1.244h3.859M12 3v8.25m0 0l-3-3m3 3l3-3" />
+                                            <path strokeLinecap="round" d="M16.5 12a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zm0 0c0 1.657 1.007 3 2.25 3S21 13.657 21 12a9 9 0 10-2.636 6.364M16.5 12V8.25" />
                                         </svg>
+
                                     </button>
 
 
@@ -106,7 +121,18 @@ const Update = () => {
                                         className='font-medium text-black-700 hover:underline ml-5 pr-1 disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed'
                                         onClick={updatePassowrd}>
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                                        </svg>
+                                    </button>
+
+                                    <button
+                                        disabled={formDisabled()}
+                                        title="Actualitzar UO i grup"
+                                        type="button"
+                                        className='font-medium text-black-700 hover:underline ml-5 pr-1 disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed'
+                                        onClick={updateUOAndGroup}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
                                         </svg>
 
                                     </button>

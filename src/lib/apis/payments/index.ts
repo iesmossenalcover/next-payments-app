@@ -32,7 +32,8 @@ export {
   createCourse,
   getCourseById,
   updateCourse,
-  downloadTemplate
+  downloadTemplate,
+  updateUOGoogleWorkspace
 } from "./client";
 
 export type {
