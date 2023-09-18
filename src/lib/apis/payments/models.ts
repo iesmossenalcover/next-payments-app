@@ -93,7 +93,7 @@ export interface SyncPersonResponse {
     password?: string,
 }
 
-export interface SyncPepoleResponse {
+export interface StartJobResponse {
     ok: boolean
 }
 
@@ -280,4 +280,29 @@ export interface EventSummary {
     groupId: number,
     paid: boolean,
     quantity?: number,
+}
+
+export enum JobType {
+    MOVE_PEOPLE_GOOGLE_WORKSPACE = 1,
+    SUSPEND_GOOGLE_WORKSPACE = 2,
+    UPDATE_GROUP_MEMBERS_WORKSPACE = 3,
+}
+
+export enum JobStatus {
+    PENDING = 0,
+    RUNNING = 1,
+    FINISHED = 2,
+}
+
+export interface GetJobsResponse {
+    jobs: Job[]
+}
+
+export interface Job {
+    id: number,
+    type: JobType
+    status: JobStatus,
+    logId?: number,
+    start: Date,
+    end?: Date
 }

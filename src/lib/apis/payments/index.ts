@@ -23,9 +23,6 @@ export {
   syncPersonGoogleWorkspace,
   updatePasswordGoogleWorkspace,
   exportPeopleGoogleWorkspace,
-  movePeopleGoogleWorkspace,
-  suspendPeopleGoogleWorkspace,
-  addPeopleToGroupsGoogleWorkspace,
   exportWifiUsers,
   exportPeople,
   setActiveCourse,
@@ -33,7 +30,9 @@ export {
   getCourseById,
   updateCourse,
   downloadTemplate,
-  updateUOGoogleWorkspace
+  updateUOGoogleWorkspace,
+  startJob,
+  getJobs
 } from "./client";
 
 export type {
@@ -59,9 +58,9 @@ export type {
   PersonRow,
   Response,
   SigninResponse,
-  SyncPersonResponse,
+  StartJobResponse as StartProcessResponse,
   UpdatePasswordResponse,
-  CreateOrderCommand
+  CreateOrderCommand,
 } from "./models";
 
-export { SigninStatus } from "./models";
+export { SigninStatus, JobType, JobStatus } from "./models";

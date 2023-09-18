@@ -1,4 +1,4 @@
-import { BatchUploadSummary, Identity, PersonActiveEventsVm, Person, PersonRow, Response, SigninResponse, CreateOrderResponse, EventRow, Event, GetOrderInfo, EventPeople, EventPayments, AdminInfo, AppConfig, EventSummaryVm, SyncPersonResponse, UpdatePasswordResponse, GroupRow, Group, SyncPepoleResponse, Course, CreateOrderCommand } from "./models"
+import { BatchUploadSummary, Identity, PersonActiveEventsVm, Person, PersonRow, Response, SigninResponse, CreateOrderResponse, EventRow, Event, GetOrderInfo, EventPeople, EventPayments, AdminInfo, AppConfig, EventSummaryVm, SyncPersonResponse, UpdatePasswordResponse, GroupRow, Group, Course, CreateOrderCommand, StartJobResponse, GetJobsResponse, JobType } from "./models"
 import { deleteJson, get, postJson, putJson, toFile } from "./baseclient"
 import { Selector } from "@/components/Selector"
 import { ApiResult } from "@/lib/hooks/useApiRequest"
@@ -188,9 +188,14 @@ export const exportPeopleGoogleWorkspace = async () => {
     await toFile(response);
 }
 
-export const movePeopleGoogleWorkspace = async (): Promise<Response<SyncPepoleResponse>> => {
-    const response = await postJson(`${API_BASE_URL}/api/googleworkspace/people/move`);
-    const data = await response.json() as Response<SyncPepoleResponse>;
+export const getJobs = async (): Promise<GetJobsResponse> => {
+    const response = await get(`${API_BASE_URL}/api/processes`);
+    return await response.json() as GetJobsResponse;
+}
+
+export const startJob = async (type: JobType): Promise<Response<StartJobResponse>> => {
+    const response = await postJson(`${API_BASE_URL}/api/processes`, { type });
+    const data = await response.json() as Response<StartJobResponse>;
 
     if (data.errors) {
         data.errors = new Map(Object.entries(data.errors));
@@ -198,29 +203,39 @@ export const movePeopleGoogleWorkspace = async (): Promise<Response<SyncPepoleRe
     return data;
 }
 
-export const addPeopleToGroupsGoogleWorkspace = async (): Promise<Response<SyncPepoleResponse>> => {
-    const response = await postJson(`${API_BASE_URL}/api/googleworkspace/people/groups`);
-    const data = await response.json() as Response<SyncPepoleResponse>;
+// export const movePeopleGoogleWorkspace = async (): Promise<Response<SyncPepoleResponse>> => {
+//     const response = await postJson(`${API_BASE_URL}/api/googleworkspace/people/move`);
+//     const data = await response.json() as Response<SyncPepoleResponse>;
 
-    if (data.errors) {
-        data.errors = new Map(Object.entries(data.errors));
-    }
-    return data;
-}
+//     if (data.errors) {
+//         data.errors = new Map(Object.entries(data.errors));
+//     }
+//     return data;
+// }
+
+// export const suspendPeopleGoogleWorkspace = async (): Promise<Response<SyncPepoleResponse>> => {
+//     const response = await postJson(`${API_BASE_URL}/api/googleworkspace/people/suspend`);
+//     const data = await response.json() as Response<SyncPepoleResponse>;
+
+//     if (data.errors) {
+//         data.errors = new Map(Object.entries(data.errors));
+//     }
+//     return data;
+// }
+
+// export const addPeopleToGroupsGoogleWorkspace = async (): Promise<Response<SyncPepoleResponse>> => {
+//     const response = await postJson(`${API_BASE_URL}/api/googleworkspace/people/groups`);
+//     const data = await response.json() as Response<SyncPepoleResponse>;
+
+//     if (data.errors) {
+//         data.errors = new Map(Object.entries(data.errors));
+//     }
+//     return data;
+// }
 
 export const exportSummaryRequest = async () => {
     const response = await get(`${API_BASE_URL}/api/events/export`);
     await toFile(response);
-}
-
-export const suspendPeopleGoogleWorkspace = async (): Promise<Response<SyncPepoleResponse>> => {
-    const response = await postJson(`${API_BASE_URL}/api/googleworkspace/people/suspend`);
-    const data = await response.json() as Response<SyncPepoleResponse>;
-
-    if (data.errors) {
-        data.errors = new Map(Object.entries(data.errors));
-    }
-    return data;
 }
 
 export const exportWifiUsers = async () => {
