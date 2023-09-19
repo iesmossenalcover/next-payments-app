@@ -303,6 +303,6 @@ export interface Job {
     type: JobType
     status: JobStatus,
     logId?: number,
-    start: Date,
-    end?: Date
+    start: string,
+    end?: string
 }
