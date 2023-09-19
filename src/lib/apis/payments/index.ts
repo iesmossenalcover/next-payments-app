@@ -32,7 +32,8 @@ export {
   downloadTemplate,
   updateUOGoogleWorkspace,
   startJob,
-  getJobs
+  getJobs,
+  getProcessLog
 } from "./client";
 
 export type {
@@ -61,6 +62,7 @@ export type {
   StartJobResponse as StartProcessResponse,
   UpdatePasswordResponse,
   CreateOrderCommand,
+  GetLogResponse
 } from "./models";
 
 export { SigninStatus, JobType, JobStatus } from "./models";

@@ -306,3 +306,7 @@ export interface Job {
     start: string,
     end?: string
 }
+
+export interface GetLogResponse {
+    data: string
+}

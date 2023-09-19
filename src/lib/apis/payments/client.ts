@@ -1,4 +1,4 @@
-import { BatchUploadSummary, Identity, PersonActiveEventsVm, Person, PersonRow, Response, SigninResponse, CreateOrderResponse, EventRow, Event, GetOrderInfo, EventPeople, EventPayments, AdminInfo, AppConfig, EventSummaryVm, SyncPersonResponse, UpdatePasswordResponse, GroupRow, Group, Course, CreateOrderCommand, StartJobResponse, GetJobsResponse, JobType } from "./models"
+import { BatchUploadSummary, Identity, PersonActiveEventsVm, Person, PersonRow, Response, SigninResponse, CreateOrderResponse, EventRow, Event, GetOrderInfo, EventPeople, EventPayments, AdminInfo, AppConfig, EventSummaryVm, SyncPersonResponse, UpdatePasswordResponse, GroupRow, Group, Course, CreateOrderCommand, StartJobResponse, GetJobsResponse, JobType, GetLogResponse } from "./models"
 import { deleteJson, get, postJson, putJson, toFile } from "./baseclient"
 import { Selector } from "@/components/Selector"
 import { ApiResult } from "@/lib/hooks/useApiRequest"
@@ -191,6 +191,16 @@ export const exportPeopleGoogleWorkspace = async () => {
 export const getJobs = async (): Promise<GetJobsResponse> => {
     const response = await get(`${API_BASE_URL}/api/processes`);
     return await response.json() as GetJobsResponse;
+}
+
+export const getProcessLog = async (logId: number): Promise<Response<GetLogResponse>> => {
+    const response = await get(`${API_BASE_URL}/api/processes/logs/${logId}`);
+    const data = await response.json() as Response<GetLogResponse>;
+
+    if (data.errors) {
+        data.errors = new Map(Object.entries(data.errors));
+    }
+    return data;
 }
 
 export const startJob = async (type: JobType): Promise<Response<StartJobResponse>> => {
