@@ -365,7 +365,7 @@ export const getOuGroupRelationById = async (id: number): Promise<Response<OuGro
 }
 
 export const updateOuGroupRelation = async (ouRelation: OuGroupRelation): Promise<Response<number>> => {
-    const response = await putJson(`${API_BASE_URL}/api/events/${ouRelation.id}`, ouRelation);
+    const response = await putJson(`${API_BASE_URL}/api/ougrouprelations/${ouRelation.id}`, ouRelation);
     const data = await response.json() as Response<number>;
 
     if (data.errors) {
@@ -375,7 +375,7 @@ export const updateOuGroupRelation = async (ouRelation: OuGroupRelation): Promis
 }
 
 export const createOuGroupRelation = async (ouGroupRelation: OuGroupRelation): Promise<Response<number>> => {
-    const response = await postJson(`${API_BASE_URL}/api/events`, ouGroupRelation);
+    const response = await postJson(`${API_BASE_URL}/api/ougrouprelations`, ouGroupRelation);
     const data = await response.json() as Response<number>;
 
     if (data.errors) {
@@ -385,7 +385,7 @@ export const createOuGroupRelation = async (ouGroupRelation: OuGroupRelation): P
 }
 
 export const deleteOuGroupRelation = async (id: number): Promise<Response<number>> => {
-    const response = await deleteJson(`${API_BASE_URL}/api/events/${id}`);
+    const response = await deleteJson(`${API_BASE_URL}/api/ougrouprelations/${id}`);
     const data = await response.json() as Response<number>;
 
     if (data.errors) {

@@ -313,6 +313,7 @@ export interface GetLogResponse {
 
 export interface OuGroupRelationRow {
     id: number
+    groupName: string,
     groupMail: string
     oldOu: string
     activeOu: string
