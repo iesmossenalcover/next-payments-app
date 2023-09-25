@@ -1,4 +1,4 @@
-import { BatchUploadSummary, Identity, PersonActiveEventsVm, Person, PersonRow, Response, SigninResponse, CreateOrderResponse, EventRow, Event, GetOrderInfo, EventPeople, EventPayments, AdminInfo, AppConfig, EventSummaryVm, SyncPersonResponse, UpdatePasswordResponse, GroupRow, Group, Course, CreateOrderCommand, StartJobResponse, GetJobsResponse, JobType, GetLogResponse } from "./models"
+import { BatchUploadSummary, Identity, PersonActiveEventsVm, Person, PersonRow, Response, SigninResponse, CreateOrderResponse, EventRow, Event, GetOrderInfo, EventPeople, EventPayments, AdminInfo, AppConfig, EventSummaryVm, SyncPersonResponse, UpdatePasswordResponse, GroupRow, Group, Course, CreateOrderCommand, StartJobResponse, GetJobsResponse, JobType, GetLogResponse, OuGroupRelationRow, OuGroupRelationPage, OuGroupRelation } from "./models"
 import { deleteJson, get, postJson, putJson, toFile } from "./baseclient"
 import { Selector } from "@/components/Selector"
 import { ApiResult } from "@/lib/hooks/useApiRequest"
@@ -213,36 +213,6 @@ export const startJob = async (type: JobType): Promise<Response<StartJobResponse
     return data;
 }
 
-// export const movePeopleGoogleWorkspace = async (): Promise<Response<SyncPepoleResponse>> => {
-//     const response = await postJson(`${API_BASE_URL}/api/googleworkspace/people/move`);
-//     const data = await response.json() as Response<SyncPepoleResponse>;
-
-//     if (data.errors) {
-//         data.errors = new Map(Object.entries(data.errors));
-//     }
-//     return data;
-// }
-
-// export const suspendPeopleGoogleWorkspace = async (): Promise<Response<SyncPepoleResponse>> => {
-//     const response = await postJson(`${API_BASE_URL}/api/googleworkspace/people/suspend`);
-//     const data = await response.json() as Response<SyncPepoleResponse>;
-
-//     if (data.errors) {
-//         data.errors = new Map(Object.entries(data.errors));
-//     }
-//     return data;
-// }
-
-// export const addPeopleToGroupsGoogleWorkspace = async (): Promise<Response<SyncPepoleResponse>> => {
-//     const response = await postJson(`${API_BASE_URL}/api/googleworkspace/people/groups`);
-//     const data = await response.json() as Response<SyncPepoleResponse>;
-
-//     if (data.errors) {
-//         data.errors = new Map(Object.entries(data.errors));
-//     }
-//     return data;
-// }
-
 export const exportSummaryRequest = async () => {
     const response = await get(`${API_BASE_URL}/api/events/export`);
     await toFile(response);
@@ -342,6 +312,7 @@ export const getGroupById = async (id: number): Promise<ApiResult<Group>> => {
     return data;
 }
 
+// Events
 export const getEventsView = async (): Promise<EventRow[]> => {
 
     let query = `${API_BASE_URL}/api/events`;
@@ -372,6 +343,57 @@ export const updateEvent = async (event: Event): Promise<Response<number>> => {
     return data;
 }
 
+//OuGroupRelation
+export const getOuGroupRelationsView = async (): Promise<OuGroupRelationRow[]> => {
+
+    let query = `${API_BASE_URL}/api/ougrouprelations`;
+    const response = await get(query)
+    if (response.ok) {
+        return await response.json() as OuGroupRelationRow[]
+    }
+
+    return [];
+}
+
+export const getOuGroupRelationById = async (id: number): Promise<Response<OuGroupRelationPage>> => {
+    const response = await get(`${API_BASE_URL}/api/ougrouprelations/${id}`);
+    const data = await response.json() as Response<OuGroupRelationPage>;
+    if (data.errors) {
+        data.errors = new Map(Object.entries(data.errors));
+    }
+    return data;
+}
+
+export const updateOuGroupRelation = async (ouRelation: OuGroupRelation): Promise<Response<number>> => {
+    const response = await putJson(`${API_BASE_URL}/api/events/${ouRelation.id}`, ouRelation);
+    const data = await response.json() as Response<number>;
+
+    if (data.errors) {
+        data.errors = new Map(Object.entries(data.errors));
+    }
+    return data;
+}
+
+export const createOuGroupRelation = async (ouGroupRelation: OuGroupRelation): Promise<Response<number>> => {
+    const response = await postJson(`${API_BASE_URL}/api/events`, ouGroupRelation);
+    const data = await response.json() as Response<number>;
+
+    if (data.errors) {
+        data.errors = new Map(Object.entries(data.errors));
+    }
+    return data;
+}
+
+export const deleteOuGroupRelation = async (id: number): Promise<Response<number>> => {
+    const response = await deleteJson(`${API_BASE_URL}/api/events/${id}`);
+    const data = await response.json() as Response<number>;
+
+    if (data.errors) {
+        data.errors = new Map(Object.entries(data.errors));
+    }
+
+    return data;
+}
 
 export const createEvent = async (event: Event): Promise<Response<string>> => {
     const response = await postJson(`${API_BASE_URL}/api/events`, event);

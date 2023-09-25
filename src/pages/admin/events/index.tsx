@@ -3,7 +3,7 @@ import { Table } from "@/components/table";
 import { getEventsView } from "@/lib/apis/payments";
 import Head from "next/head";
 import Link from "next/link";
-import { deleteEvent, exportSummaryRequest } from '@/lib/apis/payments/client'
+import { deleteOuGroupRelation, exportSummaryRequest } from '@/lib/apis/payments/client'
 import { displayDate, displayDateTime, plainErrors } from "@/lib/utils";
 import { useApiRequest, useStartApiRequest } from "@/lib/hooks/useApiRequest";
 
@@ -96,7 +96,7 @@ const Events = () => {
     const onDeleteEvent = async (item: TableRow) => {
         const del = confirm(`Eliminar esdeveniment codi: ${item.code}, nom: ${item.name} ?`);
         if (del) {
-            const response = await deleteEvent(item.id);
+            const response = await deleteOuGroupRelation(item.id);
             if (response.errors) {
                 alert("No s'ha pogut eliminar.")
             }

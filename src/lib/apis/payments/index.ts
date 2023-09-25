@@ -47,7 +47,7 @@ export type {
   EventPeopleGroup,
   EventPerson,
   EventRow as EventsRow,
-  GroupRow, 
+  GroupRow,
   EventSummary,
   EventSummaryVm,
   GetOrderInfo,
@@ -62,7 +62,10 @@ export type {
   StartJobResponse as StartProcessResponse,
   UpdatePasswordResponse,
   CreateOrderCommand,
-  GetLogResponse
+  GetLogResponse,
+  OuGroupRelationRow,
+  OuGroupRelation,
+  OuGroupRelationPage
 } from "./models";
 
 export { SigninStatus, JobType, JobStatus } from "./models";

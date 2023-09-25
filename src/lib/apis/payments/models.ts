@@ -310,3 +310,25 @@ export interface Job {
 export interface GetLogResponse {
     data: string
 }
+
+export interface OuGroupRelationRow {
+    id: number
+    groupMail: string
+    oldOu: string
+    activeOu: string
+}
+
+export interface OuGroupRelation {
+    id: number
+    groupId: number
+    groupMail: string
+    oldOu: string
+    activeOu: string
+    updatePassword: boolean
+    changePasswordNextSignIn: boolean
+}
+
+export interface OuGroupRelationPage {
+    ouGroupRelation: OuGroupRelation
+    groups: SelectorOption[]
+}
