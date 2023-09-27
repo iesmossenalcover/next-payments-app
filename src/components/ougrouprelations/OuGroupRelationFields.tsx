@@ -19,7 +19,7 @@ const OuGroupRelationsFields = ({ ouGroupRelation, groupSelector, setOuGroupRela
                 <label
                     className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                     htmlFor="groupId"
-                >Grup de l'aplicació</label>
+                >Grup de l&apos;aplicació</label>
                 <SelectorComponent
                     id="groupId"
                     name="groupId"
