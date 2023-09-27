@@ -120,7 +120,7 @@ const OuGroupRelations = () => {
                         px-3
                         rounded-lg
                         text-sm
-                        mr-5' href="/admin/people/create">Afegir relació</Link>
+                        mr-5' href="/admin/ougrouprelations/create">Afegir relació</Link>
                 </div>
                 {errors ? displayErrors(errors) : listPeople()}
             </main>
