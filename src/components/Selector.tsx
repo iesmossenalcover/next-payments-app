@@ -7,7 +7,7 @@ export interface SelectorOption {
 
 export interface Selector {
     options: SelectorOption[],
-    selected: string,
+    selected: string | number,
 }
 
 export interface SelectorProps {

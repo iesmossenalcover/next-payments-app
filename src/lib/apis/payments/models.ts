@@ -1,4 +1,4 @@
-import { SelectorOption } from "@/components/Selector";
+import { Selector, SelectorOption } from "@/components/Selector";
 
 export enum SigninStatus {
     Ok = 1,
@@ -331,5 +331,5 @@ export interface OuGroupRelation {
 
 export interface OuGroupRelationPage {
     ouGroupRelation: OuGroupRelation
-    groups: SelectorOption[]
+    groups: Selector
 }
