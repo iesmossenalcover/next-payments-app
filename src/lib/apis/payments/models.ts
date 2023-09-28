@@ -260,6 +260,7 @@ export interface EventPayment {
     group: string,
     paid: boolean,
     quantity: number,
+    datePaid?: Date,
 
 }
 

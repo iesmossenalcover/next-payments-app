@@ -8,7 +8,7 @@ interface SideBarPropos {
 
 export const SideBar = ({ identity }: SideBarPropos) => {
     return (
-        <nav className="absolute min-h-screen bg-gray-800 z-10">
+        <nav className="absolute min-h-screen bg-gray-800 z-50">
             <div className="sidebar min-h-screen w-14 overflow-hidden border-r hover:w-56 hover:shadow-lg transition-all duration-100 ease-linear">
                 <div className="flex h-screen flex-col justify-between pt-2 pb-6">
                     <ul className="mt-6 space-y-2 tracking-wide text-white px-4">

@@ -389,7 +389,7 @@ const EventLine = ({ idx, item, setEventItem: setEvent }: EventProps) => {
                     checked={selected}
                     onChange={(e) => onSelectEvent(e.target.checked)}
                 />
-                <div>
+                <label htmlFor={`event_${event.code}`}>
                     <div
                         className="ml-2 select-none text-gray-900">
                         {event.name}
@@ -400,7 +400,7 @@ const EventLine = ({ idx, item, setEventItem: setEvent }: EventProps) => {
                             <div className='ml-2 text-sm text-slate-700 italic'>Preu individual: {event.price} {event.currencySymbol}</div>
                             : null
                     }
-                </div>
+                </label>
             </div>
             <div>
                 {
