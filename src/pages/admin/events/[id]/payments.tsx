@@ -84,7 +84,7 @@ const EventPayments = () => {
         return events.map(x => (
             <li key={x.id} className="hover:text-blue-900 hover:font-bold">
                 <div className="flex justify-between">
-                    <div>{x.group} - {x.documentId} - {x.fullName} {x.paid && data.quantitySelector ? `- x${x.quantity}` : ''} <b>{x.datePaid && <>- {displayDate(x.datePaid)} {displayTime(x.datePaid)}</>}</b></div>
+                    <div><b>{x.datePaid && <>{displayDate(x.datePaid)} {displayTime(x.datePaid)} | </>}</b>{x.group} - {x.documentId} - {x.fullName} {x.paid && data.quantitySelector ? `- x${x.quantity}` : ''}</div>
                     <SetPaid event={data} payment={x} options={options} setPaidCallback={loadEventsPayments} />
                 </div>
                 <hr className="h-px mt-1 mb-4 bg-gray-200 border-0"></hr>
