@@ -334,3 +334,22 @@ export interface OuGroupRelationPage {
     ouGroupRelation: OuGroupRelation
     groups: Selector
 }
+
+export interface PersonPaymentsVm {
+    coursePayments: CoursePayment[]
+}
+
+export interface CoursePayment {
+    courseId: number,
+    courseName: string
+    payments: PersonPayment[]
+}
+
+export interface PersonPayment {
+    eventPersonId: number,
+    eventId: number
+    eventName: string
+    amount: number
+    manualPayment: boolean
+    paidDate?: string
+}

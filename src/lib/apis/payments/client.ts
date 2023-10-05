@@ -1,4 +1,4 @@
-import { BatchUploadSummary, Identity, PersonActiveEventsVm, Person, PersonRow, Response, SigninResponse, CreateOrderResponse, EventRow, Event, GetOrderInfo, EventPeople, EventPayments, AdminInfo, AppConfig, EventSummaryVm, SyncPersonResponse, UpdatePasswordResponse, GroupRow, Group, Course, CreateOrderCommand, StartJobResponse, GetJobsResponse, JobType, GetLogResponse, OuGroupRelationRow, OuGroupRelationPage, OuGroupRelation } from "./models"
+import { BatchUploadSummary, Identity, PersonActiveEventsVm, Person, PersonRow, Response, SigninResponse, CreateOrderResponse, EventRow, Event, GetOrderInfo, EventPeople, EventPayments, AdminInfo, AppConfig, EventSummaryVm, SyncPersonResponse, UpdatePasswordResponse, GroupRow, Group, Course, CreateOrderCommand, StartJobResponse, GetJobsResponse, JobType, GetLogResponse, OuGroupRelationRow, OuGroupRelationPage, OuGroupRelation, PersonPaymentsVm } from "./models"
 import { deleteJson, get, postJson, putJson, toFile } from "./baseclient"
 import { Selector } from "@/components/Selector"
 import { ApiResult } from "@/lib/hooks/useApiRequest"
@@ -38,6 +38,18 @@ export const getPeopleView = async (courseId?: number): Promise<PersonRow[]> => 
     }
 
     return [];
+}
+
+export const getPersonPayments = async (personId: number): Promise<ApiResult<PersonPaymentsVm>> => {
+
+    const response = await get(`${API_BASE_URL}/api/people/${personId}/payments`);
+    const data = await response.json() as ApiResult<PersonPaymentsVm>;
+
+    if (data.errors) {
+        data.errors = new Map(Object.entries(data.errors));
+    }
+
+    return data;
 }
 
 export const filterPeopleQuery = async (q: string): Promise<PersonRow[]> => {

@@ -33,7 +33,8 @@ export {
   updateUOGoogleWorkspace,
   startJob,
   getJobs,
-  getProcessLog
+  getProcessLog,
+  getPersonPayments
 } from "./client";
 
 export type {
@@ -65,7 +66,8 @@ export type {
   GetLogResponse,
   OuGroupRelationRow,
   OuGroupRelation,
-  OuGroupRelationPage
+  OuGroupRelationPage,
+  PersonPayment, CoursePayment, PersonPaymentsVm
 } from "./models";
 
 export { SigninStatus, JobType, JobStatus } from "./models";
