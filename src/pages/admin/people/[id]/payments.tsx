@@ -35,7 +35,7 @@ const PersonPayments = () => {
             <div className="max-w-2xl m-auto mt-10">
                 {!data && <h3>Persona no trobada</h3>}
                 {data && !data.coursePayments.length && <h3>Aquesta persona no té esdeveniments pagats</h3>}
-                {data && data.coursePayments &&
+                {data && data.coursePayments.length &&
                     <>
                         <div className="flex justify-end">
                             <button onClick={() => window.print()} className="flex text-blue-700 font-bold mb-5 print:hidden">
