@@ -336,13 +336,15 @@ export interface OuGroupRelationPage {
 }
 
 export interface PersonPaymentsVm {
+    personName: string,
+    documentId: string,
     coursePayments: CoursePayment[]
 }
 
 export interface CoursePayment {
     courseId: number,
-    courseName: string
-    payments: PersonPayment[]
+    courseName: string,
+    payments: PersonPayment[],
 }
 
 export interface PersonPayment {
