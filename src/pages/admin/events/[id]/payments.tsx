@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { displayDate, displayDateTime, displayTime } from "@/lib/utils";
 import { SelectorComponent, SelectorOption } from "@/components/Selector";
+import { useApiRequest } from "@/lib/hooks/useApiRequest";
 
 
 const tableHeaders = {
@@ -64,6 +65,9 @@ const EventPayments = () => {
     };
 
     const loadEventsPayments = () => {
+        if (data) {
+            setData({ ...data, unPaidEvents: [], paidEvents: [] });
+        }
         getEventPayments(id as string)
             .then(x => {
                 if (!x.errors || x.errors.size === 0) {
@@ -164,7 +168,7 @@ interface SetPaidProps {
 }
 
 const SetPaid = ({ event, payment, options, setPaidCallback }: SetPaidProps) => {
-
+    const { isLoading, executeRequest } = useApiRequest(setPayment);
     const [quantity, setQuantity] = useState(Math.max(1, payment.quantity));
 
     const setPaid = async (id: number, v: boolean, di: string, n: string) => {
@@ -176,8 +180,8 @@ const SetPaid = ({ event, payment, options, setPaidCallback }: SetPaidProps) => 
             del = confirm(`Desmarcar de pagats l'alumne ${n} amb DNI: ${di} ?`);
         }
         if (del) {
-            const result = await setPayment(id, v, quantity);
-            if (!result.errors) {
+            const ok = await executeRequest(id, v, quantity);
+            if (ok) {
                 setPaidCallback();
             } else {
                 alert("No s'ha pogut actualitzar")
@@ -188,8 +192,9 @@ const SetPaid = ({ event, payment, options, setPaidCallback }: SetPaidProps) => 
     if (payment.paid) {
         return (
             <button
+                disabled={isLoading}
                 onClick={() => setPaid(payment.id, false, payment.documentId, payment.fullName)}
-                className="text-red-600 font-bold">
+                className={`font-bold ${isLoading ? "text-gray-500" : "text-red-600"}`}>
                 Desmarcar Pagat
             </button>
         )
@@ -219,8 +224,9 @@ const SetPaid = ({ event, payment, options, setPaidCallback }: SetPaidProps) => 
                     />
                     : null}
                 <button
+                    disabled={isLoading}
                     onClick={() => setPaid(payment.id, true, payment.documentId, payment.fullName)}
-                    className="text-green-600 font-bold">
+                    className={`font-bold  ${isLoading ? "text-gray-500" : "text-green-600"}`}>
                     Marcar Pagat
                 </button>
             </div>
