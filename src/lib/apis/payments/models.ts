@@ -108,6 +108,8 @@ export interface UpdatePasswordResponse {
 }
 
 export interface GetOrderInfo {
+    personName: string,
+    personDocumentId: string,
     events: GetOrderInfoEvent[],
     displayEnrollment: boolean,
     enrollmentSubjectsInfo?: string,
