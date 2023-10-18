@@ -56,7 +56,7 @@ const Ok = () => {
     const event = (x: GetOrderInfoEvent) => {
         return (
             <div className="text-md over flex flex-nowrap items-center justify-between">
-                <span>{x.name}</span>
+                <span>{x.name} {x.quantity > 1 && `x${x.quantity}`}</span>
                 <span className="min-w-[6em] text-right font-bold">{x.price} {x.currency}</span>
             </div>
         )

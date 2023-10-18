@@ -119,6 +119,7 @@ export interface GetOrderInfo {
 export interface GetOrderInfoEvent {
     code: string;
     name: string;
+    quantity: number,
     price: number;
     currency: string;
 }
