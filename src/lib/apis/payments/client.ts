@@ -325,9 +325,9 @@ export const getGroupById = async (id: number): Promise<ApiResult<Group>> => {
 }
 
 // Events
-export const getEventsView = async (): Promise<EventRow[]> => {
+export const getEventsView = async (showAll: boolean): Promise<EventRow[]> => {
 
-    let query = `${API_BASE_URL}/api/events`;
+    let query = `${API_BASE_URL}/api/events${showAll ? '?showExpired=true' : ''}`;
     const response = await get(query)
     if (response.ok) {
         return await response.json() as EventRow[]

@@ -6,6 +6,8 @@ import Link from "next/link";
 import { deleteEvent, exportSummaryRequest } from '@/lib/apis/payments/client'
 import { displayDate, displayDateTime, plainErrors } from "@/lib/utils";
 import { useApiRequest, useStartApiRequest } from "@/lib/hooks/useApiRequest";
+import Toggle from "@/components/Toggle";
+import { useEffect, useState } from "react";
 
 const tableHeaders = {
     id: "Id",
@@ -34,8 +36,12 @@ interface TableRow {
 };
 
 const Events = () => {
+    const [showAll, setShowAll] = useState(false);
+    const { data: events, executeRequest } = useApiRequest(getEventsView);
 
-    const { data: events, executeRequest } = useStartApiRequest(getEventsView);
+    useEffect(() => {
+        executeRequest(showAll);
+    }, [showAll])
 
     const mapToRow = (): TableRow[] => {
         if (!events) return [];
@@ -101,7 +107,7 @@ const Events = () => {
                 alert("No s'ha pogut eliminar.")
             }
             else {
-                executeRequest();
+                executeRequest(showAll);
             }
         }
     }
@@ -146,12 +152,20 @@ const Events = () => {
             <main className="mt-5 mx-1 md:mx-4 lg:mx-6">
 
 
-                <div className='flex justify-start mb-4'>
-                    <div>
-                        <Link className=' inline-block text-white  bg-green-700  hover:bg-green-800 focus:ring-4  focus:ring-blue-300 font-medium py-3 px-3 rounded-lg text-sm mr-5' href="/admin/events/create">Nou esdeveniment</Link>
+                <div className="flex justify-between items-end mb-4">
+                    <div className='flex justify-start'>
+                        <div>
+                            <Link className=' inline-block text-white  bg-green-700  hover:bg-green-800 focus:ring-4  focus:ring-blue-300 font-medium py-3 px-3 rounded-lg text-sm mr-5' href="/admin/events/create">Nou esdeveniment</Link>
+                        </div>
+                        <ExportSummary />
                     </div>
-                    <ExportSummary />
-
+                    <Toggle
+                        id="showAll"
+                        name="showAll"
+                        text="Mostrar tots"
+                        value={showAll}
+                        onToggled={setShowAll}
+                     />
                 </div>
 
                 {listEvents()}
