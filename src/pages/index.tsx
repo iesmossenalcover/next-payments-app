@@ -84,7 +84,8 @@ const FirstStep = ({ onLoaded }: FirstStepProps) => {
                         text-md
                         font-bold
                         mb-2"
-                    htmlFor="documentId">Document d&apos;identitat alumne</label>
+                    htmlFor="documentId">Document d&apos;identitat</label>
+
                 <input
                     required={true}
                     className="
@@ -102,6 +103,11 @@ const FirstStep = ({ onLoaded }: FirstStepProps) => {
                     id="documentId" name="documentId" defaultValue={""} onChange={() => setErrors(undefined)} />
                 {displayErrors("")}
             </div>
+
+            <span
+                        className='text-gray-600 text-sm italic'>
+                        Per exemple, el document d&apos;identitat de l&apos;alumne.
+                    </span>
 
             <div>
                 <input

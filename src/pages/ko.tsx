@@ -1,7 +1,6 @@
 import Head from "next/head";
 import { Noto_Sans } from '@next/font/google';
 import { DangerAlert } from "@/components/Alerts";
-import { useEffect } from "react";
 
 const font = Noto_Sans({ weight: '400', subsets: ['devanagari'] })
 
@@ -14,7 +13,7 @@ const Ko = () => {
             <link rel="icon" href="/favicon.ico" />
         </Head>
         <main className={`${font.className} container mx-auto px-5 mt-10  max-w-xl`}>
-            <DangerAlert title="Error durant el pagament"  text="El pagament no s'ha completat. Contacta amb oficines." />
+            <DangerAlert title="Error durant el pagament"  text="El pagament no s'ha completat. Contacteu amb la vostra entitat bancària." />
         </main>
     </>)
 }
