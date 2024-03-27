@@ -67,7 +67,7 @@ const PeopleToEvent = () => {
 
                     const p = g.people[j];
                     const num = p.academicRecordNumber ? p.academicRecordNumber.toString() : "";
-                    if (numbers.find(x => x === num)) {
+                    if (numbers.find(x => x === num) || numbers.find(x => x === p.documentId)) {
                         selected.add(p.id);
                     }
                 }
@@ -82,7 +82,7 @@ const PeopleToEvent = () => {
             <div>
                 <label
                     htmlFor="academicRecordSelector"
-                    className="block mb-2 text-sm font-medium text-gray-900">Selecció per nombre d&apos;expedient acadèmic</label>
+                    className="block mb-2 text-sm font-medium text-gray-900">Selecció per nombre d&apos;expedient acadèmic o Document d'identitat</label>
                 <textarea
                     id="academicRecordSelector"
                     rows={10}
@@ -95,11 +95,11 @@ const PeopleToEvent = () => {
                     className="text-white
                                 bg-blue-600
                                 font-bold
-                                mt-3
+                                my-3
                                 py-2
                                 px-4
                                 rounded"
-                    onClick={markByAcademicRecordNumber}>Selecciona per expedient</button>
+                    onClick={markByAcademicRecordNumber}>Selecciona</button>
             </div >
         )
     }

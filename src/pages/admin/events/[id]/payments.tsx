@@ -107,6 +107,19 @@ const EventPayments = () => {
         alert("Copiat al porta-retalls");
     }
 
+    const copyDocumentsIds = () => {
+
+        let info = "<h1>Pagats</h1>";
+        info += data.paidEvents.map(x => `<div>${x.documentId}</div>`).join("");
+        info += "<h1>No Pagats</h1>";
+        info += data.unPaidEvents.map(x => `<div>${x.documentId}</div>`).join("");
+        let tab = window.open('about:blank', '_blank');
+        if (tab) {
+            tab.document.write(info); // where 'html' is a variable containing your HTML
+            tab.document.close(); // to finish loading the page
+        }
+    }
+
     return (
 
         <>
@@ -145,7 +158,9 @@ const EventPayments = () => {
                     cellClass='text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap'
                     rowClass='border-b'
                 />
-
+                <div className="text-right mt-5 ">
+                    <button className=" text-white bg-blue-700  hover:bg-blue-800 focus:ring-4  focus:ring-blue-300 font-medium py-3 px-3 rounded-lg text-sm" onClick={copyDocumentsIds}>Copia documents d'identitat</button>
+                </div>
                 <h3 className=" mt-8 mb-4 text-green-700 text-lg font-bold">Pagats: {data.summary.totalPaidCount}</h3>
                 <ul>
                     {paidEvents}
