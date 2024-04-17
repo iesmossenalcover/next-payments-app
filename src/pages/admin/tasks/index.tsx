@@ -30,7 +30,7 @@ const SyncPeopleToWorkspace = () => {
                 <JobComponent
                     callback={callback}
                     buttonClasses="flex items-center justify-center w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed"
-                    buttonText="Moure Usuaris a old OU"
+                    buttonText="1. Moure Usuaris a old OU"
                     confirmMessage="Confirma que vols moure els usuaris d'OU?"
                     jobType={JobType.MOVE_PEOPLE_GOOGLE_WORKSPACE}
                     lastJob={jobs.find(x => x.type === JobType.MOVE_PEOPLE_GOOGLE_WORKSPACE)}
@@ -39,7 +39,7 @@ const SyncPeopleToWorkspace = () => {
                 <JobComponent
                     callback={callback}
                     buttonClasses="flex items-center justify-center w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed"
-                    buttonText="Afegir usuaris a grups"
+                    buttonText="3. Afegir usuaris a grups"
                     confirmMessage="Confirma que vols afegir els usuaris al grup?"
                     jobType={JobType.UPDATE_GROUP_MEMBERS_WORKSPACE}
                     lastJob={jobs.find(x => x.type === JobType.UPDATE_GROUP_MEMBERS_WORKSPACE)}
@@ -47,7 +47,7 @@ const SyncPeopleToWorkspace = () => {
                 <JobComponent
                     callback={callback}
                     buttonClasses="flex items-center justify-center w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed"
-                    buttonText="Suspendre usuaris"
+                    buttonText="4. Suspendre usuaris"
                     confirmMessage="Confirma que vols suspendre els usuaris?"
                     jobType={JobType.SUSPEND_GOOGLE_WORKSPACE}
                     lastJob={jobs.find(x => x.type === JobType.SUSPEND_GOOGLE_WORKSPACE)}
@@ -178,7 +178,7 @@ const ExportUsers = () => {
             <button
                 disabled={isLoading}
                 className='flex items-center justify-center w-full mt-6 bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed'
-                onClick={submit}>Exportar Usuaris CSV</button>
+                onClick={submit}>2. Exportar Usuaris CSV</button>
         </div>
     )
 }
