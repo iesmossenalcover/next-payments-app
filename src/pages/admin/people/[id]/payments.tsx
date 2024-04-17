@@ -23,8 +23,6 @@ const PersonPayments = () => {
         <>No hi ha pagaments.</>
     )
 
-    console.log(data.coursePayments)
-
     return <>
         <Head>
             <title>Pagaments persona - {process.env.SCHOOL_NAME}</title>

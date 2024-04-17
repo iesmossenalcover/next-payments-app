@@ -12,7 +12,6 @@ interface OuGroupRelationsFieldsProps {
 }
 
 const OuGroupRelationsFields = ({ ouGroupRelation, groupSelector, setOuGroupRelation, errors }: OuGroupRelationsFieldsProps) => {
-    console.log(groupSelector)
     return (
         <>
             <div className="mb-6">
