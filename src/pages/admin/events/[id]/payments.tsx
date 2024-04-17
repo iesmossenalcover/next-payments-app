@@ -159,7 +159,7 @@ const EventPayments = () => {
                     rowClass='border-b'
                 />
                 <div className="text-right mt-5 ">
-                    <button className=" text-white bg-blue-700  hover:bg-blue-800 focus:ring-4  focus:ring-blue-300 font-medium py-3 px-3 rounded-lg text-sm" onClick={copyDocumentsIds}>Copia documents d'identitat</button>
+                    <button className=" text-white bg-blue-700  hover:bg-blue-800 focus:ring-4  focus:ring-blue-300 font-medium py-3 px-3 rounded-lg text-sm" onClick={copyDocumentsIds}>Mostra documents d&apos;identitat</button>
                 </div>
                 <h3 className=" mt-8 mb-4 text-green-700 text-lg font-bold">Pagats: {data.summary.totalPaidCount}</h3>
                 <ul>

@@ -82,7 +82,7 @@ const PeopleToEvent = () => {
             <div>
                 <label
                     htmlFor="academicRecordSelector"
-                    className="block mb-2 text-sm font-medium text-gray-900">Selecció per nombre d&apos;expedient acadèmic o Document d'identitat</label>
+                    className="block mb-2 text-sm font-medium text-gray-900">Selecció per nombre d&apos;expedient acadèmic o Document d&apos;identitat</label>
                 <textarea
                     id="academicRecordSelector"
                     rows={10}
