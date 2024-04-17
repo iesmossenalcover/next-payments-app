@@ -21,9 +21,12 @@ const Log = () => {
     if (!data) return null;
 
     return (
-        <ul className="mx-10 mt-5">
-            {data.data.split("\n").map((x, idx) => <li key={idx}>{x}</li>)}
-        </ul>
+        <div>
+            <h2>RESUM DE L'EXECUCIÓ</h2>
+            <ul className="mx-10 mt-5">
+                {data.data.split("\n").map((x, idx) => <li key={idx}>{x}</li>)}
+            </ul>
+        </div>
     );
 }
 

@@ -55,7 +55,7 @@ const SyncPeopleToWorkspace = () => {
                 <hr />
                 <label
                     className="mt-5 block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                    htmlFor="name">Wifi
+                    htmlFor="name">Wifi pròpia del centre
                 </label>
                 <ExportUsersWifi />
             </div>
