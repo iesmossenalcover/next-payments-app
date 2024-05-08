@@ -149,6 +149,19 @@ const EventPaymentsComp = () => {
                     </div>
                 </div>
 
+                <div className="flex gap-4 mt-3 text-lg">
+                    <span><span className="font-semibold">Preu: </span>{event.price}€</span>
+                    <span><span className="font-semibold">Preu AMIPA: </span>{event.amipaPrice}€</span>
+                    <span><span className="font-semibold">Data publicació: </span>{displayDate(event.publishDate)}</span>
+                    {
+                        event.unpublishDate? 
+                        <span><span className="font-semibold">Data expiració: </span>{displayDate(event.unpublishDate)}</span> : null
+                    }
+                    <span><span className="font-semibold">Actiu: </span>{event.isActive? "Si" : "No"}</span>
+                    <span><span className="font-semibold">És AMIPA: </span>{event.isAmpia? "Si" : "No"}</span>
+                    <span><span className="font-semibold">És matricula: </span>{event.isEnrollment? "Si" : "No"}</span>
+                    
+                </div>
                 <hr className="h-px mt-3 mb-3 bg-gray-500 border-0" />
                 <Table
                     headers={tableHeaders}

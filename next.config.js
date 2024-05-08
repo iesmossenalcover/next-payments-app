@@ -2,6 +2,7 @@
 
 const nextConfig = {
   reactStrictMode: true,
+  output: 'export',
   env: {
     API_BASE_URL: process.env.API_BASE_URL,
     CLIENT_ID_GOOGLE: process.env.CLIENT_ID_GOOGLE,

@@ -22,7 +22,7 @@ const Log = () => {
 
     return (
         <div>
-            <h2>RESUM DE L'EXECUCIÓ</h2>
+            <h2>RESUM DE L&apos;EXECUCIÓ</h2>
             <ul className="mx-10 mt-5">
                 {data.data.split("\n").map((x, idx) => <li key={idx}>{x}</li>)}
             </ul>

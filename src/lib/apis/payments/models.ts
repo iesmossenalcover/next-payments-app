@@ -238,7 +238,7 @@ export interface PaymentsEvent {
     amipaPrice: number,
     date: string,
     publishDate: string,
-    unpublishDate: string,
+    unpublishDate?: string,
     isActive: boolean,
     isEnrollment: boolean,
     isAmpia: boolean,
