@@ -230,13 +230,24 @@ export interface EventPeople {
 }
 
 
-export interface EventPayments {
-    id: number
-    code: string
+export interface PaymentsEvent {
+    id: number,
+    code: string,
     name: string,
+    price: number,
+    amipaPrice: number,
     date: string,
+    publishDate: string,
+    unpublishDate: string,
+    isActive: boolean,
+    isEnrollment: boolean,
+    isAmpia: boolean,
     quantitySelector: boolean,
-    maxQuantity?: number,
+    maxQuantity?: number
+}
+
+export interface EventPaymentsVm {
+    event: PaymentsEvent,
     summary: PaymentSummary
     paidEvents: EventPayment[]
     unPaidEvents: EventPayment[]

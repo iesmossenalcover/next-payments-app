@@ -1,11 +1,11 @@
 import { Container } from "@/components/layout/SideBar";
-import { EventPayment, EventPayments, getEventPayments, setPayment } from "@/lib/apis/payments";
+import { EventPayment, EventPaymentsEventDataVm, EventPaymentsVm, getEventPayments, setPayment } from "@/lib/apis/payments";
 import Head from "next/head";
 import Link from "next/link";
 import { Table } from "@/components/table";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { displayDate, displayDateTime, displayTime } from "@/lib/utils";
+import { displayDate, displayTime } from "@/lib/utils";
 import { SelectorComponent, SelectorOption } from "@/components/Selector";
 import { useApiRequest } from "@/lib/hooks/useApiRequest";
 
@@ -24,9 +24,9 @@ interface TableRow {
     dinersActual: string
 };
 
-const EventPayments = () => {
+const EventPaymentsComp = () => {
     const router = useRouter()
-    const [data, setData] = useState<EventPayments | undefined>(undefined);
+    const [data, setData] = useState<EventPaymentsVm | undefined>(undefined);
 
     const { id } = router.query
 
@@ -82,14 +82,15 @@ const EventPayments = () => {
 
     if (!data) return null;
 
-    const options = Array.from(Array(data.maxQuantity ?? 0), (_, x) => ({ key: (x + 1).toString(), value: x + 1 }));
+    const event = data.event;
+    const options = Array.from(Array(event.maxQuantity ?? 0), (_, x) => ({ key: (x + 1).toString(), value: x + 1 }));
 
     const displayEvents = (events: EventPayment[]) => {
         return events.map(x => (
             <li key={x.id} className="hover:text-blue-900 hover:font-bold">
                 <div className="flex justify-between">
-                    <div><b>{x.datePaid && <>{displayDate(x.datePaid)} {displayTime(x.datePaid)} | </>}</b>{x.group} - {x.documentId} - {x.fullName} {x.paid && data.quantitySelector ? `- x${x.quantity}` : ''}</div>
-                    <SetPaid event={data} payment={x} options={options} setPaidCallback={loadEventsPayments} />
+                    <div><b>{x.datePaid && <>{displayDate(x.datePaid)} {displayTime(x.datePaid)} | </>}</b>{x.group} - {x.documentId} - {x.fullName} {x.paid && event.quantitySelector ? `- x${x.quantity}` : ''}</div>
+                    <SetPaid event={event} payment={x} options={options} setPaidCallback={loadEventsPayments} />
                 </div>
                 <hr className="h-px mt-1 mb-4 bg-gray-200 border-0"></hr>
             </li>
@@ -100,7 +101,7 @@ const EventPayments = () => {
     const unPaidEvents = displayEvents(data.unPaidEvents)
 
 
-    const summaryURL = () => `${window.location.protocol}//${window.location.host}/admin/events/${data.code}/summary`;
+    const summaryURL = () => `${window.location.protocol}//${window.location.host}/admin/events/${event.code}/summary`;
 
     const copyToClipboard = () => {
         navigator.clipboard.writeText(summaryURL());
@@ -132,9 +133,9 @@ const EventPayments = () => {
             <main className="p-10">
                 <div className="flex justify-between items-center">
                     <div className="flex items-baseline">
-                        <h4 className="font-bold text-3xl">{data.code}</h4>
+                        <h4 className="font-bold text-3xl">{event.code}</h4>
                         <h4 className="font-bold text-3xl ml-3">-</h4>
-                        <h4 className="font-bold text-3xl ml-3">{`${data.name} - ${displayDate(data.date)}`}</h4>
+                        <h4 className="font-bold text-3xl ml-3">{`${event.name} - ${displayDate(event.date)}`}</h4>
                     </div>
                     <div className="flex">
                         <Link href={summaryURL()} target="_blank">{summaryURL()}</Link>
@@ -176,7 +177,7 @@ const EventPayments = () => {
 }
 
 interface SetPaidProps {
-    event: EventPayments,
+    event: EventPaymentsEventDataVm,
     payment: EventPayment,
     options: SelectorOption[],
     setPaidCallback: () => void,
@@ -255,7 +256,7 @@ export default function EventPaymentsPage() {
 
     return (
         <Container>
-            <EventPayments />
+            <EventPaymentsComp />
         </Container>
     )
 };

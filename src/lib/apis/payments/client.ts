@@ -1,4 +1,4 @@
-import { BatchUploadSummary, Identity, PersonActiveEventsVm, Person, PersonRow, Response, SigninResponse, CreateOrderResponse, EventRow, Event, GetOrderInfo, EventPeople, EventPayments, AdminInfo, AppConfig, EventSummaryVm, SyncPersonResponse, UpdatePasswordResponse, GroupRow, Group, Course, CreateOrderCommand, StartJobResponse, GetJobsResponse, JobType, GetLogResponse, OuGroupRelationRow, OuGroupRelationPage, OuGroupRelation, PersonPaymentsVm } from "./models"
+import { BatchUploadSummary, Identity, PersonActiveEventsVm, Person, PersonRow, Response, SigninResponse, CreateOrderResponse, EventRow, Event, GetOrderInfo, EventPeople, EventPaymentsVm, AdminInfo, AppConfig, EventSummaryVm, SyncPersonResponse, UpdatePasswordResponse, GroupRow, Group, Course, CreateOrderCommand, StartJobResponse, GetJobsResponse, JobType, GetLogResponse, OuGroupRelationRow, OuGroupRelationPage, OuGroupRelation, PersonPaymentsVm } from "./models"
 import { deleteJson, get, postJson, putJson, toFile } from "./baseclient"
 import { Selector } from "@/components/Selector"
 import { ApiResult } from "@/lib/hooks/useApiRequest"
@@ -457,7 +457,7 @@ export const setEventPeople = async (code: string, peopleIds: number[]) => {
 
 export const getEventPayments = async (code: string) => {
     const response = await get(`${API_BASE_URL}/api/events/${code}/payments`);
-    const data = await response.json() as Response<EventPayments>;
+    const data = await response.json() as Response<EventPaymentsVm>;
     if (data.errors) {
         data.errors = new Map(Object.entries(data.errors));
     }
