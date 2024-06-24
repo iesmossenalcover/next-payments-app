@@ -105,9 +105,9 @@ const FirstStep = ({ onLoaded }: FirstStepProps) => {
             </div>
 
             <span
-                        className='text-gray-600 text-sm italic'>
-                        Per exemple, el document d&apos;identitat de l&apos;alumne.
-                    </span>
+                className='text-gray-600 text-sm italic'>
+                Per exemple, el document d&apos;identitat de l&apos;alumne.
+            </span>
 
             <div>
                 <input
@@ -270,9 +270,12 @@ const SecondStep = ({ data }: SecondStepProps) => {
 
     const displayEvents = () => {
         if (!events || events.length == 0) {
-            return <h2
-                className='text-md font-bold'
-            >No hi ha esdeveniments actius pendents de pagar.</h2>
+            return <> <h2
+                className='text-md font-bold'>
+                No hi ha esdeveniments actius pendents de pagar.
+            </h2>
+                {amipaMessage()}
+            </>
         }
 
         return (
@@ -296,7 +299,19 @@ const SecondStep = ({ data }: SecondStepProps) => {
                         </li>
                     )}
                 </ul>
+                {amipaMessage()}
             </>
+        )
+    }
+
+    const amipaMessage = () => {
+        return (
+            <div>
+                <a target='blank' href='https://drive.google.com/file/d/1811V-ydbXgL_r0zCrsm3qVDyjypDqtrG/view?usp=sharing'
+                    className='md:text-lg text-green-500 hover:text-green-400 hover:underline'>
+                    Per fer-te soci d&apos;AMIPA clica aquí
+                </a>
+            </div>
         )
     }
 
