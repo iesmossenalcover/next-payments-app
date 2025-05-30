@@ -45,8 +45,9 @@ const EventSummaries = () => {
             </Head>
             <main className="container mx-auto p-4">
                 <div className="flex flex-col md:flex-row md:flex-wrap gap-y-1 md:gap-x-6">
-                    <h4 className="font-bold">{data.name}</h4>
-                    <h6>Codi: <span  className="font-bold">{data.code}</span> - Data: <span  className="font-bold">{displayDate(data.date)}</span></h6>
+                    <h4 className="font-bold text-2xl w-full">{data.name}</h4>
+                    <h6>Codi: <span  className="font-bold">{data.code}</span> </h6>
+                    <p>Data: <span  className="font-bold">{displayDate(data.date)}</span></p>
                     <p>
                         Inici pagament: <span className="font-bold">{displayDateTime(data.publishDate)}</span>
                     </p>
