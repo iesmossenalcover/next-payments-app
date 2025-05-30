@@ -1,7 +1,7 @@
 import { SelectorComponent } from "@/components/Selector";
 import { getEventSummary } from "@/lib/apis/payments";
 import { useApiRequest } from "@/lib/hooks/useApiRequest";
-import { displayDateTime } from "@/lib/utils";
+import { displayDate, displayDateTime } from "@/lib/utils";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -43,16 +43,21 @@ const EventSummaries = () => {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <main className="container mx-auto p-10">
-                <div>
-                    <div className="flex flex-col gap-y-1">
-                        <h4 className="font-bold">{data.name}</h4>
-                        <p className="">Codi: <span className="font-bold">{data.code}</span></p>
-                        <p className="">Inici pagament: <span className="font-bold">{displayDateTime(data.publishDate)}</span></p>
-                        <p className="">Fi pagament: <span className="font-bold">{data.unpublishDate ? displayDateTime(data.unpublishDate) : "-"}</span></p>
-                    </div>
+            <main className="container mx-auto p-4">
+                <div className="flex flex-col md:flex-row md:flex-wrap gap-y-1 md:gap-x-6">
+                    <h4 className="font-bold">{data.name}</h4>
+                    <h6>Codi: <span  className="font-bold">{data.code}</span> - Data: <span  className="font-bold">{displayDate(data.date)}</span></h6>
+                    <p>
+                        Inici pagament: <span className="font-bold">{displayDateTime(data.publishDate)}</span>
+                    </p>
+                    <p>
+                        Fi pagament:{" "}
+                        <span className="font-bold">
+                            {data.unpublishDate ? displayDateTime(data.unpublishDate) : "-"}
+                        </span>
+                    </p>
                 </div>
-                <hr className="h-px mt-3 mb-8 bg-gray-300 border-0" />
+                <hr className="h-px mt-3 mb-8 bg-gray-400 border-0" />
                 <div className="flex print:hidden">
                     <SelectorComponent
                         id='course'
@@ -82,18 +87,18 @@ const EventSummaries = () => {
                 <ul>
                     {
                         displayPaidEvents.map(x =>
-                            <li key={x.id} className="mt-3 font-semibold">
+                            <li key={x.id} className="mt-3">
                                 {x.groupName} - {x.fullName} {x.quantity ? ` - x${x.quantity}` : null}
                             </li>
                         )
                     }
                 </ul>
-
+                <hr className="h-px mt-8 bg-gray-400 border-0" />
                 <h3 className="mt-4 text-lg font-bold text-red-700">No Pagat: {displayUnpaidEvents.length}</h3>
                 <ul>
                     {
                         displayUnpaidEvents.map(x =>
-                            <li key={x.id} className="mt-3 font-semibol">
+                            <li key={x.id} className="mt-3">
                                 {x.groupName} - {x.fullName}
                             </li>
                         )
