@@ -282,7 +282,9 @@ export interface EventSummaryVm {
     id: number
     code: string
     name: string
-    date: string
+    date: string,
+    publishDate: string,
+    unpublishDate?: string,
     groups: SelectorOption[]
     events: EventSummary[]
 }

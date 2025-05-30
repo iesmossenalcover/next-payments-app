@@ -1,27 +1,22 @@
 import { SelectorComponent } from "@/components/Selector";
-import { EventSummary, EventSummaryVm, getEventSummary } from "@/lib/apis/payments";
-import { displayDate } from "@/lib/utils";
+import { getEventSummary } from "@/lib/apis/payments";
+import { useApiRequest } from "@/lib/hooks/useApiRequest";
+import { displayDateTime } from "@/lib/utils";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 const EventSummaries = () => {
     const router = useRouter()
-    const [data, setData] = useState<EventSummaryVm | undefined>(undefined)
     const [selectedGroup, setSelectedGroup] = useState<number | undefined>(undefined)
+    const { data, executeRequest } = useApiRequest(getEventSummary);
 
     const { id } = router.query
 
     useEffect(() => {
-        getEventSummary(id as string)
-            .then(x => {
-                if (x.errors) {
-                } else {
-                    setData(x.data);
-                }
-            })
-
-    }, [id])
+        if (!id) return;
+        executeRequest(id as string)
+    }, [id]);
 
     if (!data) return null;
 
@@ -49,11 +44,12 @@ const EventSummaries = () => {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <main className="container mx-auto p-10">
-                <div className="flex justify-between items-center">
-                    <div className="flex items-baseline">
-                        <h4 className="font-bold text-3xl">{data.code}</h4>
-                        <h4 className="font-bold text-3xl ml-3">-</h4>
-                        <h4 className="font-bold text-3xl ml-3">{`${data.name} - ${displayDate(data.date)}`}</h4>
+                <div>
+                    <div className="flex flex-col gap-y-1">
+                        <h4 className="font-bold">{data.name}</h4>
+                        <p className="">Codi: <span className="font-bold">{data.code}</span></p>
+                        <p className="">Inici pagament: <span className="font-bold">{displayDateTime(data.publishDate)}</span></p>
+                        <p className="">Fi pagament: <span className="font-bold">{data.unpublishDate ? displayDateTime(data.unpublishDate) : "-"}</span></p>
                     </div>
                 </div>
                 <hr className="h-px mt-3 mb-8 bg-gray-300 border-0" />
