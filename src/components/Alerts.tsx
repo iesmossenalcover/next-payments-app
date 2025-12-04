@@ -1,6 +1,6 @@
 interface SuccessAlertProps {
     text: string,
-    children?: JSX.Element
+    children?: React.ReactElement
 }
 
 export const SuccessAlert = ({ text, children }: SuccessAlertProps) => {

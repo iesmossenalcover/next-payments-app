@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { Noto_Sans } from '@next/font/google';
+import { Noto_Sans } from "next/font/google";
 import { DangerAlert } from "@/components/Alerts";
 
 const font = Noto_Sans({ weight: '400', subsets: ['devanagari'] })

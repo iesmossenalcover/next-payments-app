@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import { Noto_Sans } from '@next/font/google';
+import { Noto_Sans } from "next/font/google";
 import { useEffect, useRef, useState } from 'react';
 import { createOrder, getPersonActiveEvents, PersonActiveEvent, PersonActiveEventsVm } from '@/lib/apis/payments';
 import { CreateOrderResponse } from '@/lib/apis/payments/models';

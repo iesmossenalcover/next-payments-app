@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { Noto_Sans } from '@next/font/google';
+import { Noto_Sans } from "next/font/google";
 import { SuccessAlert } from "@/components/Alerts";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
