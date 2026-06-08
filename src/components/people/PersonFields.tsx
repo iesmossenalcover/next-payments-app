@@ -117,6 +117,18 @@ const PersonFields = ({ person, errors, setPerson }: PersonComponentProps) => {
                     text="Matriculat"
                 />
             </div>
+            <div className="mt-3">
+                <label
+                    className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                    htmlFor="schoolAlert">Alerta escolar</label>
+                <input
+                    className="px-4 appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 leading-tight focus:outline-none focus:bg-white"
+                    id="schoolAlert"
+                    name="schoolAlert"
+                    value={person.schoolAlert ?? ""}
+                    onChange={(e) => setPerson({ ...person, schoolAlert: e.target.value })} />
+                {displayKeyErrors("schoolAlert", errors)}
+            </div>
             <div className="mt-5">
                 <label htmlFor="subjectsInfo" className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">ASSIGNATURES <span className="lowercase">(una per línia)</span></label>
                 <textarea

@@ -46,8 +46,8 @@ const EventSummaries = () => {
             <main className="container mx-auto p-4">
                 <div className="flex flex-col md:flex-row md:flex-wrap gap-y-1 md:gap-x-6">
                     <h4 className="font-bold text-2xl w-full">{data.name}</h4>
-                    <h6>Codi: <span  className="font-bold">{data.code}</span> </h6>
-                    <p>Data: <span  className="font-bold">{displayDate(data.date)}</span></p>
+                    <h6>Codi: <span className="font-bold">{data.code}</span> </h6>
+                    <p>Data: <span className="font-bold">{displayDate(data.date)}</span></p>
                     <p>
                         Inici pagament: <span className="font-bold">{displayDateTime(data.publishDate)}</span>
                     </p>
@@ -90,6 +90,12 @@ const EventSummaries = () => {
                         displayPaidEvents.map(x =>
                             <li key={x.id} className="mt-3">
                                 {x.groupName} - {x.fullName} {x.quantity ? ` - x${x.quantity}` : null}
+                                {x.schoolAlert && <a href={x.schoolAlert} target="_blank" rel="noopener noreferrer" className="ml-2 inline-flex items-center text-orange-600 hover:text-orange-800 hover:underline">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mr-1">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="m18.375 12.739-7.693 7.693a4.5 4.5 0 0 1-6.364-6.364l10.94-10.94A3 3 0 1 1 19.5 7.372L8.552 18.32m.009-.01-.01.01m5.699-9.941-7.81 7.81a1.5 1.5 0 0 0 2.112 2.13" />
+                                    </svg>
+                                    <b>Alerta escolar</b>
+                                </a>}
                             </li>
                         )
                     }
@@ -101,6 +107,12 @@ const EventSummaries = () => {
                         displayUnpaidEvents.map(x =>
                             <li key={x.id} className="mt-3">
                                 {x.groupName} - {x.fullName}
+                                {x.schoolAlert && <a href={x.schoolAlert} target="_blank" rel="noopener noreferrer" className="ml-2 inline-flex items-center text-orange-600 hover:text-orange-800 hover:underline">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mr-1">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="m18.375 12.739-7.693 7.693a4.5 4.5 0 0 1-6.364-6.364l10.94-10.94A3 3 0 1 1 19.5 7.372L8.552 18.32m.009-.01-.01.01m5.699-9.941-7.81 7.81a1.5 1.5 0 0 0 2.112 2.13" />
+                                    </svg>
+                                    <b>Alerta escolar</b>
+                                </a>}
                             </li>
                         )
                     }

@@ -143,6 +143,7 @@ export interface Person {
     academicRecordNumber?: number,
     amipa: boolean,
     enrolled: boolean,
+    schoolAlert?: string,
     subjectsInfo?: string,
 }
 
@@ -297,6 +298,7 @@ export interface EventSummary {
     groupId: number,
     paid: boolean,
     quantity?: number,
+    schoolAlert?: string,
 }
 
 export enum JobType {
