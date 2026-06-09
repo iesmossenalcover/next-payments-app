@@ -88,13 +88,14 @@ const EventSummaries = () => {
                 <ul>
                     {
                         displayPaidEvents.map(x =>
-                            <li key={x.id} className="mt-3">
-                                {x.groupName} - {x.fullName} {x.quantity ? ` - x${x.quantity}` : null}
-                                {x.schoolAlert && <a href={x.schoolAlert} target="_blank" rel="noopener noreferrer" className="ml-2 inline-flex items-center text-orange-600 hover:text-orange-800 hover:underline">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mr-1">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="m18.375 12.739-7.693 7.693a4.5 4.5 0 0 1-6.364-6.364l10.94-10.94A3 3 0 1 1 19.5 7.372L8.552 18.32m.009-.01-.01.01m5.699-9.941-7.81 7.81a1.5 1.5 0 0 0 2.112 2.13" />
+                            <li key={x.id} className="mt-3 flex flex-col md:flex-row md:items-center gap-2">
+                                <span className="text-sm md:text-base">{x.groupName} - {x.fullName} {x.quantity ? ` - x${x.quantity}` : null}</span>
+                                {x.schoolAlert && <a href={x.schoolAlert} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-orange-600 hover:text-orange-800 hover:underline flex-shrink-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 md:size-6">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
                                     </svg>
-                                    <b>Alerta escolar</b>
+
+                                    <b className="text-sm md:text-base">Alerta escolar</b>
                                 </a>}
                             </li>
                         )
@@ -105,13 +106,14 @@ const EventSummaries = () => {
                 <ul>
                     {
                         displayUnpaidEvents.map(x =>
-                            <li key={x.id} className="mt-3">
-                                {x.groupName} - {x.fullName}
-                                {x.schoolAlert && <a href={x.schoolAlert} target="_blank" rel="noopener noreferrer" className="ml-2 inline-flex items-center text-orange-600 hover:text-orange-800 hover:underline">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mr-1">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="m18.375 12.739-7.693 7.693a4.5 4.5 0 0 1-6.364-6.364l10.94-10.94A3 3 0 1 1 19.5 7.372L8.552 18.32m.009-.01-.01.01m5.699-9.941-7.81 7.81a1.5 1.5 0 0 0 2.112 2.13" />
+                            <li key={x.id} className="mt-3 flex flex-col md:flex-row md:items-center gap-2">
+                                <span className="text-sm md:text-base">{x.groupName} - {x.fullName}</span>
+                                {x.schoolAlert && <a href={x.schoolAlert} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-orange-600 hover:text-orange-800 hover:underline flex-shrink-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 md:size-6">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
                                     </svg>
-                                    <b>Alerta escolar</b>
+
+                                    <b className="text-sm md:text-base">Alerta escolar</b>
                                 </a>}
                             </li>
                         )
