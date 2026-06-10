@@ -71,4 +71,4 @@ export type {
   PersonPayment, CoursePayment, PersonPaymentsVm
 } from "./models";
 
-export { SigninStatus, JobType, JobStatus } from "./models";
+export { SigninStatus, JobType, JobStatus, PaymentMethod } from "./models";

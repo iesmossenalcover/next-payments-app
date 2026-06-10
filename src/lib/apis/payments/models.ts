@@ -76,9 +76,15 @@ export interface SelectedEvent {
     quantity?: number;
 }
 
+export enum PaymentMethod {
+    Card = 0,
+    Bizum = 1,
+}
+
 export interface CreateOrderCommand {
     documentId: string,
-    events: SelectedEvent[]
+    events: SelectedEvent[],
+    paymentMethod: PaymentMethod,
 }
 
 export interface CreateOrderResponse {
