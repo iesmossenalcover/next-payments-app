@@ -252,7 +252,7 @@ const SecondStep = ({ data }: SecondStepProps) => {
                             font-medium">
                         {loading ? <>{spinner}Carregant...</> : <>Pagar amb targeta</>}
                     </button>
-                    {person && person.documentId === "11223344L" && <button disabled={loading}
+                    <button disabled={loading}
                         onClick={() => handlePayClick(PaymentMethod.Bizum)}
                         type="button"
                         className="w-full
@@ -276,7 +276,6 @@ const SecondStep = ({ data }: SecondStepProps) => {
                                     gap-2">
                         {loading ? <>{spinner}Carregant...</> : <>Pagar amb {bizumLogo}</>}
                     </button>
-                    }
                 </div>
             </>
         )
