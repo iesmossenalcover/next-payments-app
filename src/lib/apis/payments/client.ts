@@ -355,6 +355,26 @@ export const updateEvent = async (event: Event): Promise<Response<number>> => {
     return data;
 }
 
+export const syncEventGoogleWorkspace = async (id: number): Promise<Response<{ eventId: string }>> => {
+    const response = await postJson(`${API_BASE_URL}/api/googleworkspace/events/${id}/sync`, {});
+    const data = await response.json() as Response<{ eventId: string }>;
+
+    if (data.errors) {
+        data.errors = new Map(Object.entries(data.errors));
+    }
+    return data;
+}
+
+export const deleteEventGoogleWorkspace = async (id: number): Promise<Response<number>> => {
+    const response = await deleteJson(`${API_BASE_URL}/api/googleworkspace/events/${id}`);
+    const data = await response.json() as Response<number>;
+
+    if (data.errors) {
+        data.errors = new Map(Object.entries(data.errors));
+    }
+    return data;
+}
+
 //OuGroupRelation
 export const getOuGroupRelationsView = async (): Promise<OuGroupRelationRow[]> => {
 

@@ -57,7 +57,7 @@ const EventFields = ({ event, errors, setEvent }: EventComponentProps) => {
             <div className="mb-6">
                 <label
                     className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                    htmlFor="date">Data esdeveniment</label>
+                    htmlFor="date">Data inici esdeveniment</label>
 
                 <DateTime
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
@@ -69,6 +69,23 @@ const EventFields = ({ event, errors, setEvent }: EventComponentProps) => {
                     onDateChanged={date => setEvent({ ...event, date: date ? date.toISOString() : new Date().toISOString() })} />
 
                 {displayErrors("description")}
+            </div>
+
+            <div className="mb-6">
+                <label
+                    className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                    htmlFor="endDate">Data fi esdeveniment</label>
+
+                <DateTime
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                    id="endDate"
+                    name="endDate"
+                    type="datetime-local"
+                    required={false}
+                    initialValue={event.endDate ? toInputDateTime(new Date(event.endDate)) : ""}
+                    onDateChanged={date => setEvent({ ...event, endDate: date ? date.toISOString() : undefined })} />
+
+                {displayErrors("endDate")}
             </div>
 
             <div className="mb-6">

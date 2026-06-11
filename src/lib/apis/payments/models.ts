@@ -203,13 +203,15 @@ export interface Event {
     description: string,
     name: string,
     date: string,
+    endDate?: string,
     price: number,
     amipaPrice: number,
     maxQuantity: number,
     publishDate: string,
     unpublishDate?: string,
     enrollment: boolean,
-    amipa: boolean
+    amipa: boolean,
+    calendarEventId?: string,
 }
 
 

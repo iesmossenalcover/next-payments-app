@@ -1,22 +1,92 @@
 import { SuccessAlert } from "@/components/Alerts";
-import { getEventById, updateEvent } from "@/lib/apis/payments/client";
+import { deleteEventGoogleWorkspace, getEventById, syncEventGoogleWorkspace, updateEvent } from "@/lib/apis/payments/client";
 import { Event } from "@/lib/apis/payments/models";
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import EventFields from "@/components/events/EventFields";
 import { Container } from "@/components/layout/SideBar";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import useUser from "@/lib/hooks/useUser";
+
+const SyncEvent = ({ eventId }: { eventId: number }) => {
+    const [syncing, setSyncing] = useState(false)
+
+    const onSync = async () => {
+        setSyncing(true);
+        const response = await syncEventGoogleWorkspace(eventId);
+        if (response.data) {
+            window.location.reload();
+        }
+        setSyncing(false);
+    }
+
+    return (
+        <div>
+            <button
+                disabled={syncing}
+                onClick={onSync}
+                className="w-full bg-green-600 hover:cursor-pointer hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed"
+                type="button">
+                {syncing ? "Sincronitzant..." : "Sincronitzar amb Google Calendar"}
+            </button>
+        </div>
+    )
+}
+
+const DeleteCalendarEvent = ({ eventId }: { eventId: number }) => {
+    const [deleting, setDeleting] = useState(false)
+
+    const onDelete = async () => {
+        setDeleting(true);
+        const response = await deleteEventGoogleWorkspace(eventId);
+        if (!response.errors) {
+            window.location.reload();
+        }
+        setDeleting(false);
+    }
+
+    return (
+        <div className="mt-4">
+            <button
+                disabled={deleting}
+                onClick={onDelete}
+                className="w-full bg-red-600 hover:cursor-pointer hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed"
+                type="button">
+                {deleting ? "Eliminant..." : "Eliminar de Google Calendar"}
+            </button>
+        </div>
+    )
+}
+
+const GoogleCalendar = ({ event }: { event: Event }) => {
+    const { user, loading } = useUser();
+
+    if (loading || user?.role !== "superuser") {
+        return null;
+    }
+
+    return (
+        <div className="mt-10 p-4 border rounded">
+            <h6 className="text-lg mb-2 font-medium text-gray-900">Google Sync</h6>
+            <SyncEvent eventId={event.id} />
+            {event.calendarEventId ? <DeleteCalendarEvent eventId={event.id} /> : null}
+        </div>
+    )
+}
 
 const Update = () => {
     const router = useRouter()
     const { id } = router.query
     const [loading, setLoading] = useState(false)
     const [updated, setUpdated] = useState(false)
+    const [mounted, setMounted] = useState(false)
     const [errors, setErrors] = useState<Map<string, string[]>>()
     const [event, setEvent] = useState<Event | undefined>(undefined)
 
-    useEffect(() => {
+    useEffect(() => setMounted(true), [])
 
+    useEffect(() => {
         if (!id) return;
         getEventById(parseInt(id as string))
             .then(x => {
@@ -63,9 +133,14 @@ const Update = () => {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <main>
-                <div className="max-w-lg m-auto">
+                <div className="max-w-lg m-auto mb-10">
                     <div className="mt-5 mx-1 md:mx-4 lg:mx-6">
-                        {updated ? <SuccessAlert text="Event editat correctament." /> : null}
+                        {updated && mounted ? createPortal(
+                            <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[100] w-full max-w-lg px-4">
+                                <SuccessAlert text="Event editat correctament." />
+                            </div>,
+                            document.body
+                        ) : null}
 
                         <form className="mt-5" action="#" method="post" onSubmit={onFormSubmit} autoComplete="off">
                             <EventFields
@@ -80,6 +155,8 @@ const Update = () => {
                                     type="submit" />
                             </div>
                         </form>
+
+                        <GoogleCalendar event={event} />
 
                     </div>
                 </div>
