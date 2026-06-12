@@ -197,7 +197,7 @@ const SecondStep = ({ data }: SecondStepProps) => {
         if (!paymentForm) return null;
 
         return (
-            <form id='forma' method='post' action={paymentForm.url} ref={formRef} target={paymentMethod === PaymentMethod.Bizum ? '_top' : undefined}>
+            <form id='forma' method='post' action={paymentForm.url} ref={formRef} target="_top">
                 <input type="hidden" name="Ds_SignatureVersion" defaultValue={paymentForm.signatureVersion} />
                 <input type="hidden" name="Ds_MerchantParameters" defaultValue={paymentForm.merchantParameters} />
                 <input type="hidden" name="Ds_Signature" defaultValue={paymentForm.signature} />
