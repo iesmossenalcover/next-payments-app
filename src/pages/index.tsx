@@ -154,6 +154,7 @@ const SecondStep = ({ data }: SecondStepProps) => {
 
     const [errors, setErrors] = useState<Map<string, string[]>>();
     const [paymentForm, setPaymentForm] = useState<CreateOrderResponse | undefined>(undefined);
+    const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | undefined>(undefined);
     const [displayEnrollment, setDisplayEnrollment] = useState(false)
     const formRef = useRef<HTMLFormElement>(null);
 
@@ -171,6 +172,7 @@ const SecondStep = ({ data }: SecondStepProps) => {
     const getSelectedEvents = () => eventItems.filter(x => x.selected);
 
     const handlePayClick = async (paymentMethod: PaymentMethod) => {
+        setPaymentMethod(paymentMethod);
         setLoading(true);
         const selectedEvents = getSelectedEvents();
         const cmd = {
@@ -195,7 +197,7 @@ const SecondStep = ({ data }: SecondStepProps) => {
         if (!paymentForm) return null;
 
         return (
-            <form id='forma' method='post' action={paymentForm.url} ref={formRef}>
+            <form id='forma' method='post' action={paymentForm.url} ref={formRef} target={paymentMethod === PaymentMethod.Bizum ? '_top' : undefined}>
                 <input type="hidden" name="Ds_SignatureVersion" defaultValue={paymentForm.signatureVersion} />
                 <input type="hidden" name="Ds_MerchantParameters" defaultValue={paymentForm.merchantParameters} />
                 <input type="hidden" name="Ds_Signature" defaultValue={paymentForm.signature} />
