@@ -13,7 +13,18 @@ const Ko = () => {
             <link rel="icon" href="/favicon.ico" />
         </Head>
         <main className={`${font.className} container mx-auto px-5 mt-10  max-w-xl`}>
-            <DangerAlert title="Error durant el pagament"  text="El pagament no s'ha completat. Contacteu amb la vostra entitat bancària." />
+            <DangerAlert title="Error durant el pagament" text="El pagament no s'ha completat. Contacteu amb la vostra entitat bancària." />
+            <div className="mt-6 text-center">
+                <a
+                    href={process.env.SCHOOL_WEBSITE}
+                    className="inline-flex items-center gap-2 rounded-lg bg-blue-800 px-6 py-3 text-white font-semibold shadow hover:bg-blue-700 transition-colors"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                    </svg>
+                    Tornar al lloc web del centre
+                </a>
+            </div>
         </main>
     </>)
 }
