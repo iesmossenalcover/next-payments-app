@@ -335,7 +335,7 @@ const SecondStep = ({ data }: SecondStepProps) => {
                         </li>
                     )}
                 </ul>
-                {amipaMessage()}
+                {/* {amipaMessage()} */}
             </>
         )
     }
