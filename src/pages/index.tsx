@@ -310,7 +310,7 @@ const SecondStep = ({ data }: SecondStepProps) => {
                 className='text-md font-bold'>
                 No hi ha esdeveniments actius pendents de pagar.
             </h2>
-                {amipaMessage()}
+                {/* {amipaMessage()} */}
             </>
         }
 
