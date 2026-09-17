@@ -62,7 +62,7 @@ const DeleteCalendarEvent = ({ eventId }: { eventId: number }) => {
 const GoogleCalendar = ({ event }: { event: Event }) => {
     const { user, loading } = useUser();
 
-    if (loading || user?.role !== "superuser") {
+    if (loading || user?.role !== "advancedadmin") {
         return null;
     }
 
