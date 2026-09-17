@@ -11,7 +11,11 @@ export const signin = async (username: string, password: string): Promise<Signin
     return (await response.json() as SigninResponse)
 }
 
-export const signinOAuth = async (token: string): Promise<SigninResponse> => {
+export const signout = async (): Promise<void> => {
+    await postJson(`${API_BASE_URL}/api/signout`)
+}
+
+export const signinOAuth =async (token: string): Promise<SigninResponse> => {
     const response = await postJson(`${API_BASE_URL}/api/oauth`, { token })
     return (await response.json() as SigninResponse)
 }

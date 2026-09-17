@@ -19,6 +19,7 @@ export {
   setPayment,
   signin,
   signinOAuth,
+  signout,
   updatePerson,
   syncPersonGoogleWorkspace,
   updatePasswordGoogleWorkspace,
