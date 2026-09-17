@@ -23,6 +23,30 @@ export interface Response<T> {
     data?: T,
 }
 
+export const Roles = {
+    SuperUser: "superuser",
+    AdvancedAdmin: "advancedadmin",
+    Admin: "admin",
+    Reader: "reader",
+} as const;
+
+export type Role = typeof Roles[keyof typeof Roles];
+
+// Mayor número = más privilegios
+const RolePriority: Record<Role, number> = {
+    [Roles.Reader]: 1,
+    [Roles.Admin]: 2,
+    [Roles.AdvancedAdmin]: 3,
+    [Roles.SuperUser]: 4,
+};
+
+export const getRolePriority = (role?: string): number =>
+    role ? RolePriority[role as Role] ?? 0 : 0;
+
+// true si el rol del usuario tiene igual o más prioridad que el requerido
+export const hasRole = (role: string | undefined, required: Role): boolean =>
+    getRolePriority(role) >= RolePriority[required];
+
 export interface Identity {
     id: number,
     username: string,

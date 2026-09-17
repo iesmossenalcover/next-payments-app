@@ -1,4 +1,5 @@
 import { Identity } from "@/lib/apis/payments";
+import { hasRole, Roles } from "@/lib/apis/payments/models";
 import useUser from "@/lib/hooks/useUser";
 import Link from "next/link";
 
@@ -131,7 +132,7 @@ export const SideBar = ({ identity }: SideBarPropos) => {
             </li>
 
             {/* TODO: Get list of pages from server */}
-            {identity.role && identity.role === "superuser" && (
+            {hasRole(identity.role, Roles.SuperUser) && (
               <>
 
                 <li className="min-w-max">

@@ -1,6 +1,6 @@
 import { SuccessAlert } from "@/components/Alerts";
 import { deleteEventGoogleWorkspace, getEventById, syncEventGoogleWorkspace, updateEvent } from "@/lib/apis/payments/client";
-import { Event } from "@/lib/apis/payments/models";
+import { Event, hasRole, Roles } from "@/lib/apis/payments/models";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import EventFields from "@/components/events/EventFields";
@@ -62,7 +62,8 @@ const DeleteCalendarEvent = ({ eventId }: { eventId: number }) => {
 const GoogleCalendar = ({ event }: { event: Event }) => {
     const { user, loading } = useUser();
 
-    if (loading || user?.role !== "advancedadmin") {
+
+    if (loading || !hasRole(user?.role, Roles.AdvancedAdmin)) {
         return null;
     }
 
