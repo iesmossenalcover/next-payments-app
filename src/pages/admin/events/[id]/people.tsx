@@ -1,134 +1,135 @@
-import { Container } from "@/components/layout/SideBar";
-import { EventPeople, EventPeopleGroup, EventPerson, getEventPeople } from "@/lib/apis/payments";
-import { setEventPeople } from "@/lib/apis/payments/client";
-import { displayDate } from "@/lib/utils";
+import { useMemo, useState } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-
-const textAreaPlaceHolder = "11111111\n22222222\n33333333\n...";
+import { Container } from "@/components/layout/SideBar";
+import { DangerAlert } from "@/components/Alerts";
+import { Spinner } from "@/components/Loading";
+import EventPeopleGroup from "@/components/events/EventPeopleGroup";
+import PasteSelector from "@/components/events/PasteSelector";
+import useEventPeople, { matchesPerson, normalize, SaveResult } from "@/lib/hooks/useEventPeople";
+import useDebounce from "@/lib/hooks/useDebounce";
+import { displayDate } from "@/lib/utils";
 
 const PeopleToEvent = () => {
-    const router = useRouter()
-    const [eventData, setEventData] = useState<EventPeople | undefined>(undefined);
-    const [selected, setSelected] = useState<Set<number>>(new Set())
-    const [saving, setSaving] = useState(false);
-    const [academicRecordNumbers, setAcademicRecordNumbers] = useState("");
+    const router = useRouter();
+    // La ruta es diu [id] però el que s'hi passa és el codi de l'esdeveniment.
+    const { id } = router.query;
 
-    const { id } = router.query
+    const {
+        event, people, loading, loadError, selected, changes, isDirty, saving,
+        toggle, setMany, clear, markByReferences, save,
+    } = useEventPeople(id as string | undefined);
 
-    useEffect(() => {
-        if (!id) return;
+    const [search, setSearch] = useState("");
+    const [openGroups, setOpenGroups] = useState<Set<number>>(new Set());
+    const [saveResult, setSaveResult] = useState<SaveResult | undefined>(undefined);
 
-        getEventPeople(id as string)
-            .then(x => {
-                if (x.errors) {
-                } else {
-                    if (!x.data) return;
-                    var s = new Set<number>();
+    const query = normalize(useDebounce(search, 200));
 
-                    for (let i = 0; i < x.data.peopleGroups.length; i++) {
-                        const g = x.data.peopleGroups[i];
-                        for (let j = 0; j < g.people.length; j++) {
-                            const p = g.people[j];
-                            if (p.inEvent) {
-                                s.add(p.id);
-                            }
-                        }
-                    }
-                    setSelected(s);
-                    setEventData(x.data);
-                }
-            });
-    }, [id])
+    const matches = useMemo(
+        () => query ? people.filter(x => matchesPerson(x, query)).length : people.length,
+        [people, query]);
 
-    const persistChanges = () => {
-        setSaving(true);
-        setEventPeople(id as string, Array.from(selected))
-            .then((x) => {
-                if (x.code === 0) {
-                    alert("Actualitzat correctament")
-                } else {
-                    alert("No es pot guardar. Una o més persones que vols llevar ja han pagat.")
-                }
-            })
-            .finally(() => setSaving(false));
+    const onSave = async () => {
+        setSaveResult(await save());
     }
 
-    const unSelectAllPeople = () => {
+    const onToggle = (personId: number, checked: boolean) => {
+        setSaveResult(undefined);
+        toggle(personId, checked);
+    }
+
+    const onSetMany = (ids: number[], checked: boolean) => {
+        setSaveResult(undefined);
+        setMany(ids, checked);
+    }
+
+    const onClear = () => {
         if (selected.size === 0) return;
 
-        const clear = confirm(`Desmarcar les ${selected.size} persones seleccionades?`);
-        if (clear) {
-            setSelected(new Set());
+        if (confirm(`Desmarcar les ${selected.size} persones seleccionades?`)) {
+            setSaveResult(undefined);
+            clear();
         }
     }
 
-    const markByAcademicRecordNumber = () => {
-        if (!eventData) return;
-
-        const numbers = academicRecordNumbers.split("\n").map(x => x.trim()).filter(x => x.length > 0);
-        if (numbers.length > 0) {
-
-            for (let i = 0; i < eventData.peopleGroups.length; i++) {
-                const g = eventData.peopleGroups[i];
-                for (let j = 0; j < g.people.length; j++) {
-
-                    const p = g.people[j];
-                    const num = p.academicRecordNumber ? p.academicRecordNumber.toString() : "";
-                    if (numbers.find(x => x === num) || numbers.find(x => x === p.documentId)) {
-                        selected.add(p.id);
-                    }
-                }
-            }
-            setAcademicRecordNumbers("");
-            setSelected(new Set(selected));
-        }
+    const onGroupOpenChange = (groupId: number, open: boolean) => {
+        setOpenGroups(prev => {
+            const next = new Set(prev);
+            if (open) next.add(groupId); else next.delete(groupId);
+            return next;
+        });
     }
 
-    const renderAcademicRecordSelection = () => {
-        return (
-            <div>
-                <label
-                    htmlFor="academicRecordSelector"
-                    className="block mb-2 text-sm font-medium text-gray-900">Selecció per nombre d&apos;expedient acadèmic o Document d&apos;identitat</label>
-                <textarea
-                    id="academicRecordSelector"
-                    rows={10}
-                    value={academicRecordNumbers}
-                    onChange={e => setAcademicRecordNumbers(e.target.value)}
-                    className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder={textAreaPlaceHolder}></textarea>
+    const setAllGroupsOpen = (open: boolean) => {
+        setOpenGroups(open && event ? new Set(event.peopleGroups.map(x => x.id)) : new Set());
+    }
 
+    const renderToolbar = () => (
+        <div className="sticky top-0 bg-white pt-8 pb-3 z-10 border-b border-gray-200">
+            <div className="flex justify-between items-center">
+                <div className="flex items-baseline">
+                    <h4 className="font-bold text-3xl">{event?.code}</h4>
+                    <span className="mx-3 text-3xl text-gray-300">–</span>
+                    <h4 className="font-bold text-2xl text-gray-600">{event?.name}</h4>
+                    {event && <span className="ml-3 text-gray-500">· {displayDate(event.date)}</span>}
+                </div>
                 <button
-                    className="text-white
-                                bg-blue-600
-                                font-bold
-                                my-3
-                                py-2
-                                px-4
-                                rounded"
-                    onClick={markByAcademicRecordNumber}>Selecciona</button>
-            </div >
-        )
-    }
+                    disabled={saving || !isDirty}
+                    className={`
+                        ml-10
+                        text-white
+                        font-bold
+                        py-2
+                        px-5
+                        rounded ${!saving && isDirty ? "bg-green-600 hover:bg-green-900" : "bg-gray-400"}`}
+                    onClick={onSave}>{saving ? "Guardant..." : "Guardar"}</button>
+            </div>
 
-    const renderGroups = () => {
-        return (
-            <ul>
-                {eventData?.peopleGroups.map(x => (
-                    <li key={x.id}>
-                        <Group data={x} selected={selected} setSelected={setSelected} />
-                    </li>
-                ))}
-            </ul>
-        )
-    }
+            <div className="flex items-baseline mt-3">
+                <h4 className="font-semibold">Persones apuntades: {selected.size} de {people.length}</h4>
+                {isDirty &&
+                    <span className="ml-3 text-sm text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">
+                        sense guardar
+                        {changes.added > 0 ? ` +${changes.added}` : ""}
+                        {changes.removed > 0 ? ` −${changes.removed}` : ""}
+                    </span>
+                }
+                {selected.size > 0 &&
+                    <button
+                        className="ml-4 text-sm text-gray-500 hover:text-red-600 hover:underline"
+                        onClick={onClear}>Desmarcar tot</button>
+                }
+                {saveResult &&
+                    <span className={`ml-4 text-sm italic ${saveResult.ok ? "text-green-700" : "text-red-600"}`}>
+                        {saveResult.message}
+                    </span>
+                }
+            </div>
 
-    if (!eventData) return null;
+            <div className="flex items-center mt-3">
+                <input
+                    type="search"
+                    value={search}
+                    onChange={e => setSearch(e.target.value)}
+                    className="block p-2.5 w-full max-w-xl text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Cercar per nom, expedient o document d'identitat..." />
+                {query
+                    ? <span className="ml-4 text-sm text-gray-500">{matches} coincidències</span>
+                    : <span className="ml-4 text-sm">
+                        <button className="text-blue-600 hover:underline" onClick={() => setAllGroupsOpen(true)}>Obrir tots</button>
+                        <button className="ml-4 text-blue-600 hover:underline" onClick={() => setAllGroupsOpen(false)}>Tancar tots</button>
+                    </span>
+                }
+            </div>
+        </div>
+    )
+
+    if (loading) return <div className="mt-20 text-center"><Spinner /></div>;
+    if (loadError) return <div className="m-10"><DangerAlert title="Error" text={loadError} /></div>;
+    if (!event) return null;
 
     return (
-
         <>
             <Head>
                 <title>Esdeveniments - {process.env.SCHOOL_NAME}</title>
@@ -136,128 +137,36 @@ const PeopleToEvent = () => {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <main className="px-10">
-                <div className="sticky top-0 bg-white pt-10 z-10">
-                    <div className="flex justify-between items-center ">
-                        <div className="flex items-baseline">
-                            <h4 className="font-bold text-3xl">{eventData.code}</h4>
-                            <h4 className="font-bold text-3xl ml-3">-</h4>
-                            <h4 className="font-bold text-3xl ml-3">{`${eventData.name} - ${displayDate(eventData.date)}`}</h4>
-                        </div>
-                        <div>
-                            <button
-                                disabled={saving}
-                                className={`
-                                    ml-10
-                                    text-white
-                                    font-bold
-                                    py-2
-                                    px-4
-                                    rounded ${!saving ? "bg-green-600 hover:bg-green-900" : "bg-gray-500"}`}
-                                onClick={persistChanges}>Guardar</button>
-                        </div>
-                    </div>
-                    <div className="mt-3 flex items-baseline">
-                        <h4 className="font-semibold">Persones apuntades: {selected.size}</h4>
-                        {selected.size > 0 &&
-                            <button
-                                className="ml-4 text-sm text-gray-500 hover:text-red-600 hover:underline"
-                                onClick={unSelectAllPeople}>Desmarcar tot</button>
-                        }
-                    </div>
-                    <hr className="h-px mt-3 mb-8 bg-gray-300 border-0" />
+            <main className="px-10 pb-16">
+                {renderToolbar()}
+
+                <div className="mt-6">
+                    <PasteSelector onApply={markByReferences} />
+
+                    {query && matches === 0 &&
+                        <p className="text-gray-500 italic">Cap persona coincideix amb la cerca.</p>
+                    }
+                    {event.peopleGroups.map(x => (
+                        <EventPeopleGroup
+                            key={x.id}
+                            group={x}
+                            query={query}
+                            selected={selected}
+                            open={openGroups.has(x.id)}
+                            onOpenChange={open => onGroupOpenChange(x.id, open)}
+                            onToggle={onToggle}
+                            onSetMany={onSetMany} />
+                    ))}
                 </div>
-                <div className="relative">
-                    {renderGroups()}
-                </div>
-                <hr className="h-px mt-3 mb-8 bg-gray-300 border-0" />
-                {renderAcademicRecordSelection()}
             </main>
         </>
     );
 }
 
 export default function PeopleToEventPage() {
-
-
-
     return (
         <Container>
             <PeopleToEvent />
         </Container>
     )
 };
-
-interface GroupProps {
-    data: EventPeopleGroup,
-    selected: Set<number>,
-    setSelected: (x: Set<number>) => void;
-}
-
-const Group = ({ data, selected, setSelected }: GroupProps) => {
-    const [show, setShow] = useState(false);
-    const { name, people } = data;
-
-    const onPersonCheck = (x: EventPerson, checked: boolean) => {
-        if (checked) {
-            selected.add(x.id)
-        }
-        else {
-            selected.delete(x.id);
-        }
-        setSelected(new Set(selected));
-    }
-
-    const selectAll = () => {
-        for (let i = 0; i < people.length; i++) {
-            selected.add(people[i].id);
-        }
-        setSelected(new Set(selected));
-    }
-
-    const unSelectAll = () => {
-        for (let i = 0; i < people.length; i++) {
-            selected.delete(people[i].id);
-        }
-        setSelected(new Set(selected));
-    }
-
-    const renderPerson = (x: EventPerson) => {
-        return (
-            <div className="mt-4">
-                <div className="flex items-center mb-4">
-                    <input
-                        id={`in_event_${x.id}`}
-                        type="checkbox"
-                        checked={selected.has(x.id)}
-                        onChange={e => onPersonCheck(x, e.target.checked)}
-                        className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500" />
-                    <label
-                        htmlFor={`in_event_${x.id}`}
-                        className="ml-2 text-lg font-medium">{x.fullName}</label>
-                </div>
-            </div>
-        )
-    }
-
-    return (
-        <div className="mb-7">
-            <div className="flex justify-between mb-1">
-                <h3>{name}</h3>
-                <div>
-                    <button onClick={selectAll}>Marcar tots</button>
-                    <button className="ml-6" onClick={unSelectAll}>Desmarcar tots</button>
-                    <button className="ml-6" onClick={() => setShow(!show)}>{show ? "Amaga" : "Mostra"}</button>
-                </div>
-            </div>
-            <hr className="h-px bg-gray-500 border-0" />
-            {!show ? null :
-                <>
-                    <ul>
-                        {people.map(x => <li key={x.id}>{renderPerson(x)}</li>)}
-                    </ul>
-                </>
-            }
-        </div>
-    )
-}
