@@ -44,6 +44,14 @@ const Group = ({ group, query, selected, open, onOpenChange, onToggle, onSetMany
         () => people.filter(x => selected.has(x.id)).length,
         [people, selected]);
 
+    /*
+        Verd: tot el grup apuntat. Groc: només una part, per veure d'un cop d'ull
+        quins grups queden a mitges. Gris: cap persona apuntada.
+    */
+    const countClass = selectedCount === 0 ? "bg-gray-100 text-gray-500"
+        : selectedCount === people.length ? "bg-green-100 text-green-800"
+            : "bg-yellow-100 text-yellow-800";
+
     // Cercant, els grups sense cap coincidència no es mostren i la resta s'obrin sols.
     if (query && visible.length === 0) return null;
     const expanded = query ? true : open;
@@ -68,7 +76,7 @@ const Group = ({ group, query, selected, open, onOpenChange, onToggle, onSetMany
                         <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
                     </svg>
                     <h3 className="ml-2 font-semibold">{name}</h3>
-                    <span className={`ml-3 text-sm px-2 py-0.5 rounded-full tabular-nums ${selectedCount > 0 ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-500"}`}>
+                    <span className={`ml-3 text-sm px-2 py-0.5 rounded-full tabular-nums ${countClass}`}>
                         {selectedCount}/{people.length}
                     </span>
                     {query &&
