@@ -55,6 +55,15 @@ const PeopleToEvent = () => {
             .finally(() => setSaving(false));
     }
 
+    const unSelectAllPeople = () => {
+        if (selected.size === 0) return;
+
+        const clear = confirm(`Desmarcar les ${selected.size} persones seleccionades?`);
+        if (clear) {
+            setSelected(new Set());
+        }
+    }
+
     const markByAcademicRecordNumber = () => {
         if (!eventData) return;
 
@@ -148,7 +157,14 @@ const PeopleToEvent = () => {
                                 onClick={persistChanges}>Guardar</button>
                         </div>
                     </div>
-                    <h4 className="mt-3 font-semibold">Persones apuntades: {selected.size}</h4>
+                    <div className="mt-3 flex items-baseline">
+                        <h4 className="font-semibold">Persones apuntades: {selected.size}</h4>
+                        {selected.size > 0 &&
+                            <button
+                                className="ml-4 text-sm text-gray-500 hover:text-red-600 hover:underline"
+                                onClick={unSelectAllPeople}>Desmarcar tot</button>
+                        }
+                    </div>
                     <hr className="h-px mt-3 mb-8 bg-gray-300 border-0" />
                 </div>
                 <div className="relative">

@@ -229,6 +229,22 @@ export const startJob = async (type: JobType): Promise<Response<StartJobResponse
     return data;
 }
 
+export const sendDailyEventsEmail = async (): Promise<Response<void>> => {
+    const response = await postJson(`${API_BASE_URL}/api/events/daily-email`);
+
+    const text = await response.text();
+    const data = (text ? JSON.parse(text) : {}) as Response<void>;
+
+    if (data.errors) {
+        data.errors = new Map(Object.entries(data.errors));
+    }
+    else if (!response.ok) {
+        data.errors = new Map([["error", ["No s'ha pogut enviar el correu."]]]);
+    }
+
+    return data;
+}
+
 export const exportSummaryRequest = async () => {
     const response = await get(`${API_BASE_URL}/api/events/export`);
     await toFile(response);

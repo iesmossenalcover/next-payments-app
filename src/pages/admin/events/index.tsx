@@ -3,7 +3,9 @@ import { Table } from "@/components/table";
 import { getEventsView } from "@/lib/apis/payments";
 import Head from "next/head";
 import Link from "next/link";
-import { deleteEvent, exportSummaryRequest } from '@/lib/apis/payments/client'
+import { deleteEvent, exportSummaryRequest, sendDailyEventsEmail } from '@/lib/apis/payments/client'
+import { hasRole, Roles } from "@/lib/apis/payments/models";
+import useUser from "@/lib/hooks/useUser";
 import { displayDate, displayDateTime, plainErrors } from "@/lib/utils";
 import { useApiRequest, useStartApiRequest } from "@/lib/hooks/useApiRequest";
 import Toggle from "@/components/Toggle";
@@ -158,6 +160,7 @@ const Events = () => {
                             <Link className=' inline-block text-white  bg-green-700  hover:bg-green-800 focus:ring-4  focus:ring-blue-300 font-medium py-3 px-3 rounded-lg text-sm mr-5' href="/admin/events/create">Nou esdeveniment</Link>
                         </div>
                         <ExportSummary />
+                        <SendDailyEmail />
                     </div>
                     <Toggle
                         id="showAll"
@@ -192,6 +195,33 @@ const ExportSummary = () => {
                 disabled={isLoading}
                 className=' inline-block text-white  bg-yellow-600  hover:bg-yellow-700 focus:ring-4  focus:ring-yellow-300 font-medium py-3 px-3 rounded-lg text-sm mr-5'
                 onClick={submit}>Exportar Estadistiques
+            </button>
+        </div>
+    )
+}
+
+const SendDailyEmail = () => {
+    const { user, loading } = useUser();
+    const { data, errors, isLoading, executeRequest } = useApiRequest(sendDailyEventsEmail);
+
+    if (loading || !hasRole(user?.role, Roles.SuperUser)) return null;
+
+    const submit = async () => {
+        const send = confirm("Enviar el correu diari d'esdeveniments?");
+        if (send) {
+            await executeRequest();
+        }
+    }
+
+    if (errors) return <div className=" mt-4 ml-4 text-red-500 italic">{plainErrors(errors)}</div>;
+    if (data) return <div className=" mt-4 ml-4 text-green-700 italic">Correu enviat correctament</div>;
+
+    return (
+        <div>
+            <button
+                disabled={isLoading}
+                className=' inline-block text-white  bg-blue-700  hover:bg-blue-800 focus:ring-4  focus:ring-blue-300 font-medium py-3 px-3 rounded-lg text-sm mr-5 disabled:bg-slate-400 disabled:hover:bg-slate-400'
+                onClick={submit}>{isLoading ? "Enviant..." : "Enviar correu diari"}
             </button>
         </div>
     )
