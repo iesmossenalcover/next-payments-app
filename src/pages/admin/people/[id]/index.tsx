@@ -1,4 +1,5 @@
-import { SuccessAlert } from "@/components/Alerts";
+import { DangerAlert, SuccessAlert } from "@/components/Alerts";
+import Link from "next/link";
 import { Person } from "@/lib/apis/payments/models";
 import { useEffect, useState } from "react";
 import PersonFields from "@/components/people/PersonFields";
@@ -6,6 +7,7 @@ import { useRouter } from "next/router";
 import { getPersonById, updatePerson } from "@/lib/apis/payments";
 import { Container } from "@/components/layout/SideBar";
 import Head from "next/head";
+import { PageHeader, PageMain } from "@/components/layout/PageHeader";
 import { useApiRequest } from "@/lib/hooks/useApiRequest";
 import { displayKeyErrors, plainErrors } from "@/lib/utils";
 import { syncPersonGoogleWorkspace, updatePasswordGoogleWorkspace, updateUOGoogleWorkspace } from "@/lib/apis/payments/client";
@@ -76,26 +78,31 @@ const Update = () => {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <main>
-                <div className="max-w-lg m-auto">
-                    <div className="my-5 mx-1 md:mx-4 lg:mx-6">
-                        {syncErrors ? <div className=" text-red-500 italic">No s&apos;ha pogut sincronitzar: {plainErrors(syncErrors)}</div> : null}
-                        {updatePasswordErrors ? <div className=" text-red-500 italic">No s&apos;ha pogut canviar la contrassenya: {plainErrors(updatePasswordErrors)}</div> : null}
-                        {showUpdated && <SuccessAlert text="Persona actualitzada correctament" />}
-                        <form className="mt-5" action="#" method="post" onSubmit={onFormSubmit} autoComplete="off">
+            <PageMain narrow>
+                <PageHeader
+                    title="Editar persona"
+                    subtitle={`${person.name} ${person.surname1} · ${person.documentId}`}
+                    back={{ href: "/admin/people", text: "Persones" }}
+                    actions={<Link className="btn btn-secondary" href={`/admin/people/${person.id}/payments`}>Pagaments</Link>} />
+                <div className="card p-6 sm:p-8">
+                        {syncErrors ? <div className="mb-5"><DangerAlert title="No s'ha pogut sincronitzar" text={`${plainErrors(syncErrors)}`} /></div> : null}
+                        {updatePasswordErrors ? <div className="mb-5"><DangerAlert title="No s'ha pogut canviar la contrasenya" text={`${plainErrors(updatePasswordErrors)}`} /></div> : null}
+                        {showUpdated && <div className="mb-5"><SuccessAlert text="Persona actualitzada correctament" /></div>}
+                        <form action="#" method="post" onSubmit={onFormSubmit} autoComplete="off">
                             <PersonFields
                                 errors={updateErrors}
                                 person={person}
                                 setPerson={setPerson} />
 
-                            <div className="mb-6">
+                            <div className="mt-8 border-t border-slate-200 pt-8">
+                                <h3 className="section-title mb-4">Compte de Google Workspace</h3>
                                 <label
-                                    className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                                    className="form-label"
                                     htmlFor="mail">Correu
                                 </label>
-                                <div className="flex justify-between items-center">
+                                <div className="flex items-center gap-1">
                                     <input
-                                        className="px-4 appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 leading-tight focus:outline-none focus:bg-white"
+                                        className="form-input mr-2"
                                         id="mail" name="mail"
                                         type="email"
                                         value={person.email ?? ""}
@@ -105,9 +112,9 @@ const Update = () => {
                                         disabled={formDisabled()}
                                         title="Generar Email"
                                         type="button"
-                                        className='font-medium text-black-700 hover:underline ml-5 pr-1 disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed'
+                                        className='btn-icon shrink-0'
                                         onClick={generateEmail}>
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-5 w-5">
                                             <path strokeLinecap="round" d="M16.5 12a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zm0 0c0 1.657 1.007 3 2.25 3S21 13.657 21 12a9 9 0 10-2.636 6.364M16.5 12V8.25" />
                                         </svg>
 
@@ -118,9 +125,9 @@ const Update = () => {
                                         disabled={formDisabled()}
                                         title="Actualitzar contrassenya"
                                         type="button"
-                                        className='font-medium text-black-700 hover:underline ml-5 pr-1 disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed'
+                                        className='btn-icon shrink-0'
                                         onClick={updatePassowrd}>
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-5 w-5">
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
                                         </svg>
                                     </button>
@@ -129,24 +136,18 @@ const Update = () => {
                                         disabled={formDisabled()}
                                         title="Actualitzar UO i grup"
                                         type="button"
-                                        className='font-medium text-black-700 hover:underline ml-5 pr-1 disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed'
+                                        className='btn-icon shrink-0'
                                         onClick={updateUOAndGroup}>
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-5 w-5">
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
                                         </svg>
 
                                     </button>
                                 </div>
 
-                                {syncPersonResponse && syncPersonResponse.password ? <div>
-                                    <p>La contrasenya temporal és: {syncPersonResponse.password}</p>
-                                </div> : null
-                                }
+                                {syncPersonResponse && syncPersonResponse.password ? <TemporaryPassword password={syncPersonResponse.password} /> : null}
 
-                                {updatePasswordResponse ? <div>
-                                    <p>La contrasenya temporal és: {updatePasswordResponse.password}</p>
-                                </div> : null
-                                }
+                                {updatePasswordResponse ? <TemporaryPassword password={updatePasswordResponse.password} /> : null}
 
                                 {displayKeyErrors("email", updateErrors)}
                             </div>
@@ -154,17 +155,23 @@ const Update = () => {
                             <div>
                                 <input
                                     disabled={formDisabled()}
-                                    className="w-full mt-2 bg-blue-500 hover:cursor-pointer hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed"
+                                    className="btn btn-primary mt-8 w-full"
                                     value="Guardar canvis"
                                     type="submit" />
                             </div>
                         </form>
                     </div>
-                </div>
-            </main>
+            </PageMain>
         </>
     )
 }
+
+const TemporaryPassword = ({ password }: { password: string }) => (
+    <div className="mt-3 flex items-center justify-between gap-3 rounded-lg bg-amber-50 px-4 py-3 text-sm ring-1 ring-inset ring-amber-200">
+        <span className="text-amber-900">La contrasenya temporal és:</span>
+        <code className="rounded bg-white px-2 py-1 font-mono font-semibold text-slate-900 ring-1 ring-amber-200">{password}</code>
+    </div>
+)
 
 export default function UpdatePersonPage() {
     return (

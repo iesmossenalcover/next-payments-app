@@ -18,17 +18,17 @@ const PersonRow = ({ person, checked, onToggle }: { person: EventPerson, checked
     return (
         <label
             htmlFor={`in_event_${person.id}`}
-            className={`flex items-center justify-between py-2 px-3 rounded cursor-pointer hover:bg-gray-50 ${checked ? "bg-green-50" : ""}`}>
+            className={`flex items-center justify-between gap-3 rounded-lg px-3 py-2 cursor-pointer transition-colors ${checked ? "bg-brand-50/70 hover:bg-brand-50" : "hover:bg-slate-50"}`}>
             <span className="flex items-center">
                 <input
                     id={`in_event_${person.id}`}
                     type="checkbox"
                     checked={checked}
                     onChange={e => onToggle(person.id, e.target.checked)}
-                    className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500" />
-                <span className="ml-3 font-medium">{person.fullName}</span>
+                    className="h-4 w-4 rounded" />
+                <span className={`ml-3 text-sm ${checked ? "font-medium text-slate-900" : "text-slate-700"}`}>{person.fullName}</span>
             </span>
-            <span className="text-sm text-gray-400 tabular-nums">{reference}</span>
+            <span className="text-xs text-slate-400 tabular-nums">{reference}</span>
         </label>
     )
 }
@@ -48,9 +48,9 @@ const Group = ({ group, query, selected, open, onOpenChange, onToggle, onSetMany
         Verd: tot el grup apuntat. Groc: només una part, per veure d'un cop d'ull
         quins grups queden a mitges. Gris: cap persona apuntada.
     */
-    const countClass = selectedCount === 0 ? "bg-gray-100 text-gray-500"
-        : selectedCount === people.length ? "bg-green-100 text-green-800"
-            : "bg-yellow-100 text-yellow-800";
+    const countClass = selectedCount === 0 ? "badge-gray"
+        : selectedCount === people.length ? "badge-green"
+            : "badge-amber";
 
     // Cercant, els grups sense cap coincidència no es mostren i la resta s'obrin sols.
     if (query && visible.length === 0) return null;
@@ -61,10 +61,10 @@ const Group = ({ group, query, selected, open, onOpenChange, onToggle, onSetMany
     const allVisibleSelected = visible.length > 0 && visible.every(x => selected.has(x.id));
 
     return (
-        <div className="mb-3 border border-gray-200 rounded-lg">
-            <div className="flex items-center justify-between px-3 py-2">
+        <div className="card mb-3 overflow-hidden">
+            <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-3">
                 <button
-                    className="flex items-center text-left"
+                    className="flex items-center rounded text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
                     onClick={() => onOpenChange(!expanded)}>
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -72,30 +72,30 @@ const Group = ({ group, query, selected, open, onOpenChange, onToggle, onSetMany
                         viewBox="0 0 24 24"
                         strokeWidth={2}
                         stroke="currentColor"
-                        className={`w-4 h-4 text-gray-400 transition-transform ${expanded ? "rotate-90" : ""}`}>
+                        className={`h-4 w-4 text-slate-400 transition-transform duration-200 ${expanded ? "rotate-90" : ""}`}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
                     </svg>
-                    <h3 className="ml-2 font-semibold">{name}</h3>
-                    <span className={`ml-3 text-sm px-2 py-0.5 rounded-full tabular-nums ${countClass}`}>
+                    <h3 className="ml-2 font-semibold text-slate-900">{name}</h3>
+                    <span className={`badge ml-3 tabular-nums ${countClass}`}>
                         {selectedCount}/{people.length}
                     </span>
                     {query &&
-                        <span className="ml-2 text-sm text-gray-400">{visible.length} resultats</span>
+                        <span className="ml-2 text-sm text-slate-400">{visible.length} resultats</span>
                     }
                 </button>
-                <div className="text-sm">
+                <div className="flex items-center gap-1">
                     <button
-                        className="text-blue-600 hover:underline disabled:text-gray-300 disabled:no-underline"
+                        className="btn btn-ghost btn-sm text-brand-600 hover:text-brand-700"
                         disabled={allVisibleSelected}
                         onClick={() => onSetMany(visibleIds, true)}>Marcar {query ? "resultats" : "tots"}</button>
                     <button
-                        className="ml-4 text-gray-500 hover:text-red-600 hover:underline disabled:text-gray-300 disabled:no-underline"
+                        className="btn btn-ghost btn-sm hover:bg-red-50 hover:text-red-600"
                         disabled={selectedCount === 0}
                         onClick={() => onSetMany(visibleIds, false)}>Desmarcar</button>
                 </div>
             </div>
             {expanded &&
-                <ul className="border-t border-gray-100 px-2 py-2">
+                <ul className="grid gap-0.5 border-t border-slate-100 p-2 lg:grid-cols-2">
                     {visible.map(x => (
                         <li key={x.id}>
                             <PersonRow person={x} checked={selected.has(x.id)} onToggle={onToggle} />

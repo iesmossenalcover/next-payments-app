@@ -2,6 +2,7 @@ import Head from "next/head";
 import { useEffect, useState } from "react";
 import { Table } from "@/components/table";
 import { Container } from "@/components/layout/SideBar";
+import { PageHeader, PageMain } from "@/components/layout/PageHeader";
 import Link from "next/link";
 import {
   deletePerson,
@@ -103,21 +104,19 @@ const People = () => {
 
   const customRenderer = {
     group: (item: TableRow) => {
-      if (item.group === "-") return <span className="text-gray-400">-</span>;
+      if (item.group === "-") return <span className="text-slate-300">—</span>;
       return (
-        <span className="inline-flex items-center rounded-full bg-indigo-50 text-indigo-700 text-xs font-medium px-2.5 py-1">
+        <span className="badge badge-brand">
           {item.group}
         </span>
       );
     },
     amipa: (item: TableRow) => {
-      if (item.amipa === "-") return <span className="text-gray-400">-</span>;
+      if (item.amipa === "-") return <span className="text-slate-300">—</span>;
       const isYes = item.amipa === "Si";
       return (
         <span
-          className={`inline-flex items-center rounded-full text-xs font-medium px-2.5 py-1 ${
-            isYes ? "bg-green-50 text-green-700" : "bg-gray-100 text-gray-600"
-          }`}
+          className={`badge ${isYes ? "badge-green" : "badge-gray"}`}
         >
           {item.amipa}
         </span>
@@ -125,10 +124,10 @@ const People = () => {
     },
     actions: (item: TableRow) => {
       return (
-        <div className="flex justify-center">
+        <div className="flex justify-end gap-1">
           <Link
             title="Pagaments de la persona"
-            className="font-medium text-blue-600 hover:underline ml-5"
+            className="btn-icon"
             href={`/admin/people/${item.id}/payments`}
           >
             <svg
@@ -137,7 +136,7 @@ const People = () => {
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
-              className="w-6 h-6"
+              className="h-5 w-5"
             >
               <path
                 strokeLinecap="round"
@@ -149,7 +148,7 @@ const People = () => {
 
           <Link
             title="Editar"
-            className="font-medium text-blue-600 hover:underline  ml-5"
+            className="btn-icon"
             href={`/admin/people/${item.id}`}
           >
             <svg
@@ -158,7 +157,7 @@ const People = () => {
               viewBox="0 0 24 24"
               strokeWidth="1.5"
               stroke="currentColor"
-              className="w-6 h-6"
+              className="h-5 w-5"
             >
               <path
                 strokeLinecap="round"
@@ -170,7 +169,7 @@ const People = () => {
 
           <button
             title="Eliminar"
-            className="font-medium text-red-600 hover:underline ml-5"
+            className="btn-icon btn-icon-danger"
             onClick={() => onDeletePerson(item)}
           >
             <svg
@@ -179,7 +178,7 @@ const People = () => {
               viewBox="0 0 24 24"
               strokeWidth="1.5"
               stroke="currentColor"
-              className="w-6 h-6"
+              className="h-5 w-5"
             >
               <path
                 strokeLinecap="round"
@@ -201,7 +200,7 @@ const People = () => {
       <>
         <div className="mb-6 max-w-md">
           <label
-            className="block uppercase tracking-wide text-gray-500 text-xs font-bold mb-2"
+            className="sr-only"
             htmlFor="filter"
           >
             Cerca persones
@@ -214,7 +213,7 @@ const People = () => {
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
-              className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+              className="pointer-events-none absolute left-3.5 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400"
             >
               <path
                 strokeLinecap="round"
@@ -225,7 +224,7 @@ const People = () => {
             <input
               autoComplete="off"
               placeholder="Nom, llinatges o identitat..."
-              className="pl-10 pr-4 appearance-none block w-full bg-white text-gray-700 border rounded-lg py-2.5 leading-tight shadow-sm focus:outline-none focus:ring-2 focus:ring-green-300 focus:border-green-400"
+              className="form-input py-3 pl-11"
               type="text"
               id="filter"
               value={filter}
@@ -235,9 +234,10 @@ const People = () => {
         </div>
 
         {showHint && (
-          <p className="text-gray-400 italic">
-            Escriu almenys 2 caràcters per començar a cercar.
-          </p>
+          <EmptyState
+            title="Cerca una persona"
+            text="Escriu almenys 2 caràcters per començar a cercar."
+          />
         )}
 
         {isLoading && filter.length >= 2 && (
@@ -247,22 +247,19 @@ const People = () => {
         )}
 
         {showEmpty && (
-          <p className="text-gray-400 italic">
-            No s&apos;ha trobat cap persona amb aquest criteri.
-          </p>
+          <EmptyState
+            title="Sense resultats"
+            text="No s'ha trobat cap persona amb aquest criteri."
+          />
         )}
 
         {!showHint && !isLoading && (people?.length ?? 0) > 0 && (
-          <div className="bg-white border rounded-lg shadow-sm overflow-y-auto overflow-x-auto">
+          <div className="card overflow-x-auto">
             <Table
               headers={tableHeaders}
               items={mapToRow()}
               renderers={customRenderer}
-              tableClass="w-full table-auto overflow-scroll h-full"
-              headerClass="bg-gray-50 border-b"
-              headerCellClass="text-sm font-medium text-gray-900 px-6 py-4 text-left text-center"
-              cellClass="px-6 py-4 whitespace-nowrap text-center"
-              rowClass="border-b last:border-b-0 hover:bg-green-50/60 transition-colors"
+              tableClass="data-table"
               visibleFields={[
                 "documentId",
                 "firstName",
@@ -287,16 +284,14 @@ const People = () => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="mx-4 md:mx-8 py-8">
-        <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-800">Persones</h1>
-            <p className="text-gray-500">Gestiona l&apos;alumnat i el seu grup</p>
-          </div>
-          <div className="flex flex-wrap gap-3">
+      <PageMain>
+        <PageHeader
+          title="Persones"
+          subtitle="Gestiona l'alumnat i el seu grup"
+          actions={<>
             <ExportPeople />
             <Link
-              className="inline-flex items-center gap-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium py-2.5 px-4 rounded-lg text-sm"
+              className="btn btn-secondary"
               href="/admin/tasks/upload"
             >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
@@ -305,7 +300,7 @@ const People = () => {
               Carregar persones
             </Link>
             <Link
-              className="inline-flex items-center gap-2 text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium py-2.5 px-4 rounded-lg text-sm"
+              className="btn btn-primary"
               href="/admin/people/create"
             >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
@@ -313,10 +308,9 @@ const People = () => {
               </svg>
               Afegir persona
             </Link>
-          </div>
-        </div>
+          </>} />
         {errors ? displayErrors(errors) : listPeople()}
-      </main>
+      </PageMain>
     </>
   );
 };
@@ -339,13 +333,13 @@ const ExportPeople = () => {
 
   if (errors)
     return (
-      <div className="flex items-center text-red-500 italic text-sm">
+      <div className="flex items-center text-sm text-red-600">
         {plainErrors(errors)}
       </div>
     );
   if (data)
     return (
-      <div className="flex items-center text-green-700 italic text-sm">
+      <div className="badge badge-green py-1.5 text-sm">
         Executat Correctament
       </div>
     );
@@ -353,7 +347,7 @@ const ExportPeople = () => {
   return (
     <button
       disabled={isLoading}
-      className="inline-flex items-center gap-2 text-white bg-yellow-600 hover:bg-yellow-700 focus:ring-4 focus:ring-yellow-300 font-medium py-2.5 px-4 rounded-lg text-sm disabled:bg-slate-400 disabled:hover:bg-slate-400"
+      className="btn btn-secondary"
       onClick={submit}
     >
       {isLoading ? (
@@ -370,3 +364,15 @@ const ExportPeople = () => {
     </button>
   );
 };
+
+const EmptyState = ({ title, text }: { title: string; text: string }) => (
+  <div className="card flex flex-col items-center px-6 py-14 text-center">
+    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-6 w-6">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
+      </svg>
+    </div>
+    <p className="mt-4 font-semibold text-slate-900">{title}</p>
+    <p className="mt-1 text-sm text-slate-500">{text}</p>
+  </div>
+);

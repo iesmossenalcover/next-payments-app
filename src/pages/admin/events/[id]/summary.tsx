@@ -43,82 +43,103 @@ const EventSummaries = () => {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <main className="container mx-auto p-4">
-                <div className="flex flex-col md:flex-row md:flex-wrap gap-y-1 md:gap-x-6">
-                    <h4 className="font-bold text-2xl w-full">{data.name}</h4>
-                    <h6>Codi: <span className="font-bold">{data.code}</span> </h6>
-                    <p>Data: <span className="font-bold">{displayDate(data.date)}</span></p>
-                    <p>
-                        Inici pagament: <span className="font-bold">{displayDateTime(data.publishDate)}</span>
-                    </p>
-                    <p>
-                        Fi pagament:{" "}
-                        <span className="font-bold">
-                            {data.unpublishDate ? displayDateTime(data.unpublishDate) : "-"}
-                        </span>
-                    </p>
+            <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6 print:max-w-none print:p-0">
+                <div className="card p-6 print:p-0">
+                    <h1 className="text-2xl font-bold tracking-tight text-slate-900">{data.name}</h1>
+                    <dl className="mt-4 grid grid-cols-2 gap-x-6 gap-y-3 text-sm sm:grid-cols-4">
+                        <div>
+                            <dt className="text-slate-500">Codi</dt>
+                            <dd className="mt-0.5 font-mono font-semibold text-slate-900">{data.code}</dd>
+                        </div>
+                        <div>
+                            <dt className="text-slate-500">Data</dt>
+                            <dd className="mt-0.5 font-semibold text-slate-900">{displayDate(data.date)}</dd>
+                        </div>
+                        <div>
+                            <dt className="text-slate-500">Inici pagament</dt>
+                            <dd className="mt-0.5 font-semibold text-slate-900">{displayDateTime(data.publishDate)}</dd>
+                        </div>
+                        <div>
+                            <dt className="text-slate-500">Fi pagament</dt>
+                            <dd className="mt-0.5 font-semibold text-slate-900">{data.unpublishDate ? displayDateTime(data.unpublishDate) : "-"}</dd>
+                        </div>
+                    </dl>
                 </div>
-                <hr className="h-px mt-3 mb-8 bg-gray-400 border-0" />
-                <div className="flex print:hidden">
+
+                <div className="my-6 flex flex-wrap items-center gap-3 print:hidden">
+                    <label htmlFor="course" className="text-sm font-medium text-slate-700">Grup</label>
                     <SelectorComponent
                         id='course'
                         name='course'
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+                        className="form-input w-auto min-w-[12rem]"
                         onSelect={val => setSelectedGroup(parseInt(val))}
                         selector={{ selected: `${selectedGroup}`, options: [{ key: "0", value: "Tots" }, ...data.groups] }} />
 
                     <button
                         onClick={() => window.print()}
-                        className='
-                            text-blue-700
-                            hover:text-white
-                            border
-                            border-blue-700
-                            hover:bg-blue-800
-                            focus:outline-none
-                            font-medium
-                            rounded-lg
-                            ml-5
-                            text-sm px-2 py-1 text-center'>
+                        className='btn btn-secondary ml-auto'>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-4 w-4">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0110.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0l.229 2.523a1.125 1.125 0 01-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0021 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 00-1.913-.247M6.34 18H5.25A2.25 2.25 0 013 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 011.913-.247m10.5 0a48.536 48.536 0 00-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5zm-3 0h.008v.008H15V10.5z" />
+                        </svg>
                         Imprimir
                     </button>
                 </div>
 
-                <h3 className="mt-4 text-lg font-bold text-green-700">Pagat: {displayPaidEvents.length}</h3>
-                <ul>
-                    {
-                        displayPaidEvents.map(x =>
-                            <li key={x.id} className="mt-3 flex flex-col md:flex-row md:items-center gap-2">
-                                <span className="text-sm md:text-base">{x.groupName} - {x.fullName} {x.quantity ? ` - x${x.quantity}` : null}</span>
-                                {x.schoolAlert && <a href={x.schoolAlert} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-orange-600 hover:text-orange-800 hover:underline flex-shrink-0">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 md:size-6">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
-                                    </svg>
-
-                                    <b className="text-sm md:text-base">Alerta escolar</b>
-                                </a>}
-                            </li>
-                        )
-                    }
-                </ul>
-                <hr className="h-px mt-8 bg-gray-400 border-0" />
-                <h3 className="mt-4 text-lg font-bold text-red-700">No Pagat: {displayUnpaidEvents.length}</h3>
-                <ul>
-                    {
-                        displayUnpaidEvents.map(x =>
-                            <li key={x.id} className="mt-3 flex flex-col md:flex-row md:items-center gap-2">
-                                <span className="text-sm md:text-base">{x.groupName} - {x.fullName}</span>
-                                {x.schoolAlert && <a href={x.schoolAlert} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-orange-600 hover:text-orange-800 hover:underline flex-shrink-0">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 md:size-6">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
-                                    </svg>
-
-                                    <b className="text-sm md:text-base">Alerta escolar</b>
-                                </a>}
-                            </li>
-                        )
-                    }
-                </ul>
+                <div className="grid gap-6 lg:grid-cols-2 print:mt-6 print:block">
+                    <section className="card overflow-hidden print:mb-6">
+                        <h3 className="flex items-center gap-2 border-b border-slate-200 px-5 py-4 font-semibold text-slate-900">
+                            <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                            Pagat
+                            <span className="badge badge-green">{displayPaidEvents.length}</span>
+                        </h3>
+                        <ul className="divide-y divide-slate-100">
+                            {
+                                displayPaidEvents.map(x =>
+                                    <li key={x.id} className="flex flex-wrap items-center justify-between gap-2 px-5 py-2.5 text-sm md:text-base">
+                                        <span>
+                                            <span className="text-slate-500">{x.groupName}</span>
+                                            <span className="mx-2 text-slate-300">·</span>
+                                            <span className="font-medium text-slate-900">{x.fullName}</span>
+                                            {x.quantity ? <span className="badge badge-gray ml-2">x{x.quantity}</span> : null}
+                                        </span>
+                                        {x.schoolAlert && <a href={x.schoolAlert} target="_blank" rel="noopener noreferrer" className="badge badge-amber shrink-0 hover:bg-amber-100">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+                                        </svg>
+                                        Alerta escolar
+                                    </a>}
+                                    </li>
+                                )
+                            }
+                        </ul>
+                    </section>
+                    <section className="card overflow-hidden">
+                        <h3 className="flex items-center gap-2 border-b border-slate-200 px-5 py-4 font-semibold text-slate-900">
+                            <span className="h-2 w-2 rounded-full bg-red-500" />
+                            No Pagat
+                            <span className="badge badge-red">{displayUnpaidEvents.length}</span>
+                        </h3>
+                        <ul className="divide-y divide-slate-100">
+                            {
+                                displayUnpaidEvents.map(x =>
+                                    <li key={x.id} className="flex flex-wrap items-center justify-between gap-2 px-5 py-2.5 text-sm md:text-base">
+                                        <span>
+                                            <span className="text-slate-500">{x.groupName}</span>
+                                            <span className="mx-2 text-slate-300">·</span>
+                                            <span className="font-medium text-slate-900">{x.fullName}</span>
+                                        </span>
+                                        {x.schoolAlert && <a href={x.schoolAlert} target="_blank" rel="noopener noreferrer" className="badge badge-amber shrink-0 hover:bg-amber-100">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+                                        </svg>
+                                        Alerta escolar
+                                    </a>}
+                                    </li>
+                                )
+                            }
+                        </ul>
+                    </section>
+                </div>
             </main>
         </>
     );

@@ -1,31 +1,16 @@
-import Link from "next/link"
+import { ErrorPage } from "@/components/layout/ErrorPage"
 
 const InternalServerErrorPage = () => {
     return (
-        <main className="text-center mt-10 p-5">
-            <h1 className="text-2xl font-bold">Oops, s&apos;ha produït un error!</h1>
-            
-            <Link
-                className="text-white
-                    inline-block
-                    mt-10
-                    bg-blue-700
-                    hover:bg-blue-800
-                    focus:ring-4
-                    focus:ring-blue-300
-                    font-medium
-                    rounded-lg
-                    text-lg
-                    px-5
-                    py-2.5
-                    mr-2
-                    mb-2
-                    dark:bg-blue-600
-                    dark:hover:bg-blue-700
-                    focus:outline-none
-                    dark:focus:ring-blue-800"
-                href="/">Torna a la pàgina principal.</Link>
-        </main>
+        <ErrorPage
+            code="500"
+            title="Oops, s'ha produït un error!"
+            icon={
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-8 w-8">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                </svg>
+            }
+            link={{ href: "/", text: "Torna a la pàgina principal." }} />
     )
 }
 

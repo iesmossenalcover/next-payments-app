@@ -1,12 +1,11 @@
 import Head from 'next/head'
-import { Noto_Sans } from "next/font/google";
 import { useEffect, useRef, useState } from 'react';
 import { createOrder, getPersonActiveEvents, PaymentMethod, PersonActiveEvent, PersonActiveEventsVm } from '@/lib/apis/payments';
 import { CreateOrderResponse } from '@/lib/apis/payments/models';
 import { displayDate } from '@/lib/utils';
 import { SelectorComponent } from '@/components/Selector';
-
-const font = Noto_Sans({ weight: '400', subsets: ['devanagari'] })
+import { Spinner } from '@/components/Loading';
+import { PublicLayout } from '@/components/layout/PublicLayout';
 
 const Home = () => {
 
@@ -26,15 +25,46 @@ const Home = () => {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <main className={`${font.className} container mx-auto px-1 mt-10  max-w-2xl`}>
+            <PublicLayout
+                title="Portal de pagaments"
+                subtitle={step === 1
+                    ? "Consulta i paga els esdeveniments pendents de manera ràpida i segura."
+                    : "Selecciona què vols pagar i tria el mètode de pagament."}>
+                <Steps current={step} />
                 {step === 1 ? <FirstStep onLoaded={onEventsLoaded} /> : null}
                 {step === 2 && viewModel ? <SecondStep data={viewModel} /> : null}
-            </main>
+            </PublicLayout>
         </>
     )
 }
 
 export default Home
+
+const Steps = ({ current }: { current: number }) => {
+    const steps = ["Identificació", "Selecció", "Pagament"];
+
+    return (
+        <ol className="mb-4 flex items-center gap-2 text-sm">
+            {steps.map((x, idx) => {
+                const n = idx + 1;
+                const done = n < current;
+                const active = n === current;
+                return (
+                    <li key={x} className="flex items-center gap-2">
+                        <span className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-semibold ${active || done ? "bg-white text-brand-700 shadow" : "bg-white/20 text-white"}`}>
+                            {done ?
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="h-3.5 w-3.5">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                </svg> : n}
+                        </span>
+                        <span className={`hidden sm:inline ${active ? "font-semibold text-white" : "text-brand-100"}`}>{x}</span>
+                        {n < steps.length && <span className="mx-1 h-px w-6 bg-white/30 sm:w-10" />}
+                    </li>
+                )
+            })}
+        </ol>
+    )
+}
 
 
 interface FirstStepProps {
@@ -67,70 +97,50 @@ const FirstStep = ({ onLoaded }: FirstStepProps) => {
         const list = errors.get(key) as string[];
         return (
             <>
-                {list.map((x, idx) => <p key={idx} className="mt-3 text-red-500 italic">{x}</p>)}
+                {list.map((x, idx) => <p key={idx} className="form-error">{x}</p>)}
             </>
         )
     }
 
     return (
-        <form className='max-w-md mx-auto' action="#" onSubmit={onFormSubmit}>
+        <form className='card animate-fade-in p-6 sm:p-8' action="#" onSubmit={onFormSubmit}>
             <div>
                 <label
-                    className="
-                        block
-                        uppercase
-                        tracking-wide
-                        text-gray-700
-                        text-md
-                        font-bold
-                        mb-2"
+                    className="form-label text-base"
                     htmlFor="documentId">Document d&apos;identitat</label>
 
-                <input
-                    required={true}
-                    className="
-                        px-4
-                        w-full
-                        text-lg
-                        text-gray-700
-                        border-2
-                        border-gray-600
-                        rounded
-                        py-3
-                        leading-tight
-                        focus:outline-none
-                        focus:bg-white"
-                    id="documentId" name="documentId" defaultValue={""} onChange={() => setErrors(undefined)} />
+                <div className="relative">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="pointer-events-none absolute left-3.5 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.875 1.875 0 11-3.75 0 1.875 1.875 0 013.75 0zm1.294 6.336a6.721 6.721 0 01-3.17.789 6.721 6.721 0 01-3.168-.789 3.376 3.376 0 016.338 0z" />
+                    </svg>
+                    <input
+                        required={true}
+                        autoFocus
+                        autoComplete="off"
+                        placeholder="12345678A"
+                        className={`form-input py-3.5 pl-11 text-lg uppercase placeholder:normal-case ${errors ? "ring-red-300 focus:ring-red-500" : ""}`}
+                        id="documentId" name="documentId" defaultValue={""} onChange={() => setErrors(undefined)} />
+                </div>
                 {displayErrors("")}
             </div>
 
-            <span
-                className='text-gray-600 text-sm italic'>
+            <p className='form-hint'>
                 Per exemple, el document d&apos;identitat de l&apos;alumne.
-            </span>
+            </p>
 
-            <div>
-                <input
-                    disabled={loading}
-                    className="w-full mt-6
-                    bg-blue-500
-                    hover:cursor-pointer
-                    hover:bg-blue-700
-                    text-white
-                    text-lg
-                    py-2
-                    px-4
-                    rounded
-                    focus:outline-none
-                    focus:shadow-outline
-                    disabled:bg-slate-50
-                    disabled:text-slate-500
-                    disabled:border-slate-200
-                    disabled:shadow-none
-                    disabled:hover:cursor-not-allowed"
-                    value="Continua"
-                    type="submit" />
-            </div>
+            <button
+                disabled={loading}
+                className="btn btn-primary btn-lg mt-6 w-full"
+                type="submit">
+                {loading ? <><Spinner className="h-5 w-5 text-white" />Cercant...</> :
+                    <>
+                        Continua
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="h-5 w-5">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                        </svg>
+                    </>
+                }
+            </button>
         </form>
     )
 }
@@ -211,20 +221,15 @@ const SecondStep = ({ data }: SecondStepProps) => {
         const list = errors.get(key) as string[];
         return (
             <>
-                {list.map((x, idx) => <p key={idx} className="mt-3 text-red-500 italic">{x}</p>)}
+                {list.map((x, idx) => <p key={idx} className="form-error">{x}</p>)}
             </>
         )
     }
 
-    const spinner = (
-        <svg aria-hidden="true" role="status" className="inline mr-3 w-4 h-4 text-white animate-spin" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="#E5E7EB"></path>
-            <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentColor"></path>
-        </svg>
-    );
+    const spinner = <Spinner className="h-5 w-5 text-white" />;
 
     const bizumLogo = (
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 122 36" className="h-6 w-auto" fill="none">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 122 36" className="h-5 w-auto" fill="none">
             <path fillRule="evenodd" clipRule="evenodd" d="M59.8625 12.8257c-1.0347 0-1.8704.8358-1.8704 1.8308v13.8113c0 1.0348.8357 1.8707 1.8704 1.8707s1.8704-.8359 1.8704-1.8707V14.6565c0-.995-.8357-1.8308-1.8704-1.8308Zm-.0001-6.88561c-1.154 0-2.1091.95524-2.1091 2.1095 0 1.15425.9551 2.14931 2.1091 2.14931 1.1541 0 2.1092-.95526 2.1092-2.14931 0-1.15426-.9551-2.1095-2.1092-2.1095ZM78.089 14.6566c0-1.1543-.9153-1.5921-1.751-1.5921h-9.2725c-.9153 0-1.6316.7164-1.6316 1.5921 0 .9154.7163 1.6319 1.6316 1.6319h6.0888l-7.8796 10.9853c-.2388.3184-.3581.7562-.3581 1.1144 0 1.1543.9153 1.7911 1.7112 1.7911h9.8296c.9153 0 1.6316-.7164 1.6316-1.6319 0-.9154-.7163-1.6318-1.6316-1.6318h-6.6062l7.7204-10.7466c.398-.5572.5174-1.0348.5174-1.5124Zm-27.3 8.6769c0 2.2687-.9949 3.6618-3.2633 3.6618-2.2683 0-3.2234-1.3931-3.2234-3.6618v-7.045h3.3826c2.7459 0 3.1041 1.5125 3.1041 3.1842v3.8608Zm3.7408-3.9404c0-3.8608-2.0296-6.3683-6.7653-6.3683h-3.4224V7.81078c0-1.03485-.8357-1.87069-1.8306-1.87069-1.0347 0-1.8704.83584-1.8704 1.87069V23.3335c0 3.8608 2.0693 7.0051 6.9642 7.0051 4.8551 0 6.9643-3.1841 6.9643-7.0051v-3.9404h-.0398Zm38.1642-6.5674c-1.0346 0-1.8704.8358-1.8704 1.8706v8.6371c0 2.2687-.9949 3.6617-3.2632 3.6617-2.2684 0-3.2235-1.393-3.2235-3.6617v-8.6371c0-1.0348-.8357-1.8706-1.8306-1.8706-1.0347 0-1.8704.8358-1.8704 1.8706v8.6371c0 3.8607 2.0694 7.0051 6.9643 7.0051 4.8551 0 6.9642-3.1842 6.9642-7.0051v-8.6371c-.0397-1.0348-.8755-1.8706-1.8704-1.8706Zm28.374 7.0451c0-3.8608-1.79-7.0052-6.645-7.0052-2.189 0-3.741.6369-4.816 1.7115-1.074-1.0348-2.626-1.7115-4.815-1.7115-4.8552 0-6.646 3.1842-6.646 7.0052v8.637c0 1.0348.8357 1.8707 1.8306 1.8707 1.0344 0 1.8704-.8359 1.8704-1.8707v-8.637c0-2.2687.716-3.6618 2.945-3.6618 2.268 0 2.945 1.3931 2.945 3.6618v8.637c0 1.0348.836 1.8707 1.83 1.8707 1.035 0 1.871-.8359 1.871-1.8707v-8.637c0-2.2687.716-3.6618 2.945-3.6618 2.268 0 2.945 1.3931 2.945 3.6618v8.637c0 1.0348.835 1.8707 1.83 1.8707 1.035 0 1.871-.8359 1.871-1.8707l.039-8.637ZM6.61567 12.8655c1.31327.9553 3.14387.6767 4.09893-.6368l3.4225-4.73643c.9551-1.31346.6765-3.14434-.6367-4.09959-1.3133-.95524-3.1439-.67663-4.09902.63683L5.93914 8.76593c-.9153 1.31347-.63673 3.14437.67653 4.09957ZM22.2952 6.17881c-1.3133-.95524-3.1439-.67663-4.099.63683L4.42685 25.7613c-.9551 1.3135-.67653 3.1444.63673 4.0996 1.31326.9553 3.14387.6767 4.09897-.6368L22.9319 10.2784c.9949-1.31345.6765-3.14434-.6367-4.09959ZM5.3024 4.66637c.9551-1.31346.67652-3.14435-.63674-4.099591C3.3524-.388466 1.52179-.109853.566693 1.20361c-.9551 1.31346-.676529 3.14435.636737 4.09959 1.31326.95525 3.14387.67663 4.09897-.63683ZM26.1952 30.6968c-1.3132-.9553-3.1438-.6766-4.0989.6368-.9551 1.3135-.6766 3.1444.6367 4.0996 1.3133.9553 3.1439.6766 4.099-.6368.9551-1.3135.6765-3.1444-.6368-4.0996Zm-5.3724-7.5226c-1.3132-.9552-3.1438-.6766-4.0989.6369l-3.4623 4.7364c-.9551 1.3134-.6765 3.1443.6367 4.0996 1.3133.9552 3.1439.6766 4.099-.6369l3.4623-4.7364c.9551-1.3134.6765-3.1443-.6368-4.0996Z" fill="white" />
         </svg>
     );
@@ -232,53 +237,33 @@ const SecondStep = ({ data }: SecondStepProps) => {
     const displayPayButton = () => {
         return (
             <>
-                <div className='mt-5'>{displayErrors("eventCodes")}</div>
-                <div className='mt-5 flex flex-col sm:flex-row gap-3'>
+                {displayErrors("eventCodes")}
+                <div className='mt-5 grid gap-3 sm:grid-cols-2'>
                     <button disabled={loading}
                         onClick={() => handlePayClick(PaymentMethod.Card)}
                         type="button"
-                        className="w-full
-                            text-white
-                            bg-blue-700
-                            hover:bg-blue-800
-                            focus:ring-4
-                            focus:outline-none
-                            focus:ring-blue-300
-                            disabled:bg-slate-300
-                            disabled:hover:bg-slate-300
-                            rounded
-                            text-lg
-                            px-5
-                            py-2.5
-                            text-center
-                            font-medium">
-                        {loading ? <>{spinner}Carregant...</> : <>Pagar amb targeta</>}
+                        className="btn btn-primary btn-lg w-full">
+                        {loading && paymentMethod === PaymentMethod.Card ? <>{spinner}Carregant...</> :
+                            <>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor" className="h-5 w-5">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z" />
+                                </svg>
+                                Pagar amb targeta
+                            </>}
                     </button>
                     <button disabled={loading}
                         onClick={() => handlePayClick(PaymentMethod.Bizum)}
                         type="button"
-                        className="w-full
-                                    text-white
-                                    bg-cyan-600
-                                    hover:bg-cyan-700
-                                    focus:ring-4
-                                    focus:outline-none
-                                    focus:ring-cyan-300
-                                    disabled:bg-slate-300
-                                    disabled:hover:bg-slate-300
-                                    rounded
-                                    text-lg
-                                    px-5
-                                    py-2.5
-                                    text-center
-                                    font-medium
-                                    inline-flex
-                                    items-center
-                                    justify-center
-                                    gap-2">
-                        {loading ? <>{spinner}Carregant...</> : <>Pagar amb {bizumLogo}</>}
+                        className="btn btn-lg w-full bg-cyan-600 text-white hover:bg-cyan-700 focus-visible:ring-cyan-500 disabled:hover:bg-cyan-600">
+                        {loading && paymentMethod === PaymentMethod.Bizum ? <>{spinner}Carregant...</> : <>Pagar amb {bizumLogo}</>}
                     </button>
                 </div>
+                <p className="mt-4 flex items-center justify-center gap-1.5 text-xs text-slate-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor" className="h-4 w-4">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                    </svg>
+                    Seràs redirigit a la passarel·la de pagament segura del banc.
+                </p>
             </>
         )
     }
@@ -293,41 +278,44 @@ const SecondStep = ({ data }: SecondStepProps) => {
         let total = selectedEvents.reduce((part, x) => part + x.event.price * Math.max(x.quantity, 1), 0);
 
         return (
-            <>
-                <hr className="h-px my-8 bg-gray-200 border-2" />
-                <div className='mt-5 flex justify-between text-xl'>
-                    <h3>Total</h3>
-                    <h3 className='font-bold'>{total} {events[0].currencySymbol}</h3>
+            <div className="animate-fade-in border-t border-slate-200 bg-slate-50/80 p-6 sm:px-8">
+                <div className='flex items-baseline justify-between'>
+                    <span className="text-slate-600">
+                        Total <span className="text-sm text-slate-400">({selectedEvents.length} {selectedEvents.length === 1 ? "element" : "elements"})</span>
+                    </span>
+                    <span className='text-3xl font-bold tracking-tight text-slate-900 tabular-nums'>{total} {events[0].currencySymbol}</span>
                 </div>
                 {displayPayButton()}
-            </>
+            </div>
         )
     }
 
     const displayEvents = () => {
         if (!events || events.length == 0) {
-            return <> <h2
-                className='text-md font-bold'>
-                No hi ha esdeveniments actius pendents de pagar.
-            </h2>
-                {/* {amipaMessage()} */}
-            </>
+            return (
+                <div className="px-6 py-12 text-center sm:px-8">
+                    <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="h-6 w-6">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                        </svg>
+                    </div>
+                    <h2 className='mt-4 font-semibold text-slate-900'>
+                        No hi ha esdeveniments actius pendents de pagar.
+                    </h2>
+                    {/* {amipaMessage()} */}
+                </div>
+            )
         }
 
         return (
-            <>
-                <span
-                    className="
-                        block
-                        uppercase
-                        tracking-wide
-                        text-gray-700
-                        text-md
-                        font-bold
-                        mb-10">Selecciona els esdeveniments a pagar</span>
-                <ul>
+            <div className="p-6 sm:px-8">
+                <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-slate-500">Selecciona els esdeveniments a pagar</h2>
+                <ul className="space-y-3">
                     {eventItems.map((x, idx) =>
-                        <li key={x.event.code} className="w-full mb-5 py-4 px-2 md:text-lg border-solid border-[1px] border-slate-300">
+                        <li key={x.event.code}
+                            className={`rounded-xl p-4 ring-1 transition-all ${x.selected
+                                ? "bg-brand-50/60 ring-2 ring-brand-500"
+                                : "bg-white ring-slate-200 hover:ring-slate-300"} ${x.event.selectable ? "" : "opacity-60"}`}>
                             <EventLine
                                 item={x}
                                 idx={idx}
@@ -336,7 +324,7 @@ const SecondStep = ({ data }: SecondStepProps) => {
                     )}
                 </ul>
                 {/* {amipaMessage()} */}
-            </>
+            </div>
         )
     }
 
@@ -344,7 +332,7 @@ const SecondStep = ({ data }: SecondStepProps) => {
         return (
             <div>
                 <a target='blank' href='https://drive.google.com/file/d/1811V-ydbXgL_r0zCrsm3qVDyjypDqtrG/view?usp=sharing'
-                    className='md:text-lg text-green-500 hover:text-green-400 hover:underline'>
+                    className='link md:text-lg'>
                     Per fer-te soci d&apos;AMIPA clica aquí
                 </a>
             </div>
@@ -355,7 +343,7 @@ const SecondStep = ({ data }: SecondStepProps) => {
         (
             <>
                 <button
-                    className='text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:outline-none font-medium rounded-lg text-sm px-2 py-1 text-center'
+                    className='btn btn-secondary btn-sm'
                     onClick={() => setDisplayEnrollment(!displayEnrollment)}
                 >{displayEnrollment ? "Amaga matrícula" : "Mostra matrícula"}</button>
             </>
@@ -365,34 +353,42 @@ const SecondStep = ({ data }: SecondStepProps) => {
         if (!person.enrolled) return null;
 
         return (
-            <>
-                {person.groupDescription ? <h3 className='pb-4 font-semibold'>Curs: {person.groupDescription}</h3> : null}
+            <div className="animate-fade-in p-6 sm:px-8">
+                {person.groupDescription ?
+                    <p className='mb-4'>
+                        <span className="text-sm text-slate-500">Curs</span>
+                        <span className="block font-semibold text-slate-900">{person.groupDescription}</span>
+                    </p> : null}
                 {
                     person.enrollmentSubjectsInfo ? <>
-                        <h3 className='underline'>Assignatures a les que s&apos;ha matriculat:</h3>
-                        <ul className='pl-5 list-disc'>
+                        <h3 className='text-sm font-semibold uppercase tracking-wider text-slate-500'>Assignatures a les que s&apos;ha matriculat</h3>
+                        <ul className='mt-3 divide-y divide-slate-100 rounded-lg ring-1 ring-slate-200'>
                             {person.enrollmentSubjectsInfo.trim().split("\n").map((x, idx) => (
-                                <li key={idx} className="mt-3">{x}</li>
+                                <li key={idx} className="px-4 py-2.5 text-slate-700">{x}</li>
                             ))}
                         </ul>
                     </> : null
                 }
-            </>
+            </div>
         )
     }
 
+    const initials = person.fullName.split(" ").filter(x => x.length > 0).slice(0, 2).map(x => x[0].toUpperCase()).join("");
+
     return (
-        <>
-            <div className='flex justify-between items-center mb-4'>
-                <h3 className='
-                    text-lg
-                    tracking-wide
-                    font-bold
-                    text-gray-500
-                    text-md'>{person.fullName}</h3>
+        <div className="card animate-fade-in overflow-hidden">
+            <div className='flex items-center justify-between gap-4 border-b border-slate-200 p-6 sm:px-8'>
+                <div className="flex min-w-0 items-center gap-3">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand-100 font-semibold text-brand-700">
+                        {initials}
+                    </div>
+                    <div className="min-w-0">
+                        <p className="text-xs font-medium uppercase tracking-wider text-slate-400">Alumne</p>
+                        <h3 className='truncate font-semibold text-slate-900'>{person.fullName}</h3>
+                    </div>
+                </div>
                 {enrollmentButton}
             </div>
-            <hr className="h-px mb-5 border-2 bg-gray-700" />
             {displayEnrollment ?
                 <>{renderEnrollment()}</> :
                 <>
@@ -401,8 +397,7 @@ const SecondStep = ({ data }: SecondStepProps) => {
                     {renderAndSubmitPaymentForm()}
                 </>
             }
-
-        </>
+        </div>
     )
 }
 
@@ -431,45 +426,46 @@ const EventLine = ({ idx, item, setEventItem: setEvent }: EventProps) => {
     }
 
     return (
-        <div className="w-full flex justify-between items-center ">
-            <div className="flex items-center ">
+        <div className="flex w-full items-center justify-between gap-4">
+            <div className="flex min-w-0 flex-1 items-center">
                 <input id={`event_${event.code}`}
                     aria-describedby="helper-checkbox-text"
                     type="checkbox"
                     disabled={!event.selectable}
-                    className="w-5 h-5
-                    text-blue-600
-                    bg-gray-100
-                    border-gray-300
-                    rounded
-                    focus:ring-2"
+                    className="h-5 w-5 shrink-0 cursor-pointer rounded disabled:cursor-not-allowed"
                     checked={selected}
                     onChange={(e) => onSelectEvent(e.target.checked)}
                 />
-                <label htmlFor={`event_${event.code}`}>
-                    <div
-                        className="ml-2 select-none text-gray-900">
+                <label htmlFor={`event_${event.code}`} className={`ml-3 min-w-0 flex-1 select-none ${event.selectable ? "cursor-pointer" : "cursor-not-allowed"}`}>
+                    <div className="font-medium text-slate-900">
                         {event.name}
-                        <span className='hidden md:inline-block'>&nbsp;- {displayDate(event.date)}</span>
                     </div>
-                    {
-                        event.displayQuantitySelector ?
-                            <div className='ml-2 text-sm text-slate-700 italic'>Preu individual: {event.price} {event.currencySymbol}</div>
-                            : null
-                    }
+                    <div className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-slate-500">
+                        <span className="inline-flex items-center gap-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-4 w-4">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                            </svg>
+                            {displayDate(event.date)}
+                        </span>
+                        {
+                            event.displayQuantitySelector ?
+                                <span>Preu individual: {event.price} {event.currencySymbol}</span>
+                                : null
+                        }
+                    </div>
                 </label>
             </div>
-            <div>
+            <div className="flex shrink-0 items-center gap-3">
                 {
                     event.displayQuantitySelector ?
                         <SelectorComponent
                             id={`"quantity_"${event.code}`}
                             name={`"quantity_"${event.code}`}
-                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 py-1 px-2.5 mr-0 md:mr-5"
+                            className="form-input w-auto py-1.5 pl-3 pr-8"
                             selector={{ selected: quantity.toString(), options }}
                             onSelect={onSelectQuantity} /> : null
                 }
-                <div className={`${event.displayQuantitySelector ? 'hidden' : ''} md:inline-block`}>
+                <div className={`${event.displayQuantitySelector ? 'hidden sm:block' : ''} min-w-[4rem] text-right font-semibold text-slate-900 tabular-nums`}>
                     {
                         event.displayQuantitySelector ?
                             <>{event.price * quantity} {event.currencySymbol}</> :

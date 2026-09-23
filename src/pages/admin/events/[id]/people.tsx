@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import Head from "next/head";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { Container } from "@/components/layout/SideBar";
 import { DangerAlert } from "@/components/Alerts";
@@ -66,30 +67,34 @@ const PeopleToEvent = () => {
     }
 
     const renderToolbar = () => (
-        <div className="sticky top-0 bg-white pt-8 pb-3 z-10 border-b border-gray-200">
-            <div className="flex justify-between items-center">
-                <div className="flex items-baseline">
-                    <h4 className="font-bold text-3xl">{event?.code}</h4>
-                    <span className="mx-3 text-3xl text-gray-300">–</span>
-                    <h4 className="font-bold text-2xl text-gray-600">{event?.name}</h4>
-                    {event && <span className="ml-3 text-gray-500">· {displayDate(event.date)}</span>}
+        <div className="sticky top-0 z-10 -mx-4 border-b border-slate-200 bg-slate-50/90 px-4 pb-4 pt-6 backdrop-blur sm:-mx-6 sm:px-6 lg:-mx-10 lg:px-10">
+            <Link href="/admin/events" className="mb-2 inline-flex items-center gap-1 text-sm font-medium text-slate-500 transition-colors hover:text-slate-900">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="h-4 w-4">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                </svg>
+                Esdeveniments
+            </Link>
+            <div className="flex flex-wrap items-center justify-between gap-4">
+                <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1">
+                    <h1 className="text-2xl font-bold tracking-tight text-slate-900">{event?.name}</h1>
+                    <span className="badge badge-gray font-mono">{event?.code}</span>
+                    {event && <span className="text-sm text-slate-500">{displayDate(event.date)}</span>}
                 </div>
                 <button
                     disabled={saving || !isDirty}
-                    className={`
-                        ml-10
-                        text-white
-                        font-bold
-                        py-2
-                        px-5
-                        rounded ${!saving && isDirty ? "bg-green-600 hover:bg-green-900" : "bg-gray-400"}`}
-                    onClick={onSave}>{saving ? "Guardant..." : "Guardar"}</button>
+                    className="btn btn-primary min-w-[8rem]"
+                    onClick={onSave}>
+                    {saving && <Spinner className="h-4 w-4 text-white" />}
+                    {saving ? "Guardant..." : "Guardar"}
+                </button>
             </div>
 
-            <div className="flex items-baseline mt-3">
-                <h4 className="font-semibold">Persones apuntades: {selected.size} de {people.length}</h4>
+            <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
+                <span className="text-slate-600">
+                    Persones apuntades: <span className="font-semibold text-slate-900 tabular-nums">{selected.size}</span> de <span className="tabular-nums">{people.length}</span>
+                </span>
                 {isDirty &&
-                    <span className="ml-3 text-sm text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">
+                    <span className="badge badge-amber">
                         sense guardar
                         {changes.added > 0 ? ` +${changes.added}` : ""}
                         {changes.removed > 0 ? ` −${changes.removed}` : ""}
@@ -97,36 +102,41 @@ const PeopleToEvent = () => {
                 }
                 {selected.size > 0 &&
                     <button
-                        className="ml-4 text-sm text-gray-500 hover:text-red-600 hover:underline"
+                        className="font-medium text-slate-500 transition-colors hover:text-red-600"
                         onClick={onClear}>Desmarcar tot</button>
                 }
                 {saveResult &&
-                    <span className={`ml-4 text-sm italic ${saveResult.ok ? "text-green-700" : "text-red-600"}`}>
+                    <span className={`badge ${saveResult.ok ? "badge-green" : "badge-red"}`}>
                         {saveResult.message}
                     </span>
                 }
             </div>
 
-            <div className="flex items-center mt-3">
-                <input
-                    type="search"
-                    value={search}
-                    onChange={e => setSearch(e.target.value)}
-                    className="block p-2.5 w-full max-w-xl text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Cercar per nom, expedient o document d'identitat..." />
+            <div className="mt-4 flex flex-wrap items-center gap-3">
+                <div className="relative w-full max-w-xl">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="pointer-events-none absolute left-3.5 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                    </svg>
+                    <input
+                        type="search"
+                        value={search}
+                        onChange={e => setSearch(e.target.value)}
+                        className="form-input pl-11"
+                        placeholder="Cercar per nom, expedient o document d'identitat..." />
+                </div>
                 {query
-                    ? <span className="ml-4 text-sm text-gray-500">{matches} coincidències</span>
-                    : <span className="ml-4 text-sm">
-                        <button className="text-blue-600 hover:underline" onClick={() => setAllGroupsOpen(true)}>Obrir tots</button>
-                        <button className="ml-4 text-blue-600 hover:underline" onClick={() => setAllGroupsOpen(false)}>Tancar tots</button>
+                    ? <span className="text-sm text-slate-500">{matches} coincidències</span>
+                    : <span className="flex items-center gap-1">
+                        <button className="btn btn-ghost btn-sm" onClick={() => setAllGroupsOpen(true)}>Obrir tots</button>
+                        <button className="btn btn-ghost btn-sm" onClick={() => setAllGroupsOpen(false)}>Tancar tots</button>
                     </span>
                 }
             </div>
         </div>
     )
 
-    if (loading) return <div className="mt-20 text-center"><Spinner /></div>;
-    if (loadError) return <div className="m-10"><DangerAlert title="Error" text={loadError} /></div>;
+    if (loading) return <div className="flex justify-center py-24"><Spinner /></div>;
+    if (loadError) return <div className="mx-auto max-w-2xl p-10"><DangerAlert title="Error" text={loadError} /></div>;
     if (!event) return null;
 
     return (
@@ -137,14 +147,14 @@ const PeopleToEvent = () => {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <main className="px-10 pb-16">
+            <main className="px-4 pb-16 sm:px-6 lg:px-10">
                 {renderToolbar()}
 
                 <div className="mt-6">
                     <PasteSelector onApply={markByReferences} />
 
                     {query && matches === 0 &&
-                        <p className="text-gray-500 italic">Cap persona coincideix amb la cerca.</p>
+                        <p className="card px-6 py-10 text-center text-slate-500">Cap persona coincideix amb la cerca.</p>
                     }
                     {event.peopleGroups.map(x => (
                         <EventPeopleGroup

@@ -3,6 +3,7 @@ import { createPerson } from "@/lib/apis/payments/client";
 import { Person } from "@/lib/apis/payments/models";
 import PersonFields from "@/components/people/PersonFields";
 import Head from "next/head";
+import { PageHeader, PageMain } from "@/components/layout/PageHeader";
 import { Container } from "@/components/layout/SideBar";
 import { useApiRequest } from "@/lib/hooks/useApiRequest";
 import Link from "next/link";
@@ -42,14 +43,14 @@ const Create = () => {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <main>
-                <div className="max-w-lg m-auto">
-                    <div className="my-5 mx-1 md:mx-4 lg:mx-6">
+            <PageMain narrow>
+                <PageHeader title="Afegir persona" back={{ href: "/admin/people", text: "Persones" }} />
+                <div className="card p-6 sm:p-8">
                         {
                             data ?
                                 <SuccessAlert text="Persona afegida correctament">
                                     <Link
-                                        className="inline-block font-bold underline mt-3"
+                                        className="link mt-2 inline-block text-emerald-800"
                                         href={`/admin/people/${data}`}>{`Editar la persona creada`}</Link>
                                 </SuccessAlert> :
                                 <form action="#" method="post" onSubmit={onFormSubmit} autoComplete="off">
@@ -60,15 +61,14 @@ const Create = () => {
                                     <div>
                                         <input
                                             disabled={formDisabled()}
-                                            className="w-full mt-6 bg-green-700 hover:cursor-pointer hover:bg-green-800 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed"
+                                            className="btn btn-primary mt-8 w-full"
                                             value="Afegir persona"
                                             type="submit" />
                                     </div>
                                 </form>
                         }
                     </div>
-                </div>
-            </main>
+            </PageMain>
         </>
     )
 }

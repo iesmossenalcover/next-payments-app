@@ -1,4 +1,6 @@
 import { Container } from "@/components/layout/SideBar";
+import { PageHeader, PageMain } from "@/components/layout/PageHeader";
+import { Spinner } from "@/components/Loading";
 import Toggle from "@/components/Toggle";
 import { AppConfig, getAdminInfo, setAppConfig } from "@/lib/apis/payments";
 import { useStartApiRequest } from "@/lib/hooks/useApiRequest";
@@ -32,7 +34,7 @@ const Admin = () => {
     }
 
     if (isLoading || !data) {
-        return null;
+        return <div className="flex justify-center py-24"><Spinner /></div>;
     }
 
     return (
@@ -44,19 +46,18 @@ const Admin = () => {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <main className="mx-4 md:mx-8 py-8">
+            <PageMain>
+                <PageHeader
+                    title="Tauler Administratiu"
+                    subtitle="Resum de l'activitat de la plataforma"
+                    actions={
+                        <span className="badge badge-brand px-3 py-1 text-sm">
+                            <span className="h-1.5 w-1.5 rounded-full bg-brand-500" />
+                            Curs {data.currentCurs}
+                        </span>
+                    } />
 
-                <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
-                    <div>
-                        <h1 className="text-2xl font-bold text-gray-800">Tauler Administratiu</h1>
-                        <p className="text-gray-500">Resum de l'activitat de la plataforma</p>
-                    </div>
-                    <span className="inline-flex items-center rounded-full bg-green-100 text-green-700 font-semibold text-sm px-4 py-1.5">
-                        Curs {data.currentCurs}
-                    </span>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 mb-8">
+                <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
                     <StatCard
                         title="Esdeveniments creats"
                         value={data.events}
@@ -107,9 +108,13 @@ const Admin = () => {
                     />
                 </div>
 
-                <div className="bg-white border rounded-lg shadow-sm p-5 max-w-3xl">
-                    <h2 className="font-bold text-gray-700 mb-4">Configuració</h2>
-                    <form className="flex flex-col gap-4" action="#" onSubmit={onSubmitAppConfig}>
+                <div className="card max-w-3xl overflow-hidden">
+                    <div className="border-b border-slate-200 px-6 py-4">
+                        <h2 className="section-title">Configuració</h2>
+                        <p className="mt-0.5 text-sm text-slate-500">Opcions generals del portal de pagaments.</p>
+                    </div>
+                    <form className="flex flex-col" action="#" onSubmit={onSubmitAppConfig}>
+                        <div className="px-6 py-5">
                         <Toggle
                             name="displayEnrollment"
                             id="displayEnrollment"
@@ -117,35 +122,31 @@ const Admin = () => {
                             onToggled={val => setData({ ...data, appConfig: { ...data.appConfig, displayEnrollment: val } })}
                             text="Visualitzar al portal de pagaments les assignatures i el grup dels alumnes."
                         />
-                        <div className="pt-3 border-t flex justify-end">
+                        </div>
+                        <div className="flex justify-end bg-slate-50 px-6 py-3">
                             <button
                                 disabled={updatingConfig}
                                 type="submit"
-                                className="inline-flex items-center gap-2 text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium py-2.5 px-5 rounded-lg text-sm disabled:bg-slate-400 disabled:hover:bg-slate-400 disabled:cursor-not-allowed"
+                                className="btn btn-primary"
                             >
-                                {updatingConfig && (
-                                    <svg className="animate-spin w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
-                                    </svg>
-                                )}
+                                {updatingConfig && <Spinner className="h-4 w-4 text-white" />}
                                 {updatingConfig ? "Guardant..." : "Guardar"}
                             </button>
                         </div>
                     </form>
                 </div>
-            </main>
+            </PageMain>
         </>
     );
 }
 
 const statColors = {
-    blue: "bg-blue-50 text-blue-600",
-    green: "bg-green-50 text-green-600",
-    amber: "bg-amber-50 text-amber-600",
-    purple: "bg-purple-50 text-purple-600",
-    indigo: "bg-indigo-50 text-indigo-600",
-    teal: "bg-teal-50 text-teal-600",
+    blue: "bg-blue-50 text-blue-600 ring-blue-100",
+    green: "bg-emerald-50 text-emerald-600 ring-emerald-100",
+    amber: "bg-amber-50 text-amber-600 ring-amber-100",
+    purple: "bg-purple-50 text-purple-600 ring-purple-100",
+    indigo: "bg-indigo-50 text-indigo-600 ring-indigo-100",
+    teal: "bg-teal-50 text-teal-600 ring-teal-100",
 } as const;
 
 interface StatCardProps {
@@ -157,15 +158,15 @@ interface StatCardProps {
 
 const StatCard = ({ title, value, icon, color }: StatCardProps) => {
     return (
-        <div className="bg-white border rounded-lg shadow-sm p-4 flex items-center gap-4">
-            <div className={`shrink-0 rounded-full p-3 ${statColors[color]}`}>
+        <div className="card flex items-center gap-4 p-5 transition-shadow hover:shadow-md">
+            <div className={`shrink-0 rounded-xl p-3 ring-1 ring-inset ${statColors[color]}`}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                     {icon}
                 </svg>
             </div>
             <div className="text-left">
-                <h5 className="text-sm font-medium text-gray-500">{title}</h5>
-                <h3 className="font-bold text-2xl text-gray-800">{value}</h3>
+                <p className="text-sm font-medium text-slate-500">{title}</p>
+                <p className="mt-0.5 text-3xl font-bold tracking-tight text-slate-900 tabular-nums">{value}</p>
             </div>
         </div>
     );

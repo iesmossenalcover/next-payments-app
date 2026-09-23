@@ -1,31 +1,16 @@
-import Link from "next/link"
+import { ErrorPage } from "@/components/layout/ErrorPage"
 
 const NotFoundPage = () => {
     return (
-        <main className="text-center mt-10 p-5">
-            <h1 className="text-2xl font-bold">Pàgina no trobada</h1>
-            
-            <Link
-                className="text-white
-                    inline-block
-                    mt-10
-                    bg-blue-700
-                    hover:bg-blue-800
-                    focus:ring-4
-                    focus:ring-blue-300
-                    font-medium
-                    rounded-lg
-                    text-lg
-                    px-5
-                    py-2.5
-                    mr-2
-                    mb-2
-                    dark:bg-blue-600
-                    dark:hover:bg-blue-700
-                    focus:outline-none
-                    dark:focus:ring-blue-800"
-                href="/admin/signin">Torna a la pàgina principal.</Link>
-        </main>
+        <ErrorPage
+            code="404"
+            title="Pàgina no trobada"
+            icon={
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-8 w-8">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                </svg>
+            }
+            link={{ href: "/admin/signin", text: "Torna a la pàgina principal." }} />
     )
 }
 

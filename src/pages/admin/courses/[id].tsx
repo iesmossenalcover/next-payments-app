@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { Container } from "@/components/layout/SideBar";
 import Head from "next/head";
+import { PageHeader, PageMain } from "@/components/layout/PageHeader";
+import { DangerAlert } from "@/components/Alerts";
 import { useApiRequest } from "@/lib/hooks/useApiRequest";
 import { getCourseById, updateCourse } from "@/lib/apis/payments/client";
 import GroupFields from "@/components/groups/GroupFields";
@@ -55,12 +57,13 @@ const Update = () => {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <main>
-                {!course ? courseErrors ? <div className="mt-5 ml-5">{plainErrors(courseErrors)}</div> : null :
-                    <div className="max-w-lg m-auto">
-                        <div className="m-5">
-                            {showUpdated ? <SuccessAlert text="Curs actualitzt correctament" /> : null}
-                            <form className="mt-5" action="#" method="post" onSubmit={onFormSubmit} autoComplete="off">
+            <PageMain narrow>
+                <PageHeader title="Editar curs" subtitle={course?.name} back={{ href: "/admin/courses", text: "Cursos" }} />
+                {!course ? courseErrors ? <DangerAlert title="Error" text={`${plainErrors(courseErrors)}`} /> : null :
+                    <div className="card p-6 sm:p-8">
+                        <div>
+                            {showUpdated ? <div className="mb-5"><SuccessAlert text="Curs actualitzat correctament" /></div> : null}
+                            <form action="#" method="post" onSubmit={onFormSubmit} autoComplete="off">
                                 <CourseFields
                                     errors={updateErrors}
                                     course={course} />
@@ -68,7 +71,7 @@ const Update = () => {
                                 <div>
                                     <input
                                         disabled={formDisabled()}
-                                        className="w-full mt-6 bg-blue-500 hover:cursor-pointer hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed"
+                                        className="btn btn-primary mt-8 w-full"
                                         value="Guardar canvis"
                                         type="submit" />
                                 </div>
@@ -76,7 +79,7 @@ const Update = () => {
                         </div>
                     </div>
                 }
-            </main>
+            </PageMain>
         </>
     )
 }

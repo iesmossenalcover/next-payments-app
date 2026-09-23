@@ -10,27 +10,27 @@ const
     GroupFields = ({ group, errors }: GroupComponentProps) => {
 
         return (
-            <>
-                <div className="mb-6">
+            <div className="space-y-5">
+                <div>
                     <label
-                        className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                        className="form-label"
                         htmlFor="name">Nom</label>
                     <input
-                        className="px-4 appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 leading-tight focus:outline-none focus:bg-white"
+                        className="form-input"
                         id="name" name="name" defaultValue={group.name} />
                     {displayKeyErrors("name", errors)}
                 </div>
 
-                <div className="mb-6">
+                <div>
                     <label
-                        className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                        className="form-label"
                         htmlFor="description">Descripció</label>
                     <input
-                        className="px-4 appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 leading-tight focus:outline-none focus:bg-white"
+                        className="form-input"
                         id="description" name="description" defaultValue={group.description} />
                     {displayKeyErrors("description", errors)}
                 </div>
-            </>
+            </div>
         )
     }
 

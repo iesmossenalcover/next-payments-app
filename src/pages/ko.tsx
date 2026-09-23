@@ -1,8 +1,6 @@
 import Head from "next/head";
-import { Noto_Sans } from "next/font/google";
-import { DangerAlert } from "@/components/Alerts";
-
-const font = Noto_Sans({ weight: '400', subsets: ['devanagari'] })
+import Link from "next/link";
+import { PublicLayout } from "@/components/layout/PublicLayout";
 
 const Ko = () => {
     return (<>
@@ -12,20 +10,32 @@ const Ko = () => {
             <meta name="viewport" content="width=device-width, initial-scale=1" />
             <link rel="icon" href="/favicon.ico" />
         </Head>
-        <main className={`${font.className} container mx-auto px-5 mt-10  max-w-xl`}>
-            <DangerAlert title="Error durant el pagament" text="El pagament no s'ha completat. Contacteu amb la vostra entitat bancària." />
-            <div className="mt-6 text-center">
-                <a
-                    href={process.env.SCHOOL_WEBSITE}
-                    className="inline-flex items-center gap-2 rounded-lg bg-blue-800 px-6 py-3 text-white font-semibold shadow hover:bg-blue-700 transition-colors"
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+        <PublicLayout>
+            <div className="card animate-fade-in px-6 py-10 text-center sm:px-10" role="alert">
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-50 text-red-600 ring-8 ring-red-50/50">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="h-8 w-8">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
-                    Tornar al lloc web del centre
-                </a>
+                </div>
+                <h1 className="mt-6 text-2xl font-bold tracking-tight text-slate-900">Error durant el pagament</h1>
+                <p className="mx-auto mt-2 max-w-sm text-slate-500">El pagament no s&apos;ha completat. Contacteu amb la vostra entitat bancària.</p>
+
+                <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+                    <Link href="/" className="btn btn-primary">
+                        Tornar-ho a provar
+                    </Link>
+                    <a
+                        href={process.env.SCHOOL_WEBSITE}
+                        className="btn btn-secondary"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="h-4 w-4">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                        </svg>
+                        Tornar al lloc web del centre
+                    </a>
+                </div>
             </div>
-        </main>
+        </PublicLayout>
     </>)
 }
 

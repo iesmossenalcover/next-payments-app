@@ -13,10 +13,10 @@ interface OuGroupRelationsFieldsProps {
 
 const OuGroupRelationsFields = ({ ouGroupRelation, groupSelector, setOuGroupRelation, errors }: OuGroupRelationsFieldsProps) => {
     return (
-        <>
-            <div className="mb-6">
+        <div className="space-y-5">
+            <div>
                 <label
-                    className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                    className="form-label"
                     htmlFor="groupId"
                 >Grup de l&apos;aplicació</label>
                 <SelectorComponent
@@ -26,43 +26,43 @@ const OuGroupRelationsFields = ({ ouGroupRelation, groupSelector, setOuGroupRela
                     onSelect={val => setOuGroupRelation({ ...ouGroupRelation, groupId: parseInt(val) })} />
                 {displayKeyErrors("groupId", errors)}
             </div>
-            <div className="mb-6">
+            <div>
                 <label
-                    className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                    className="form-label"
                     htmlFor="groupMail">Correu del grup</label>
                 <input
-                    className="px-4 appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 leading-tight focus:outline-none focus:bg-white"
+                    className="form-input"
                     id="groupMail" name="groupMail"
                     value={ouGroupRelation.groupMail}
                     onChange={(e) => setOuGroupRelation({ ...ouGroupRelation, groupMail: e.target.value })} />
                 {displayKeyErrors("groupMail", errors)}
             </div>
 
-            <div className="mb-6">
+            <div>
                 <label
-                    className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                    className="form-label"
                     htmlFor="activeOu">Unitat organitzativa activa</label>
                 <input
-                    className="px-4 appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 leading-tight focus:outline-none focus:bg-white"
+                    className="form-input"
                     id="activeOu" name="activeOu"
                     value={ouGroupRelation.activeOu}
                     onChange={(e) => setOuGroupRelation({ ...ouGroupRelation, activeOu: e.target.value })} />
                 {displayKeyErrors("activeOu", errors)}
             </div>
 
-            <div className="mb-6">
+            <div>
                 <label
-                    className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                    className="form-label"
                     htmlFor="oldOu">Unitat organitzativa antiga</label>
                 <input
-                    className="px-4 appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 leading-tight focus:outline-none focus:bg-white"
+                    className="form-input"
                     id="oldOu" name="oldOu"
                     value={ouGroupRelation.oldOu}
                     onChange={(e) => setOuGroupRelation({ ...ouGroupRelation, oldOu: e.target.value })} />
                 {displayKeyErrors("oldOu", errors)}
             </div>
             
-            <div className="mt-5">
+            <div className="space-y-4 rounded-lg bg-slate-50 p-4 ring-1 ring-inset ring-slate-200">
                 <Toggle
                     name="changePasswordNextSignIn"
                     id="changePasswordNextSignIn"
@@ -70,8 +70,6 @@ const OuGroupRelationsFields = ({ ouGroupRelation, groupSelector, setOuGroupRela
                     onToggled={val => setOuGroupRelation({ ...ouGroupRelation, changePasswordNextSignIn: val })}
                     text="Canviar contrasenya al següent inici de sessió"
                 />
-            </div>
-            <div className="mt-5">
                 <Toggle
                     name="updatePassword"
                     id="updatePassword"
@@ -80,10 +78,8 @@ const OuGroupRelationsFields = ({ ouGroupRelation, groupSelector, setOuGroupRela
                     text="Actualitzar contrassenya?"
                 />
             </div>
-            <div className="mt-3">
-                {displayKeyErrors("", errors)}
-            </div>
-        </>
+            {displayKeyErrors("", errors)}
+        </div>
     )
 }
 

@@ -6,6 +6,7 @@ import { createOuGroupRelation, getGroupsSelector } from "@/lib/apis/payments/cl
 import { useApiRequest, useStartApiRequest } from "@/lib/hooks/useApiRequest";
 import { displayErrors } from "@/lib/utils";
 import Head from "next/head";
+import { PageHeader, PageMain } from "@/components/layout/PageHeader";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -48,10 +49,11 @@ const Create = () => {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <main>
-                <div className="max-w-lg m-auto mt-10">
-                    {showCreated && <SuccessAlert text="Relació creada correctament" />}
-                    <form className="mt-5" action="#" method="post" onSubmit={onFormSubmit} autoComplete="off">
+            <PageMain narrow>
+                <PageHeader title="Nova relació UO" back={{ href: "/admin/ougrouprelations", text: "Relacions UO" }} />
+                <div className="card p-6 sm:p-8">
+                    {showCreated && <div className="mb-5"><SuccessAlert text="Relació creada correctament" /></div>}
+                    <form action="#" method="post" onSubmit={onFormSubmit} autoComplete="off">
                         <OuGroupRelationsFields
                             groupSelector={{ selected: ouGroupRelation.groupId === 0 ?  "" : ouGroupRelation.groupId, options: groups.options }}
                             ouGroupRelation={ouGroupRelation}
@@ -62,13 +64,13 @@ const Create = () => {
                         <div>
                             <input
                                 disabled={formDisabled()}
-                                className="w-full mt-2 bg-blue-500 hover:cursor-pointer hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed"
+                                className="btn btn-primary mt-8 w-full"
                                 value="Crear"
                                 type="submit" />
                         </div>
                     </form>
                 </div>
-            </main>
+            </PageMain>
         </>
     )
 }

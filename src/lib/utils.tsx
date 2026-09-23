@@ -17,7 +17,7 @@ export const plainErrors = (errors?: Map<string, string[]>) => (
 export const displayErrors = (errors?: Map<string, string[]>) => (
     errors ?
         <ul>
-            {Array.from(errors.entries()).map((x, idx) => <li key={idx} className="text-red-500 italic">{x[0]}: {x[1].join(", ")}</li>)}
+            {Array.from(errors.entries()).map((x, idx) => <li key={idx} className="form-error">{x[0]}: {x[1].join(", ")}</li>)}
         </ul> : null
 )
 
@@ -26,7 +26,7 @@ export const displayKeyErrors = (key: string, errors?: Map<string, string[]>) =>
     const list = errors.get(key) as string[];
     return (
         <ul>
-            {list.map((x, idx) => <li key={idx} className="text-red-500 italic">{x}</li>)}
+            {list.map((x, idx) => <li key={idx} className="form-error">{x}</li>)}
         </ul>
     )
 }

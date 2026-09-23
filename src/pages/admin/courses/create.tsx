@@ -1,6 +1,7 @@
 import { SuccessAlert } from "@/components/Alerts";
 import { Course } from "@/lib/apis/payments/models";
 import Head from "next/head";
+import { PageHeader, PageMain } from "@/components/layout/PageHeader";
 import { Container } from "@/components/layout/SideBar";
 import { useApiRequest } from "@/lib/hooks/useApiRequest";
 import CourseFields from "@/components/courses/CourseFields";
@@ -47,9 +48,9 @@ const Create = () => {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <main>
-                <div className="max-w-lg m-auto">
-                    <div className="m-5">
+            <PageMain narrow>
+                <PageHeader title="Nou curs" back={{ href: "/admin/courses", text: "Cursos" }} />
+                <div className="card p-6 sm:p-8">
                         {
                             data ? <SuccessAlert text="Curs afegit correctament" /> :
                                 <form action="#" method="post" onSubmit={onFormSubmit} autoComplete="off">
@@ -59,15 +60,14 @@ const Create = () => {
                                     <div>
                                         <input
                                             disabled={formDisabled()}
-                                            className="w-full mt-6 bg-green-700 hover:cursor-pointer hover:bg-green-800 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed"
+                                            className="btn btn-primary mt-8 w-full"
                                             value="Afegir curs"
                                             type="submit" />
                                     </div>
                                 </form>
                         }
                     </div>
-                </div>
-            </main>
+            </PageMain>
         </>
     )
 }

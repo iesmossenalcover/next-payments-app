@@ -6,6 +6,8 @@ import { createPortal } from "react-dom";
 import EventFields from "@/components/events/EventFields";
 import { Container } from "@/components/layout/SideBar";
 import Head from "next/head";
+import Link from "next/link";
+import { PageHeader, PageMain } from "@/components/layout/PageHeader";
 import { useRouter } from "next/router";
 import useUser from "@/lib/hooks/useUser";
 
@@ -26,7 +28,7 @@ const SyncEvent = ({ eventId }: { eventId: number }) => {
             <button
                 disabled={syncing}
                 onClick={onSync}
-                className="w-full bg-green-600 hover:cursor-pointer hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed"
+                className="btn btn-secondary w-full"
                 type="button">
                 {syncing ? "Sincronitzant..." : "Sincronitzar amb Google Calendar"}
             </button>
@@ -47,11 +49,11 @@ const DeleteCalendarEvent = ({ eventId }: { eventId: number }) => {
     }
 
     return (
-        <div className="mt-4">
+        <div className="mt-3">
             <button
                 disabled={deleting}
                 onClick={onDelete}
-                className="w-full bg-red-600 hover:cursor-pointer hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed"
+                className="btn btn-danger w-full"
                 type="button">
                 {deleting ? "Eliminant..." : "Eliminar de Google Calendar"}
             </button>
@@ -68,8 +70,11 @@ const GoogleCalendar = ({ event }: { event: Event }) => {
     }
 
     return (
-        <div className="mt-10 p-4 border rounded">
-            <h6 className="text-lg mb-2 font-medium text-gray-900">Google Sync</h6>
+        <div className="card mt-6 p-6 sm:p-8">
+            <h2 className="section-title">Google Calendar</h2>
+            <p className="mb-5 mt-1 text-sm text-slate-500">
+                {event.calendarEventId ? "Aquest esdeveniment està sincronitzat amb el calendari." : "Aquest esdeveniment encara no és al calendari."}
+            </p>
             <SyncEvent eventId={event.id} />
             {event.calendarEventId ? <DeleteCalendarEvent eventId={event.id} /> : null}
         </div>
@@ -133,17 +138,25 @@ const Update = () => {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <main>
-                <div className="max-w-lg m-auto mb-10">
-                    <div className="mt-5 mx-1 md:mx-4 lg:mx-6">
+            <PageMain narrow>
+                <PageHeader
+                    title="Editar esdeveniment"
+                    subtitle={<span className="inline-flex items-center gap-2">{event.name} <span className="badge badge-gray font-mono">{event.code}</span></span>}
+                    back={{ href: "/admin/events", text: "Esdeveniments" }}
+                    actions={<>
+                        <Link className="btn btn-secondary" href={`/admin/events/${event.code}/people`}>Persones</Link>
+                        <Link className="btn btn-secondary" href={`/admin/events/${event.code}/payments`}>Pagaments</Link>
+                    </>} />
+                <div>
+                    <div>
                         {updated && mounted ? createPortal(
-                            <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[100] w-full max-w-lg px-4">
+                            <div className="fixed right-4 top-4 z-[100] w-full max-w-sm">
                                 <SuccessAlert text="Event editat correctament." />
                             </div>,
                             document.body
                         ) : null}
 
-                        <form className="mt-5" action="#" method="post" onSubmit={onFormSubmit} autoComplete="off">
+                        <form className="card p-6 sm:p-8" action="#" method="post" onSubmit={onFormSubmit} autoComplete="off">
                             <EventFields
                                 errors={errors}
                                 event={event}
@@ -151,7 +164,7 @@ const Update = () => {
                             <div>
                                 <input
                                     disabled={formDisabled()}
-                                    className="w-full mt-6 bg-blue-500 hover:cursor-pointer hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed"
+                                    className="btn btn-primary mt-8 w-full"
                                     value="Guardar Canvis"
                                     type="submit" />
                             </div>
@@ -161,7 +174,7 @@ const Update = () => {
 
                     </div>
                 </div>
-            </main>
+            </PageMain>
         </>
 
     )
