@@ -31,17 +31,6 @@ const Admin = () => {
         setUpdatingConfig(false);
     }
 
-    const box = (t: string, x: number) => {
-        return (
-            <div className="w-full sm:w-1/2 xl:w-1/3 p-3">
-                <div className="bg-white border rounded shadow p-2">
-                    <h5 className="font-bold uppercase text-gray-500">{t}</h5>
-                    <h3 className="font-bold text-3xl">{x}<span className="text-green-500"><i className="fas fa-caret-up"></i></span></h3>
-                </div>
-            </div>
-        );
-    }
-
     if (isLoading || !data) {
         return null;
     }
@@ -55,25 +44,72 @@ const Admin = () => {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <main className="text-center pt-10 flex flex-col min-h-screen justify-between mx-6">
+            <main className="mx-4 md:mx-8 py-8">
 
-                <div>
-                    <h1 className='text-2xl ml-3 mb-3 tracking-wide font-bold text-left text-green-600'>Curs: {data?.currentCurs}</h1>
-                    <h1 className='text-lg mb-3 tracking-wide font-bold text-center text-gray-500 text-md'>Tauler Administratiu</h1>
-
-                    <hr className="h-px mb-5 mt-5 border-2 bg-gray-700" />
-
-                    <div className="flex flex-wrap">
-                        {box("Esdeveniments creats", data.events)}
-                        {box("Esdeveniments actius", data.activeEvents)}
-                        {box("Esdeveniments que acaben avui", data.eventsEndToday)}
-                        {box("Total Grups", data.grups)}
-                        {box("Total Persones", data.people)}
-                        {box("pagaments fets avui", data.todayPayments)}
-
+                <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+                    <div>
+                        <h1 className="text-2xl font-bold text-gray-800">Tauler Administratiu</h1>
+                        <p className="text-gray-500">Resum de l'activitat de la plataforma</p>
                     </div>
-                    <hr className="h-px mb-5 mt-5 border-2 bg-gray-700" />
-                    <form className="flex items-center justify-between" action="#" onSubmit={onSubmitAppConfig}>
+                    <span className="inline-flex items-center rounded-full bg-green-100 text-green-700 font-semibold text-sm px-4 py-1.5">
+                        Curs {data.currentCurs}
+                    </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 mb-8">
+                    <StatCard
+                        title="Esdeveniments creats"
+                        value={data.events}
+                        color="blue"
+                        icon={
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                        }
+                    />
+                    <StatCard
+                        title="Esdeveniments actius"
+                        value={data.activeEvents}
+                        color="green"
+                        icon={
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        }
+                    />
+                    <StatCard
+                        title="Acaben avui"
+                        value={data.eventsEndToday}
+                        color="amber"
+                        icon={
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        }
+                    />
+                    <StatCard
+                        title="Total Grups"
+                        value={data.grups}
+                        color="purple"
+                        icon={
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" />
+                        }
+                    />
+                    <StatCard
+                        title="Total Persones"
+                        value={data.people}
+                        color="indigo"
+                        icon={
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
+                        }
+                    />
+                    <StatCard
+                        title="Pagaments fets avui"
+                        value={data.todayPayments}
+                        color="teal"
+                        icon={
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z" />
+                        }
+                    />
+                </div>
+
+                <div className="bg-white border rounded-lg shadow-sm p-5 max-w-3xl">
+                    <h2 className="font-bold text-gray-700 mb-4">Configuració</h2>
+                    <form className="flex flex-col gap-4" action="#" onSubmit={onSubmitAppConfig}>
                         <Toggle
                             name="displayEnrollment"
                             id="displayEnrollment"
@@ -81,16 +117,57 @@ const Admin = () => {
                             onToggled={val => setData({ ...data, appConfig: { ...data.appConfig, displayEnrollment: val } })}
                             text="Visualitzar al portal de pagaments les assignatures i el grup dels alumnes."
                         />
-                        <input
-                            disabled={updatingConfig}
-                            className="bg-blue-500 hover:cursor-pointer hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:hover:cursor-not-allowed"
-                            value="Guardar"
-                            type="submit"
-                        />
+                        <div className="pt-3 border-t flex justify-end">
+                            <button
+                                disabled={updatingConfig}
+                                type="submit"
+                                className="inline-flex items-center gap-2 text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium py-2.5 px-5 rounded-lg text-sm disabled:bg-slate-400 disabled:hover:bg-slate-400 disabled:cursor-not-allowed"
+                            >
+                                {updatingConfig && (
+                                    <svg className="animate-spin w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+                                    </svg>
+                                )}
+                                {updatingConfig ? "Guardant..." : "Guardar"}
+                            </button>
+                        </div>
                     </form>
                 </div>
             </main>
         </>
+    );
+}
+
+const statColors = {
+    blue: "bg-blue-50 text-blue-600",
+    green: "bg-green-50 text-green-600",
+    amber: "bg-amber-50 text-amber-600",
+    purple: "bg-purple-50 text-purple-600",
+    indigo: "bg-indigo-50 text-indigo-600",
+    teal: "bg-teal-50 text-teal-600",
+} as const;
+
+interface StatCardProps {
+    title: string,
+    value: number,
+    icon: React.ReactNode,
+    color: keyof typeof statColors,
+}
+
+const StatCard = ({ title, value, icon, color }: StatCardProps) => {
+    return (
+        <div className="bg-white border rounded-lg shadow-sm p-4 flex items-center gap-4">
+            <div className={`shrink-0 rounded-full p-3 ${statColors[color]}`}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                    {icon}
+                </svg>
+            </div>
+            <div className="text-left">
+                <h5 className="text-sm font-medium text-gray-500">{title}</h5>
+                <h3 className="font-bold text-2xl text-gray-800">{value}</h3>
+            </div>
+        </div>
     );
 }
 
