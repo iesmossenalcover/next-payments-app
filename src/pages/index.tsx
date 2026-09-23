@@ -25,11 +25,7 @@ const Home = () => {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <PublicLayout
-                title="Portal de pagaments"
-                subtitle={step === 1
-                    ? "Consulta i paga els esdeveniments pendents de manera ràpida i segura."
-                    : "Selecciona què vols pagar i tria el mètode de pagament."}>
+            <PublicLayout>
                 <Steps current={step} />
                 {step === 1 ? <FirstStep onLoaded={onEventsLoaded} /> : null}
                 {step === 2 && viewModel ? <SecondStep data={viewModel} /> : null}
@@ -116,7 +112,7 @@ const FirstStep = ({ onLoaded }: FirstStepProps) => {
                     <input
                         required={true}
                         autoFocus
-                        autoComplete="off"
+                        autoComplete="on"
                         placeholder="12345678A"
                         className={`form-input py-3.5 pl-11 text-lg uppercase placeholder:normal-case ${errors ? "ring-red-300 focus:ring-red-500" : ""}`}
                         id="documentId" name="documentId" defaultValue={""} onChange={() => setErrors(undefined)} />
@@ -308,12 +304,12 @@ const SecondStep = ({ data }: SecondStepProps) => {
         }
 
         return (
-            <div className="p-6 sm:px-8">
+            <div className="p-4 sm:px-8 sm:py-6">
                 <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-slate-500">Selecciona els esdeveniments a pagar</h2>
                 <ul className="space-y-3">
                     {eventItems.map((x, idx) =>
                         <li key={x.event.code}
-                            className={`rounded-xl p-4 ring-1 transition-all ${x.selected
+                            className={`rounded-xl ring-1 transition-all ${x.selected
                                 ? "bg-brand-50/60 ring-2 ring-brand-500"
                                 : "bg-white ring-slate-200 hover:ring-slate-300"} ${x.event.selectable ? "" : "opacity-60"}`}>
                             <EventLine
@@ -383,7 +379,7 @@ const SecondStep = ({ data }: SecondStepProps) => {
                         {initials}
                     </div>
                     <div className="min-w-0">
-                        <p className="text-xs font-medium uppercase tracking-wider text-slate-400">Alumne</p>
+                        {/* <p className="text-xs font-medium uppercase tracking-wider text-slate-400">Alumne</p> */}
                         <h3 className='truncate font-semibold text-slate-900'>{person.fullName}</h3>
                     </div>
                 </div>
@@ -426,7 +422,10 @@ const EventLine = ({ idx, item, setEventItem: setEvent }: EventProps) => {
     }
 
     return (
-        <div className="flex w-full items-center justify-between gap-4">
+        // Tot el recuadre és l'etiqueta del checkbox: clicar a qualsevol lloc el marca/desmarca.
+        <label
+            htmlFor={`event_${event.code}`}
+            className={`flex w-full select-none items-center justify-between gap-3 p-3 sm:gap-4 sm:p-4 ${event.selectable ? "cursor-pointer" : "cursor-not-allowed"}`}>
             <div className="flex min-w-0 flex-1 items-center">
                 <input id={`event_${event.code}`}
                     aria-describedby="helper-checkbox-text"
@@ -436,8 +435,8 @@ const EventLine = ({ idx, item, setEventItem: setEvent }: EventProps) => {
                     checked={selected}
                     onChange={(e) => onSelectEvent(e.target.checked)}
                 />
-                <label htmlFor={`event_${event.code}`} className={`ml-3 min-w-0 flex-1 select-none ${event.selectable ? "cursor-pointer" : "cursor-not-allowed"}`}>
-                    <div className="font-medium text-slate-900">
+                <div className="ml-3 min-w-0 flex-1">
+                    <div className="break-words font-medium text-slate-900">
                         {event.name}
                     </div>
                     <div className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-slate-500">
@@ -453,7 +452,7 @@ const EventLine = ({ idx, item, setEventItem: setEvent }: EventProps) => {
                                 : null
                         }
                     </div>
-                </label>
+                </div>
             </div>
             <div className="flex shrink-0 items-center gap-3">
                 {
@@ -461,7 +460,7 @@ const EventLine = ({ idx, item, setEventItem: setEvent }: EventProps) => {
                         <SelectorComponent
                             id={`"quantity_"${event.code}`}
                             name={`"quantity_"${event.code}`}
-                            className="form-input w-auto py-1.5 pl-3 pr-8"
+                            className="form-input w-auto cursor-pointer py-1.5 pl-3 pr-8"
                             selector={{ selected: quantity.toString(), options }}
                             onSelect={onSelectQuantity} /> : null
                 }
@@ -473,6 +472,6 @@ const EventLine = ({ idx, item, setEventItem: setEvent }: EventProps) => {
                     }
                 </div>
             </div>
-        </div>
+        </label>
     );
 }

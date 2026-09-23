@@ -29,9 +29,10 @@ export const PageHeader = ({ title, subtitle, actions, back }: PageHeaderProps) 
     )
 }
 
-export const PageMain = ({ children, narrow = false }: { children: React.ReactNode, narrow?: boolean }) => {
+export const PageMain = ({ children, narrow = false, full = false }: { children: React.ReactNode, narrow?: boolean, full?: boolean }) => {
+    const width = full ? "max-w-none" : narrow ? "max-w-2xl" : "max-w-[96rem]";
     return (
-        <main className={`mx-auto w-full px-4 py-8 sm:px-6 lg:px-10 ${narrow ? "max-w-2xl" : "max-w-[96rem]"}`}>
+        <main className={`mx-auto w-full px-4 py-8 sm:px-6 lg:px-8 ${width}`}>
             {children}
         </main>
     )

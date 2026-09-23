@@ -72,7 +72,7 @@ const Events = () => {
 
     const customRenderer = {
         code: (item: TableRow) => <span className="badge badge-gray font-mono">{item.code}</span>,
-        name: (item: TableRow) => <span className="font-medium text-slate-900">{item.name}</span>,
+        name: (item: TableRow) => <span className="block min-w-[12rem] whitespace-normal font-medium text-slate-900">{item.name}</span>,
         active: (item: TableRow) => (
             <span className={`badge ${item.active === "Si" ? "badge-green" : "badge-gray"}`}>
                 {item.active === "Si" && <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />}
@@ -157,7 +157,7 @@ const Events = () => {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <PageMain>
+            <PageMain full>
                 <PageHeader
                     title="Esdeveniments"
                     subtitle="Activitats i cobraments del curs"

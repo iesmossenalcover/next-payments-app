@@ -5,6 +5,7 @@ import { useState } from "react";
 import EventFields from "@/components/events/EventFields";
 import { Container } from "@/components/layout/SideBar";
 import Head from "next/head";
+import Link from "next/link";
 import { PageHeader, PageMain } from "@/components/layout/PageHeader";
 import { useApiRequest } from "@/lib/hooks/useApiRequest";
 
@@ -55,7 +56,17 @@ const Create = () => {
                 <PageHeader title="Nou esdeveniment" back={{ href: "/admin/events", text: "Esdeveniments" }} />
                 <div className="card p-6 sm:p-8">
                         {created ?
-                            <SuccessAlert text={`Event afegit correctament el codi de l'event és: ${code}`} /> :
+                            <SuccessAlert text={`Event afegit correctament el codi de l'event és: ${code}`}>
+                                <div className="mt-3 flex flex-wrap gap-2">
+                                    <Link className="btn btn-success btn-sm" href={`/admin/events/${code}/people`}>
+                                        Afegir persones a l&apos;esdeveniment
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="h-4 w-4">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                                        </svg>
+                                    </Link>
+                                    <Link className="btn btn-secondary btn-sm" href="/admin/events">Tornar als esdeveniments</Link>
+                                </div>
+                            </SuccessAlert> :
                             <form action="#" method="post" onSubmit={onFormSubmit} autoComplete="off">
                                 <EventFields
                                     errors={errors}
