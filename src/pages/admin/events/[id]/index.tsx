@@ -11,12 +11,18 @@ import { PageHeader, PageMain } from "@/components/layout/PageHeader";
 import { useRouter } from "next/router";
 import useUser from "@/lib/hooks/useUser";
 
-const SyncEvent = ({ eventId }: { eventId: number }) => {
+const SyncEvent = ({ event }: { event: Event }) => {
     const [syncing, setSyncing] = useState(false)
 
     const onSync = async () => {
         setSyncing(true);
-        const response = await syncEventGoogleWorkspace(eventId);
+        // Save pending changes (e.g. description) so the calendar gets the current data
+        // const saved = await updateEvent(event);
+        // if (saved.errors) {
+        //     setSyncing(false);
+        //     return;
+        // }
+        const response = await syncEventGoogleWorkspace(event.id);
         if (response.data) {
             window.location.reload();
         }
@@ -75,7 +81,7 @@ const GoogleCalendar = ({ event }: { event: Event }) => {
             <p className="mb-5 mt-1 text-sm text-slate-500">
                 {event.calendarEventId ? "Aquest esdeveniment està sincronitzat amb el calendari." : "Aquest esdeveniment encara no és al calendari."}
             </p>
-            <SyncEvent eventId={event.id} />
+            <SyncEvent event={event} />
             {event.calendarEventId ? <DeleteCalendarEvent eventId={event.id} /> : null}
         </div>
     )

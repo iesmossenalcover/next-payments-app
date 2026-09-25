@@ -315,6 +315,7 @@ export interface EventSummaryVm {
     id: number
     code: string
     name: string
+    description?: string
     date: string,
     publishDate: string,
     unpublishDate?: string,

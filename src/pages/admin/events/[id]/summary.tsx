@@ -64,6 +64,18 @@ const EventSummaries = () => {
                             <dd className="mt-0.5 font-semibold text-slate-900">{data.unpublishDate ? displayDateTime(data.unpublishDate) : "-"}</dd>
                         </div>
                     </dl>
+                    {data.description ? (
+                        <details className="group mt-4 border-t border-slate-200 pt-4 text-sm">
+                            <summary className="flex cursor-pointer list-none items-center gap-1 font-medium text-slate-700 hover:text-slate-900 [&::-webkit-details-marker]:hidden">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="h-4 w-4 transition-transform group-open:rotate-90">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                                </svg>
+                                <span className="group-open:hidden">Mostrar descripció</span>
+                                <span className="hidden group-open:inline">Amagar descripció</span>
+                            </summary>
+                            <p className="mt-2 whitespace-pre-line text-slate-900">{data.description}</p>
+                        </details>
+                    ) : null}
                 </div>
 
                 <div className="my-6 flex flex-wrap items-center gap-3 print:hidden">
