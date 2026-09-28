@@ -23,10 +23,19 @@ const Update = () => {
     const { data: updatePasswordResponse, errors: updatePasswordErrors, isLoading: isUpdatingPasswordLoading, executeRequest: updatePassowrdRequest } = useApiRequest(updatePasswordGoogleWorkspace);
     const { errors: updateUOErrors, isLoading: isUpdatingUO, executeRequest: updateUORequest } = useApiRequest(updateUOGoogleWorkspace);
 
+    // Snapshot of the last saved person, used to detect unsaved changes
+    const [savedPerson, setSavedPerson] = useState<string | undefined>(undefined);
+
     useEffect(() => {
         if (!id) return;
         getPersonRequest(parseInt(id as string))
     }, [id]);
+
+    useEffect(() => {
+        if (!isPersonLoading && person) setSavedPerson(JSON.stringify(person));
+    }, [isPersonLoading]);
+
+    const hasPendingChanges = !!person && JSON.stringify(person) !== savedPerson;
 
     const onFormSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -108,6 +117,7 @@ const Update = () => {
                                         value={person.email ?? ""}
                                         onChange={(e) => setPerson({ ...person, email: e.target.value ? e.target.value : undefined })} />
 
+                                    {!hasPendingChanges && <>
                                     <button
                                         disabled={formDisabled()}
                                         title="Generar Email"
@@ -143,7 +153,14 @@ const Update = () => {
                                         </svg>
 
                                     </button>
+                                    </>}
                                 </div>
+
+                                {hasPendingChanges ? (
+                                    <p className="mt-3 rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-900 ring-1 ring-inset ring-amber-200">
+                                        Hi ha canvis pendents. Guarda els canvis per poder sincronitzar amb Google Workspace.
+                                    </p>
+                                ) : null}
 
                                 {syncPersonResponse && syncPersonResponse.password ? <TemporaryPassword password={syncPersonResponse.password} /> : null}
 

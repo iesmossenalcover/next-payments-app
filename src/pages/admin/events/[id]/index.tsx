@@ -67,7 +67,7 @@ const DeleteCalendarEvent = ({ eventId }: { eventId: number }) => {
     )
 }
 
-const GoogleCalendar = ({ event }: { event: Event }) => {
+const GoogleCalendar = ({ event, hasPendingChanges }: { event: Event, hasPendingChanges: boolean }) => {
     const { user, loading } = useUser();
 
 
@@ -81,8 +81,16 @@ const GoogleCalendar = ({ event }: { event: Event }) => {
             <p className="mb-5 mt-1 text-sm text-slate-500">
                 {event.calendarEventId ? "Aquest esdeveniment està sincronitzat amb el calendari." : "Aquest esdeveniment encara no és al calendari."}
             </p>
-            <SyncEvent event={event} />
-            {event.calendarEventId ? <DeleteCalendarEvent eventId={event.id} /> : null}
+            {hasPendingChanges ? (
+                <p className="rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-900 ring-1 ring-inset ring-amber-200">
+                    Hi ha canvis pendents. Guarda els canvis per poder sincronitzar amb Google Calendar.
+                </p>
+            ) : (
+                <>
+                    <SyncEvent event={event} />
+                    {event.calendarEventId ? <DeleteCalendarEvent eventId={event.id} /> : null}
+                </>
+            )}
         </div>
     )
 }
@@ -95,6 +103,8 @@ const Update = () => {
     const [mounted, setMounted] = useState(false)
     const [errors, setErrors] = useState<Map<string, string[]>>()
     const [event, setEvent] = useState<Event | undefined>(undefined)
+    // Snapshot of the last saved event, used to detect unsaved changes
+    const [savedEvent, setSavedEvent] = useState<string | undefined>(undefined)
 
     useEffect(() => setMounted(true), [])
 
@@ -106,6 +116,7 @@ const Update = () => {
                     return;
                 }
                 setEvent(x.data)
+                setSavedEvent(JSON.stringify(x.data))
             });
     }, [id])
 
@@ -119,6 +130,7 @@ const Update = () => {
             setErrors(data.errors);
         }
         else {
+            setSavedEvent(JSON.stringify(e));
             setUpdated(true);
             setTimeout(() => setUpdated(false), 1500);
         }
@@ -176,7 +188,7 @@ const Update = () => {
                             </div>
                         </form>
 
-                        <GoogleCalendar event={event} />
+                        <GoogleCalendar event={event} hasPendingChanges={JSON.stringify(event) !== savedEvent} />
 
                     </div>
                 </div>
