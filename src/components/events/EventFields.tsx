@@ -197,7 +197,7 @@ const EventFields = ({ event, errors, setEvent }: EventComponentProps) => {
                         name="amipa"
                         id="amipa"
                         className="text-slate-700"
-                        text="És un event per ser soci d'AMIPA?"
+                        text="És un event per ser soci d'AFA?"
                         onToggled={val => setEvent({ ...event, amipa: val })}
                         value={event.amipa}
                     />

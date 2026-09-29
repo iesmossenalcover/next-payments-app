@@ -1,20 +1,27 @@
 import Head from 'next/head'
 import { useEffect, useRef, useState } from 'react';
 import { createOrder, getPersonActiveEvents, PaymentMethod, PersonActiveEvent, PersonActiveEventsVm } from '@/lib/apis/payments';
-import { CreateOrderResponse } from '@/lib/apis/payments/models';
-import { displayDate } from '@/lib/utils';
+import { GetOrderInfo, RedsysForm } from '@/lib/apis/payments/models';
+import { displayDate, displayPrice } from '@/lib/utils';
 import { SelectorComponent } from '@/components/Selector';
 import { Spinner } from '@/components/Loading';
 import { PublicLayout } from '@/components/layout/PublicLayout';
+import { OrderConfirmation } from '@/components/orders/OrderConfirmation';
 
 const Home = () => {
 
     const [step, setStep] = useState(1)
     const [viewModel, setViewModel] = useState<PersonActiveEventsVm | undefined>(undefined);
+    const [freeOrderInfo, setFreeOrderInfo] = useState<GetOrderInfo | undefined>(undefined);
 
     const onEventsLoaded = (data: PersonActiveEventsVm) => {
         setStep(2);
         setViewModel(data);
+    }
+
+    const onFreeOrderConfirmed = (orderInfo: GetOrderInfo) => {
+        setStep(3);
+        setFreeOrderInfo(orderInfo);
     }
 
     return (
@@ -28,7 +35,8 @@ const Home = () => {
             <PublicLayout>
                 <Steps current={step} />
                 {step === 1 ? <FirstStep onLoaded={onEventsLoaded} /> : null}
-                {step === 2 && viewModel ? <SecondStep data={viewModel} /> : null}
+                {step === 2 && viewModel ? <SecondStep data={viewModel} onFreeOrderConfirmed={onFreeOrderConfirmed} /> : null}
+                {step === 3 && freeOrderInfo ? <OrderConfirmation orderInfo={freeOrderInfo} title="Inscripció confirmada correctament" /> : null}
             </PublicLayout>
         </>
     )
@@ -149,17 +157,18 @@ interface Item {
 
 
 interface SecondStepProps {
-    data: PersonActiveEventsVm
+    data: PersonActiveEventsVm,
+    onFreeOrderConfirmed: (orderInfo: GetOrderInfo) => void,
 }
 
-const SecondStep = ({ data }: SecondStepProps) => {
+const SecondStep = ({ data, onFreeOrderConfirmed }: SecondStepProps) => {
     const { events, person } = data;
     const [loading, setLoading] = useState(false);
 
     const [eventItems, setEventItems] = useState<Item[]>(events.map(x => ({ event: x, quantity: 0, selected: false })));
 
     const [errors, setErrors] = useState<Map<string, string[]>>();
-    const [paymentForm, setPaymentForm] = useState<CreateOrderResponse | undefined>(undefined);
+    const [paymentForm, setPaymentForm] = useState<RedsysForm | undefined>(undefined);
     const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | undefined>(undefined);
     const [displayEnrollment, setDisplayEnrollment] = useState(false)
     const formRef = useRef<HTMLFormElement>(null);
@@ -194,8 +203,16 @@ const SecondStep = ({ data }: SecondStepProps) => {
         const response = await createOrder(cmd);
         if (response.errors) {
             setErrors(response.errors)
+            setLoading(false);
+        } else if (response.data?.confirmation) {
+            // Import 0: el servidor ja ha confirmat l'ordre, no s'ha d'anar a Redsys.
+            onFreeOrderConfirmed(response.data.confirmation);
+        } else if (response.data?.payment) {
+            setPaymentForm(response.data.payment);
         } else {
-            setPaymentForm(response.data);
+            // Resposta sense cap dels dos camps: no hi ha res a fer, però no deixem el botó penjat.
+            setErrors(new Map([["", ["No s'ha pogut iniciar el pagament. Torna-ho a provar."]]]));
+            setLoading(false);
         }
     }
 
@@ -230,10 +247,31 @@ const SecondStep = ({ data }: SecondStepProps) => {
         </svg>
     );
 
+    const displayConfirmButton = () => {
+        return (
+            <>
+                {displayErrors("eventCodes")}
+                {displayErrors("")}
+                <div className='mt-5'>
+                    <button disabled={loading}
+                        onClick={() => handlePayClick(PaymentMethod.Card)}
+                        type="button"
+                        className="btn btn-primary btn-lg w-full">
+                        {loading ? <>{spinner}Carregant...</> : <>Confirmar inscripció</>}
+                    </button>
+                </div>
+                <p className="mt-4 text-center text-xs text-slate-400">
+                    No s&apos;ha de pagar res: només cal confirmar.
+                </p>
+            </>
+        )
+    }
+
     const displayPayButton = () => {
         return (
             <>
                 {displayErrors("eventCodes")}
+                {displayErrors("")}
                 <div className='mt-5 grid gap-3 sm:grid-cols-2'>
                     <button disabled={loading}
                         onClick={() => handlePayClick(PaymentMethod.Card)}
@@ -279,9 +317,9 @@ const SecondStep = ({ data }: SecondStepProps) => {
                     <span className="text-slate-600">
                         Total <span className="text-sm text-slate-400">({selectedEvents.length} {selectedEvents.length === 1 ? "element" : "elements"})</span>
                     </span>
-                    <span className='text-3xl font-bold tracking-tight text-slate-900 tabular-nums'>{total} {events[0].currencySymbol}</span>
+                    <span className='text-3xl font-bold tracking-tight text-slate-900 tabular-nums'>{displayPrice(total, events[0].currencySymbol)}</span>
                 </div>
-                {displayPayButton()}
+                {total === 0 ? displayConfirmButton() : displayPayButton()}
             </div>
         )
     }
@@ -329,7 +367,7 @@ const SecondStep = ({ data }: SecondStepProps) => {
             <div>
                 <a target='blank' href='https://drive.google.com/file/d/1811V-ydbXgL_r0zCrsm3qVDyjypDqtrG/view?usp=sharing'
                     className='link md:text-lg'>
-                    Per fer-te soci d&apos;AMIPA clica aquí
+                    Per fer-te soci d&apos;AFA clica aquí
                 </a>
             </div>
         )
@@ -448,7 +486,7 @@ const EventLine = ({ idx, item, setEventItem: setEvent }: EventProps) => {
                         </span>
                         {
                             event.displayQuantitySelector ?
-                                <span>Preu individual: {event.price} {event.currencySymbol}</span>
+                                <span>Preu individual: {displayPrice(event.price, event.currencySymbol)}</span>
                                 : null
                         }
                     </div>
@@ -467,8 +505,8 @@ const EventLine = ({ idx, item, setEventItem: setEvent }: EventProps) => {
                 <div className={`${event.displayQuantitySelector ? 'hidden sm:block' : ''} min-w-[4rem] text-right font-semibold text-slate-900 tabular-nums`}>
                     {
                         event.displayQuantitySelector ?
-                            <>{event.price * quantity} {event.currencySymbol}</> :
-                            <>{event.price} {event.currencySymbol}</>
+                            <>{displayPrice(event.price * quantity, event.currencySymbol)}</> :
+                            <>{displayPrice(event.price, event.currencySymbol)}</>
                     }
                 </div>
             </div>

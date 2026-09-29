@@ -19,7 +19,7 @@ const tableHeaders = {
     name: "Nom",
     date: "Data",
     price: "Preu",
-    amipaPrice: "Preu AMIPA",
+    amipaPrice: "Preu AFA",
     from: "Publicació",
     to: "Expiració",
     active: "Actiu",

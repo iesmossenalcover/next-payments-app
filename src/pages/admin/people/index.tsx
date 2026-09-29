@@ -21,7 +21,7 @@ const tableHeaders = {
   lastName: "Llinatges",
   academicRecordNumber: "Número expedient",
   group: "Grup",
-  amipa: "Amipa",
+  amipa: "AFA",
   actions: "Accions",
 };
 
