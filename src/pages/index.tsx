@@ -1,20 +1,27 @@
 import Head from 'next/head'
 import { useEffect, useRef, useState } from 'react';
 import { createOrder, getPersonActiveEvents, PaymentMethod, PersonActiveEvent, PersonActiveEventsVm } from '@/lib/apis/payments';
-import { CreateOrderResponse } from '@/lib/apis/payments/models';
+import { CreateOrderResponse, GetOrderInfo } from '@/lib/apis/payments/models';
 import { displayDate } from '@/lib/utils';
 import { SelectorComponent } from '@/components/Selector';
 import { Spinner } from '@/components/Loading';
 import { PublicLayout } from '@/components/layout/PublicLayout';
+import { OrderConfirmation } from '@/components/orders/OrderConfirmation';
 
 const Home = () => {
 
     const [step, setStep] = useState(1)
     const [viewModel, setViewModel] = useState<PersonActiveEventsVm | undefined>(undefined);
+    const [freeOrderInfo, setFreeOrderInfo] = useState<GetOrderInfo | undefined>(undefined);
 
     const onEventsLoaded = (data: PersonActiveEventsVm) => {
         setStep(2);
         setViewModel(data);
+    }
+
+    const onFreeOrderConfirmed = (orderInfo: GetOrderInfo) => {
+        setStep(3);
+        setFreeOrderInfo(orderInfo);
     }
 
     return (
@@ -28,7 +35,8 @@ const Home = () => {
             <PublicLayout>
                 <Steps current={step} />
                 {step === 1 ? <FirstStep onLoaded={onEventsLoaded} /> : null}
-                {step === 2 && viewModel ? <SecondStep data={viewModel} /> : null}
+                {step === 2 && viewModel ? <SecondStep data={viewModel} onFreeOrderConfirmed={onFreeOrderConfirmed} /> : null}
+                {step === 3 && freeOrderInfo ? <OrderConfirmation orderInfo={freeOrderInfo} title="Inscripció confirmada correctament" /> : null}
             </PublicLayout>
         </>
     )
@@ -149,10 +157,11 @@ interface Item {
 
 
 interface SecondStepProps {
-    data: PersonActiveEventsVm
+    data: PersonActiveEventsVm,
+    onFreeOrderConfirmed: (orderInfo: GetOrderInfo) => void,
 }
 
-const SecondStep = ({ data }: SecondStepProps) => {
+const SecondStep = ({ data, onFreeOrderConfirmed }: SecondStepProps) => {
     const { events, person } = data;
     const [loading, setLoading] = useState(false);
 
@@ -194,6 +203,10 @@ const SecondStep = ({ data }: SecondStepProps) => {
         const response = await createOrder(cmd);
         if (response.errors) {
             setErrors(response.errors)
+            setLoading(false);
+        } else if (response.data?.free && response.data.orderInfo) {
+            // Import 0: el servidor ja ha confirmat l'ordre, no s'ha d'anar a Redsys.
+            onFreeOrderConfirmed(response.data.orderInfo);
         } else {
             setPaymentForm(response.data);
         }
@@ -230,10 +243,31 @@ const SecondStep = ({ data }: SecondStepProps) => {
         </svg>
     );
 
+    const displayConfirmButton = () => {
+        return (
+            <>
+                {displayErrors("eventCodes")}
+                {displayErrors("")}
+                <div className='mt-5'>
+                    <button disabled={loading}
+                        onClick={() => handlePayClick(PaymentMethod.Card)}
+                        type="button"
+                        className="btn btn-primary btn-lg w-full">
+                        {loading ? <>{spinner}Carregant...</> : <>Confirmar inscripció</>}
+                    </button>
+                </div>
+                <p className="mt-4 text-center text-xs text-slate-400">
+                    No s&apos;ha de pagar res: només cal confirmar.
+                </p>
+            </>
+        )
+    }
+
     const displayPayButton = () => {
         return (
             <>
                 {displayErrors("eventCodes")}
+                {displayErrors("")}
                 <div className='mt-5 grid gap-3 sm:grid-cols-2'>
                     <button disabled={loading}
                         onClick={() => handlePayClick(PaymentMethod.Card)}
@@ -281,7 +315,7 @@ const SecondStep = ({ data }: SecondStepProps) => {
                     </span>
                     <span className='text-3xl font-bold tracking-tight text-slate-900 tabular-nums'>{total} {events[0].currencySymbol}</span>
                 </div>
-                {displayPayButton()}
+                {total === 0 ? displayConfirmButton() : displayPayButton()}
             </div>
         )
     }
