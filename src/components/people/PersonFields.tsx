@@ -112,7 +112,7 @@ const PersonFields = ({ person, errors, setPerson }: PersonComponentProps) => {
                     id="amipa"
                     value={person.amipa}
                     onToggled={val => setPerson({ ...person, amipa: val })}
-                    text="Amipa"
+                    text="AFA"
                 />
                 <Toggle
                     name="enrolled"

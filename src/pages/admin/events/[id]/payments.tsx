@@ -166,7 +166,7 @@ const EventPaymentsComp = () => {
                                 <dd className="mt-1 font-semibold text-slate-900">{event.price} €</dd>
                             </div>
                             <div>
-                                <dt className="text-slate-500">Preu AMIPA</dt>
+                                <dt className="text-slate-500">Preu AFA</dt>
                                 <dd className="mt-1 font-semibold text-slate-900">{event.amipaPrice} €</dd>
                             </div>
                             <div>
@@ -185,7 +185,7 @@ const EventPaymentsComp = () => {
                                 <dd className="mt-1">{yesNo(event.isActive)}</dd>
                             </div>
                             <div>
-                                <dt className="text-slate-500">És AMIPA</dt>
+                                <dt className="text-slate-500">És AFA</dt>
                                 <dd className="mt-1">{yesNo(event.isAmpia)}</dd>
                             </div>
                             <div>

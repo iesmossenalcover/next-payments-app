@@ -1,4 +1,5 @@
 import { GetOrderInfo, GetOrderInfoEvent } from "@/lib/apis/payments";
+import { displayPrice } from "@/lib/utils";
 
 interface OrderConfirmationProps {
     orderInfo: GetOrderInfo,
@@ -36,7 +37,7 @@ export const OrderConfirmation = ({ orderInfo, title }: OrderConfirmationProps) 
 
         return (
             <>
-                {orderInfo.events.reduce((prev, x) => prev + x.price, 0)} {orderInfo.events[0].currency}
+                {displayPrice(orderInfo.events.reduce((prev, x) => prev + x.price, 0), orderInfo.events[0].currency)}
             </>
         )
     }
@@ -46,7 +47,7 @@ export const OrderConfirmation = ({ orderInfo, title }: OrderConfirmationProps) 
                 <span className="text-slate-700">
                     {x.name} {x.quantity > 1 && <span className="badge badge-gray ml-1">x{x.quantity}</span>}
                 </span>
-                <span className="min-w-[6em] text-right font-semibold text-slate-900 tabular-nums">{x.price} {x.currency}</span>
+                <span className="min-w-[6em] text-right font-semibold text-slate-900 tabular-nums">{displayPrice(x.price, x.currency)}</span>
             </div>
         )
     }

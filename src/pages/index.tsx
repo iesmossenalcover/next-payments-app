@@ -1,8 +1,8 @@
 import Head from 'next/head'
 import { useEffect, useRef, useState } from 'react';
 import { createOrder, getPersonActiveEvents, PaymentMethod, PersonActiveEvent, PersonActiveEventsVm } from '@/lib/apis/payments';
-import { CreateOrderResponse, GetOrderInfo } from '@/lib/apis/payments/models';
-import { displayDate } from '@/lib/utils';
+import { GetOrderInfo, RedsysForm } from '@/lib/apis/payments/models';
+import { displayDate, displayPrice } from '@/lib/utils';
 import { SelectorComponent } from '@/components/Selector';
 import { Spinner } from '@/components/Loading';
 import { PublicLayout } from '@/components/layout/PublicLayout';
@@ -168,7 +168,7 @@ const SecondStep = ({ data, onFreeOrderConfirmed }: SecondStepProps) => {
     const [eventItems, setEventItems] = useState<Item[]>(events.map(x => ({ event: x, quantity: 0, selected: false })));
 
     const [errors, setErrors] = useState<Map<string, string[]>>();
-    const [paymentForm, setPaymentForm] = useState<CreateOrderResponse | undefined>(undefined);
+    const [paymentForm, setPaymentForm] = useState<RedsysForm | undefined>(undefined);
     const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | undefined>(undefined);
     const [displayEnrollment, setDisplayEnrollment] = useState(false)
     const formRef = useRef<HTMLFormElement>(null);
@@ -204,11 +204,15 @@ const SecondStep = ({ data, onFreeOrderConfirmed }: SecondStepProps) => {
         if (response.errors) {
             setErrors(response.errors)
             setLoading(false);
-        } else if (response.data?.free && response.data.orderInfo) {
+        } else if (response.data?.confirmation) {
             // Import 0: el servidor ja ha confirmat l'ordre, no s'ha d'anar a Redsys.
-            onFreeOrderConfirmed(response.data.orderInfo);
+            onFreeOrderConfirmed(response.data.confirmation);
+        } else if (response.data?.payment) {
+            setPaymentForm(response.data.payment);
         } else {
-            setPaymentForm(response.data);
+            // Resposta sense cap dels dos camps: no hi ha res a fer, però no deixem el botó penjat.
+            setErrors(new Map([["", ["No s'ha pogut iniciar el pagament. Torna-ho a provar."]]]));
+            setLoading(false);
         }
     }
 
@@ -313,7 +317,7 @@ const SecondStep = ({ data, onFreeOrderConfirmed }: SecondStepProps) => {
                     <span className="text-slate-600">
                         Total <span className="text-sm text-slate-400">({selectedEvents.length} {selectedEvents.length === 1 ? "element" : "elements"})</span>
                     </span>
-                    <span className='text-3xl font-bold tracking-tight text-slate-900 tabular-nums'>{total} {events[0].currencySymbol}</span>
+                    <span className='text-3xl font-bold tracking-tight text-slate-900 tabular-nums'>{displayPrice(total, events[0].currencySymbol)}</span>
                 </div>
                 {total === 0 ? displayConfirmButton() : displayPayButton()}
             </div>
@@ -363,7 +367,7 @@ const SecondStep = ({ data, onFreeOrderConfirmed }: SecondStepProps) => {
             <div>
                 <a target='blank' href='https://drive.google.com/file/d/1811V-ydbXgL_r0zCrsm3qVDyjypDqtrG/view?usp=sharing'
                     className='link md:text-lg'>
-                    Per fer-te soci d&apos;AMIPA clica aquí
+                    Per fer-te soci d&apos;AFA clica aquí
                 </a>
             </div>
         )
@@ -482,7 +486,7 @@ const EventLine = ({ idx, item, setEventItem: setEvent }: EventProps) => {
                         </span>
                         {
                             event.displayQuantitySelector ?
-                                <span>Preu individual: {event.price} {event.currencySymbol}</span>
+                                <span>Preu individual: {displayPrice(event.price, event.currencySymbol)}</span>
                                 : null
                         }
                     </div>
@@ -501,8 +505,8 @@ const EventLine = ({ idx, item, setEventItem: setEvent }: EventProps) => {
                 <div className={`${event.displayQuantitySelector ? 'hidden sm:block' : ''} min-w-[4rem] text-right font-semibold text-slate-900 tabular-nums`}>
                     {
                         event.displayQuantitySelector ?
-                            <>{event.price * quantity} {event.currencySymbol}</> :
-                            <>{event.price} {event.currencySymbol}</>
+                            <>{displayPrice(event.price * quantity, event.currencySymbol)}</> :
+                            <>{displayPrice(event.price, event.currencySymbol)}</>
                     }
                 </div>
             </div>

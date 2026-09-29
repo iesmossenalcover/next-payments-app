@@ -6,6 +6,9 @@ const parseDateIfNeeded = (date: Date | string) => typeof date === "string" ? ne
 export const displayDate = (date: Date | string) => parseDateIfNeeded(date).toLocaleDateString([], dateDisplayOptions);
 export const displayTime = (date: Date | string, includeSeconds: boolean = false) => parseDateIfNeeded(date).toLocaleTimeString([], { second: includeSeconds ? "2-digit" : undefined, ...dateTimeDisplayOptions });
 export const displayDateTime = (date: Date | string, includeSeconds: boolean = false) => `${displayDate(date)} - ${displayTime(date, includeSeconds)}`;
+// Un import de 0 no es mostra com "0 €": per a qui ho llegeix és una inscripció gratuïta.
+export const displayPrice = (amount: number, currency: string) => amount === 0 ? "Gratuït" : `${amount} ${currency}`;
+
 export const twoDigit = (n: number) => n < 10 ? '0' + n : '' + n;
 export const toInputDateTime = (d: Date): string => `${d.getFullYear()}-${twoDigit(d.getMonth() + 1)}-${twoDigit(d.getDate())}T${twoDigit(d.getHours())}:${twoDigit(d.getMinutes())}`;
 export const toInputDate = (d: Date): string => `${d.getFullYear()}-${twoDigit(d.getMonth() + 1)}-${twoDigit(d.getDate())}`;

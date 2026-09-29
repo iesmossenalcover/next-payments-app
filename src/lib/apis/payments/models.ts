@@ -111,14 +111,19 @@ export interface CreateOrderCommand {
     paymentMethod: PaymentMethod,
 }
 
-// Si free és true l'ordre ja està confirmada (import 0) i no s'ha d'anar a Redsys: només ve orderInfo.
+// Dades del formulari que s'ha d'enviar per POST a la passarel·la de Redsys.
+export interface RedsysForm {
+    url: string,
+    merchantParameters: string,
+    signatureVersion: string,
+    signature: string,
+}
+
+// Només un dels dos camps ve informat: payment si l'ordre s'ha de pagar per Redsys,
+// o confirmation si era gratuïta (import 0) i el servidor ja l'ha confirmada.
 export interface CreateOrderResponse {
-    free: boolean,
-    url?: string,
-    merchantParameters?: string,
-    signatureVersion?: string,
-    signature?: string,
-    orderInfo?: GetOrderInfo,
+    payment?: RedsysForm,
+    confirmation?: GetOrderInfo,
 }
 
 export interface SyncPersonResponse {
