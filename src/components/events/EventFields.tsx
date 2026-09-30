@@ -1,4 +1,4 @@
-import { Event } from "@/lib/apis/payments/models";
+import { Event, EventType } from "@/lib/apis/payments/models";
 import { Dispatch } from "react";
 import Toggle from "../Toggle";
 import { DateTime } from "@/components/form";
@@ -70,9 +70,8 @@ const EventFields = ({ event, errors, setEvent }: EventComponentProps) => {
                             className="form-input"
                             id="type"
                             name="type"
-                            value={event.type ?? ""}
-                            onChange={(e) => setEvent({ ...event, type: e.target.value === "" ? undefined : parseInt(e.target.value) })}>
-                            <option value="">Selecciona el tipus…</option>
+                            value={event.type ?? EventType.Other}
+                            onChange={(e) => setEvent({ ...event, type: parseInt(e.target.value) })}>
                             {eventTypeOptions.map(x => <option key={x.value} value={x.value}>{x.label}</option>)}
                         </select>
                         {selectedType && <p className="mt-1.5 text-sm text-slate-500">{selectedType.help}</p>}

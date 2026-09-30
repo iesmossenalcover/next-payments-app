@@ -8,17 +8,17 @@ export const eventTypeOptions: { value: EventType, label: string, help: string }
     },
     {
         value: EventType.Transport,
-        label: "Sortida amb transport (autocar, tren, cotxe… sortida d'un dia)",
+        label: "Sortida amb transport",
         help: "Es marcaran com a no autoritzats els alumnes sense l'autorització de sortides amb transport del curs. Si hi ha qualsevol transport, tria aquesta opció.",
     },
     {
         value: EventType.Trip,
-        label: "Viatge (colònies, viatge d'estudis, avió, diversos dies…)",
+        label: "Viatge",
         help: "Els viatges tenen una autorització específica que es gestiona fora d'aquesta aplicació. No es marcarà cap alumne.",
     },
     {
         value: EventType.Other,
-        label: "Altres (taller, xerrada, activitat al centre, venda de material…)",
+        label: "Altres",
         help: "No requereix autorització. No es marcarà cap alumne.",
     },
 ];
