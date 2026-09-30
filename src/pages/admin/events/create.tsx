@@ -1,6 +1,6 @@
 import { SuccessAlert } from "@/components/Alerts";
 import { createEvent } from "@/lib/apis/payments/client";
-import { Event, EventType } from "@/lib/apis/payments/models";
+import { Event } from "@/lib/apis/payments/models";
 import { useState } from "react";
 import EventFields from "@/components/events/EventFields";
 import { Container } from "@/components/layout/SideBar";
@@ -22,7 +22,6 @@ const defaultEvent: Event = {
     unpublishDate: undefined,
     enrollment: false,
     amipa: false,
-    type: EventType.Other,
 };
 
 
