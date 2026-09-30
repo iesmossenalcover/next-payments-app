@@ -121,6 +121,20 @@ const PersonFields = ({ person, errors, setPerson }: PersonComponentProps) => {
                     onToggled={val => setPerson({ ...person, enrolled: val })}
                     text="Matriculat"
                 />
+                <Toggle
+                    name="walkingAuthorization"
+                    id="walkingAuthorization"
+                    value={person.walkingAuthorization}
+                    onToggled={val => setPerson({ ...person, walkingAuthorization: val })}
+                    text="Autorització sortides a peu (curs actual)"
+                />
+                <Toggle
+                    name="transportAuthorization"
+                    id="transportAuthorization"
+                    value={person.transportAuthorization}
+                    onToggled={val => setPerson({ ...person, transportAuthorization: val })}
+                    text="Autorització sortides amb transport (curs actual)"
+                />
             </div>
 
             <div>

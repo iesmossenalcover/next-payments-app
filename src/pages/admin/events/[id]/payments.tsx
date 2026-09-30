@@ -9,6 +9,7 @@ import { displayDate, displayTime } from "@/lib/utils";
 import { SelectorComponent, SelectorOption } from "@/components/Selector";
 import { useApiRequest } from "@/lib/hooks/useApiRequest";
 import { PageHeader, PageMain } from "@/components/layout/PageHeader";
+import { EventTypeBadge, MissingAuthorizationBadge } from "@/components/events/EventTypeInfo";
 
 
 const tableHeaders = {
@@ -91,8 +92,9 @@ const EventPaymentsComp = () => {
             <li key={x.id} className="flex flex-wrap items-center justify-between gap-3 px-5 py-3 transition-colors hover:bg-slate-50">
                 <div className="min-w-0">
                     <p className="font-medium text-slate-900">
-                        {x.fullName}
+                        <span className={x.paid && !x.authorized ? "text-slate-400 line-through" : ""}>{x.fullName}</span>
                         {x.paid && event.quantitySelector ? <span className="badge badge-gray ml-2">x{x.quantity}</span> : null}
+                        {!x.authorized && <span className="ml-2"><MissingAuthorizationBadge type={event.type} /></span>}
                     </p>
                     <p className="mt-0.5 flex flex-wrap items-center gap-x-2 text-sm text-slate-500">
                         <span>{x.group}</span>
@@ -192,6 +194,10 @@ const EventPaymentsComp = () => {
                                 <dt className="text-slate-500">És matrícula</dt>
                                 <dd className="mt-1">{yesNo(event.isEnrollment)}</dd>
                             </div>
+                            <div>
+                                <dt className="text-slate-500">Tipus</dt>
+                                <dd className="mt-1"><EventTypeBadge type={event.type} /></dd>
+                            </div>
                         </dl>
 
                         <div className="mt-5 border-t border-slate-100 pt-4">
@@ -223,6 +229,10 @@ const EventPaymentsComp = () => {
                             <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-100">
                                 <div className="h-full rounded-full bg-emerald-500 transition-all" style={{ width: `${paidPercent}%` }} />
                             </div>
+                            {data.summary.notAuthorizedCount > 0 &&
+                                <p className="mt-3 text-sm text-amber-800">
+                                    Sense autorització: {data.summary.notAuthorizedCount} ({data.summary.notAuthorizedPaidCount} pagats)
+                                </p>}
                         </div>
                     </div>
                 </div>

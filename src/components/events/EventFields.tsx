@@ -3,6 +3,7 @@ import { Dispatch } from "react";
 import Toggle from "../Toggle";
 import { DateTime } from "@/components/form";
 import { toInputDateTime } from "@/lib/utils";
+import { eventTypeOptions } from "./EventTypeInfo";
 
 interface EventComponentProps {
     errors?: Map<string, string[]>
@@ -22,6 +23,10 @@ const EventFields = ({ event, errors, setEvent }: EventComponentProps) => {
             </>
         )
     }
+
+    // Enrollment and AFA events are not outings, the backend always stores them as "Altres".
+    const isOuting = !event.enrollment && !event.amipa;
+    const selectedType = eventTypeOptions.find(x => x.value === event.type);
 
     return (
         <div className="space-y-8">
@@ -55,6 +60,25 @@ const EventFields = ({ event, errors, setEvent }: EventComponentProps) => {
 
                     {displayErrors("description")}
                 </div>
+
+                {isOuting &&
+                    <div>
+                        <label
+                            className="form-label"
+                            htmlFor="type">Tipus</label>
+                        <select
+                            className="form-input"
+                            id="type"
+                            name="type"
+                            value={event.type ?? ""}
+                            onChange={(e) => setEvent({ ...event, type: e.target.value === "" ? undefined : parseInt(e.target.value) })}>
+                            <option value="">Selecciona el tipus…</option>
+                            {eventTypeOptions.map(x => <option key={x.value} value={x.value}>{x.label}</option>)}
+                        </select>
+                        {selectedType && <p className="mt-1.5 text-sm text-slate-500">{selectedType.help}</p>}
+                        {displayErrors("type")}
+                    </div>
+                }
 
                 <div className="grid gap-5 sm:grid-cols-2">
                     <div>

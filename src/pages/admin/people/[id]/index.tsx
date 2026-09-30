@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Person } from "@/lib/apis/payments/models";
 import { useEffect, useState } from "react";
 import PersonFields from "@/components/people/PersonFields";
+import PersonCoursesHistory from "@/components/people/PersonCoursesHistory";
 import { useRouter } from "next/router";
 import { getPersonById, updatePerson } from "@/lib/apis/payments";
 import { Container } from "@/components/layout/SideBar";
@@ -178,6 +179,7 @@ const Update = () => {
                             </div>
                         </form>
                     </div>
+                <PersonCoursesHistory courses={person.courses} />
             </PageMain>
         </>
     )

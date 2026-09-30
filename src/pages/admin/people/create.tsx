@@ -17,6 +17,8 @@ const defaultPerson: Person = {
     groupId: undefined,
     amipa: false,
     enrolled: false,
+    walkingAuthorization: false,
+    transportAuthorization: false,
 };
 
 const Create = () => {

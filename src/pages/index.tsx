@@ -1,6 +1,7 @@
 import Head from 'next/head'
 import { useEffect, useRef, useState } from 'react';
 import { createOrder, getPersonActiveEvents, PaymentMethod, PersonActiveEvent, PersonActiveEventsVm } from '@/lib/apis/payments';
+import { MissingAuthorizations } from '@/lib/apis/payments/models';
 import { GetOrderInfo, RedsysForm } from '@/lib/apis/payments/models';
 import { displayDate, displayPrice } from '@/lib/utils';
 import { SelectorComponent } from '@/components/Selector';
@@ -162,7 +163,7 @@ interface SecondStepProps {
 }
 
 const SecondStep = ({ data, onFreeOrderConfirmed }: SecondStepProps) => {
-    const { events, person } = data;
+    const { events, person, missingAuthorizations } = data;
     const [loading, setLoading] = useState(false);
 
     const [eventItems, setEventItems] = useState<Item[]>(events.map(x => ({ event: x, quantity: 0, selected: false })));
@@ -423,6 +424,7 @@ const SecondStep = ({ data, onFreeOrderConfirmed }: SecondStepProps) => {
                 </div>
                 {enrollmentButton}
             </div>
+            {missingAuthorizations && <MissingAuthorizationsAlert missing={missingAuthorizations} />}
             {displayEnrollment ?
                 <>{renderEnrollment()}</> :
                 <>
@@ -433,6 +435,19 @@ const SecondStep = ({ data, onFreeOrderConfirmed }: SecondStepProps) => {
             }
         </div>
     )
+}
+
+const MissingAuthorizationsAlert = ({ missing }: { missing: MissingAuthorizations }) => {
+    const types = [
+        missing.walking ? "sortides a peu" : undefined,
+        missing.transport ? "sortides amb transport" : undefined,
+    ].filter(x => x).join(" i de ");
+
+    return (
+        <div className="mx-6 mt-6 rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-900 ring-1 ring-inset ring-amber-200 sm:mx-8" role="alert">
+            Falta l&apos;autorització de {types} d&apos;aquest curs. Per saber com lliurar-la, truca a l&apos;oficina del centre: <a className="font-semibold underline" href={`tel:${missing.contactPhone.replace(/\s/g, "")}`}>{missing.contactPhone}</a>.
+        </div>
+    );
 }
 
 interface EventProps {
