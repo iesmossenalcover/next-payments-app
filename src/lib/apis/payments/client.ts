@@ -335,6 +335,16 @@ export const updateGroup = async (group: Group): Promise<Response<number>> => {
     return data;
 }
 
+export const deleteGroup = async (id: number): Promise<Response<number>> => {
+    const response = await deleteJson(`${API_BASE_URL}/api/groups/${id}`);
+    const data = await response.json() as Response<number>;
+
+    if (data.errors) {
+        data.errors = new Map(Object.entries(data.errors));
+    }
+    return data;
+}
+
 export const getGroupById = async (id: number): Promise<ApiResult<Group>> => {
     const response = await get(`${API_BASE_URL}/api/groups/${id}`);
     const data = await response.json() as Response<Group>;
