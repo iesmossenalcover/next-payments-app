@@ -88,7 +88,8 @@ export interface PersonActiveEvent {
     code: string,
     name: string,
     date: string,
-    price: number,
+    // Només ve informat si l'esdeveniment es pot pagar: sense autorització el servidor no envia el preu.
+    price?: number,
     displayQuantitySelector: boolean,
     maxQuantity: number,
     currencySymbol: string,
@@ -319,6 +320,13 @@ export interface PaymentSummary {
     noAmipaPaid: number
     notAuthorizedCount: number
     notAuthorizedPaidCount: number
+}
+
+export interface SetEventPeoplePaidVm {
+    // Marcats com a pagats.
+    paid: number,
+    // Deixats com estaven perquè els falta l'autorització del curs.
+    skippedNotAuthorized: number,
 }
 
 export interface EventPayment {

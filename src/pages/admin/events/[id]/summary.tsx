@@ -34,7 +34,6 @@ const EventSummaries = () => {
     const displayEvents = events();
     const displayPaidEvents = displayEvents.filter(x => x.paid);
     const displayUnpaidEvents = displayEvents.filter(x => !x.paid);
-    const notAuthorizedCount = displayEvents.filter(x => !x.authorized).length;
 
     return (
 
@@ -70,10 +69,6 @@ const EventSummaries = () => {
                             <dd className="mt-0.5"><EventTypeBadge type={data.type} /></dd>
                         </div>
                     </dl>
-                    {notAuthorizedCount > 0 &&
-                        <p className="mt-4 rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-900 ring-1 ring-inset ring-amber-200">
-                            {notAuthorizedCount} {notAuthorizedCount === 1 ? "alumne no té" : "alumnes no tenen"} l&apos;autorització d&apos;aquest curs per a aquesta sortida.
-                        </p>}
                     {data.description ? (
                         <details className="group mt-4 border-t border-slate-200 pt-4 text-sm">
                             <summary className="flex cursor-pointer list-none items-center gap-1 font-medium text-slate-700 hover:text-slate-900 [&::-webkit-details-marker]:hidden">
