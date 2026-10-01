@@ -82,13 +82,6 @@ export interface PersonActiveEventsVm {
         enrollmentSubjectsInfo?: string,
         groupDescription?: string,
     },
-    missingAuthorizations?: MissingAuthorizations,
-}
-
-export interface MissingAuthorizations {
-    walking: boolean,
-    transport: boolean,
-    contactPhone: string,
 }
 
 export interface PersonActiveEvent {
