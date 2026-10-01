@@ -193,20 +193,6 @@ export interface Person {
     subjectsInfo?: string,
     walkingAuthorization: boolean,
     transportAuthorization: boolean,
-    courses?: PersonCourse[],
-}
-
-export interface PersonCourse {
-    courseId: number,
-    courseName: string,
-    active: boolean,
-    groupName: string,
-    amipa: boolean,
-    enrolled: boolean,
-    walkingAuthorization: boolean,
-    walkingAuthorizationDate?: string,
-    transportAuthorization: boolean,
-    transportAuthorizationDate?: string,
 }
 
 export interface BatchUploadSummary {
