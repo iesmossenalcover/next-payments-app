@@ -505,6 +505,10 @@ const EventLine = ({ idx, item, setEventItem: setEvent }: EventProps) => {
                                 : null
                         }
                     </div>
+                    {event.missingAuthorization &&
+                        <p className="mt-1 text-sm font-medium text-amber-800">
+                            {event.missingAuthorization}.
+                        </p>}
                 </div>
             </div>
             <div className="flex shrink-0 items-center gap-3">

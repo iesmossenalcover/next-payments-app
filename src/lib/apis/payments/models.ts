@@ -100,6 +100,7 @@ export interface PersonActiveEvent {
     maxQuantity: number,
     currencySymbol: string,
     selectable: boolean,
+    missingAuthorization?: string,
 }
 
 export interface SelectedEvent {
