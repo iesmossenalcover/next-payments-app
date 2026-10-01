@@ -21,7 +21,7 @@ const defaultEvent: Event = {
     publishDate: new Date().toISOString(),
     unpublishDate: undefined,
     enrollment: false,
-    amipa: false
+    amipa: false,
 };
 
 

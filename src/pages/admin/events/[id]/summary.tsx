@@ -5,6 +5,7 @@ import { displayDate, displayDateTime } from "@/lib/utils";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { EventTypeBadge, MissingAuthorizationBadge } from "@/components/events/EventTypeInfo";
 
 const EventSummaries = () => {
     const router = useRouter()
@@ -63,6 +64,10 @@ const EventSummaries = () => {
                             <dt className="text-slate-500">Fi pagament</dt>
                             <dd className="mt-0.5 font-semibold text-slate-900">{data.unpublishDate ? displayDateTime(data.unpublishDate) : "-"}</dd>
                         </div>
+                        <div>
+                            <dt className="text-slate-500">Tipus</dt>
+                            <dd className="mt-0.5"><EventTypeBadge type={data.type} /></dd>
+                        </div>
                     </dl>
                     {data.description ? (
                         <details className="group mt-4 border-t border-slate-200 pt-4 text-sm">
@@ -111,8 +116,9 @@ const EventSummaries = () => {
                                         <span>
                                             <span className="text-slate-500">{x.groupName}</span>
                                             <span className="mx-2 text-slate-300">·</span>
-                                            <span className="font-medium text-slate-900">{x.fullName}</span>
+                                            <span className={`font-medium ${x.authorized ? "text-slate-900" : "text-slate-400 line-through"}`}>{x.fullName}</span>
                                             {x.quantity ? <span className="badge badge-gray ml-2">x{x.quantity}</span> : null}
+                                            {!x.authorized && <span className="ml-2"><MissingAuthorizationBadge type={data.type} /></span>}
                                         </span>
                                         {x.schoolAlert && <a href={x.schoolAlert} target="_blank" rel="noopener noreferrer" className="badge badge-amber shrink-0 hover:bg-amber-100">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
@@ -139,6 +145,7 @@ const EventSummaries = () => {
                                             <span className="text-slate-500">{x.groupName}</span>
                                             <span className="mx-2 text-slate-300">·</span>
                                             <span className="font-medium text-slate-900">{x.fullName}</span>
+                                            {!x.authorized && <span className="ml-2"><MissingAuthorizationBadge type={data.type} /></span>}
                                         </span>
                                         {x.schoolAlert && <a href={x.schoolAlert} target="_blank" rel="noopener noreferrer" className="badge badge-amber shrink-0 hover:bg-amber-100">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">

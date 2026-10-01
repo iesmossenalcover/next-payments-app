@@ -6,7 +6,8 @@ import { PageHeader, PageMain } from "@/components/layout/PageHeader";
 import { Spinner } from "@/components/Loading";
 import Link from "next/link";
 import { deleteEvent, exportSummaryRequest, sendDailyEventsEmail } from '@/lib/apis/payments/client'
-import { hasRole, Roles } from "@/lib/apis/payments/models";
+import { EventType, hasRole, Roles } from "@/lib/apis/payments/models";
+import { EventTypeBadge } from "@/components/events/EventTypeInfo";
 import useUser from "@/lib/hooks/useUser";
 import { displayDate, displayDateTime, plainErrors } from "@/lib/utils";
 import { useApiRequest, useStartApiRequest } from "@/lib/hooks/useApiRequest";
@@ -17,6 +18,7 @@ const tableHeaders = {
     id: "Id",
     code: "Codi",
     name: "Nom",
+    type: "Tipus",
     date: "Data",
     price: "Preu",
     amipaPrice: "Preu AFA",
@@ -30,6 +32,7 @@ interface TableRow {
     id: number,
     code: string,
     name: string,
+    type?: EventType,
     date: string,
     price: string,
     amipaPrice: string,
@@ -59,6 +62,7 @@ const Events = () => {
                 id: x.id,
                 code: x.code,
                 name: x.name,
+                type: x.type,
                 date: displayDate(date),
                 price: `${x.price} €`,
                 amipaPrice: `${x.amipaPrice} €`,
@@ -73,6 +77,7 @@ const Events = () => {
     const customRenderer = {
         code: (item: TableRow) => <span className="badge badge-gray font-mono">{item.code}</span>,
         name: (item: TableRow) => <span className="block min-w-[12rem] whitespace-normal font-medium text-slate-900">{item.name}</span>,
+        type: (item: TableRow) => <EventTypeBadge type={item.type} />,
         active: (item: TableRow) => (
             <span className={`badge ${item.active === "Si" ? "badge-green" : "badge-gray"}`}>
                 {item.active === "Si" && <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />}
@@ -135,6 +140,7 @@ const Events = () => {
                     visibleFields={[
                         "code",
                         "name",
+                        "type",
                         "date",
                         "price",
                         "amipaPrice",

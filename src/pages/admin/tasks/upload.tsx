@@ -47,6 +47,10 @@ const BatchUpload = () => {
                             name="file"
                             className="block w-full cursor-pointer rounded-lg text-sm text-slate-600 ring-1 ring-inset ring-slate-300 file:mr-4 file:cursor-pointer file:border-0 file:bg-brand-50 file:px-4 file:py-2.5 file:text-sm file:font-semibold file:text-brand-700 hover:file:bg-brand-100 focus:outline-none focus:ring-2 focus:ring-brand-500"
                             type="file" id="formFile" />
+                        <p className="mt-2 text-sm text-slate-500">
+                            Amipa, Matriculat, AutoritzacioAPeu i AutoritzacioTransport: <strong>Sí</strong> o <strong>No</strong>. Si es deixa buida, es manté el valor actual.
+                            AlertaEscolar: si es deixa buida, es manté l&apos;actual.
+                        </p>
 
                         {errors ? <div className="mt-4">
                             {Array.from(errors.entries()).map((x, idx) => <p key={idx} className="form-error">{x[0]}: {x[1]}</p>)}

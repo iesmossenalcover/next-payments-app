@@ -123,6 +123,26 @@ const PersonFields = ({ person, errors, setPerson }: PersonComponentProps) => {
                 />
             </div>
 
+            <div className="rounded-lg bg-slate-50 p-4 ring-1 ring-inset ring-slate-200">
+                <p className="form-label">Autoritzacions de sortides <span className="font-normal text-slate-400">(curs actual)</span></p>
+                <div className="flex flex-wrap gap-x-8 gap-y-4">
+                    <Toggle
+                        name="walkingAuthorization"
+                        id="walkingAuthorization"
+                        value={person.walkingAuthorization}
+                        onToggled={val => setPerson({ ...person, walkingAuthorization: val })}
+                        text="Sortides a peu"
+                    />
+                    <Toggle
+                        name="transportAuthorization"
+                        id="transportAuthorization"
+                        value={person.transportAuthorization}
+                        onToggled={val => setPerson({ ...person, transportAuthorization: val })}
+                        text="Sortides amb transport"
+                    />
+                </div>
+            </div>
+
             <div>
                 <label
                     className="form-label"

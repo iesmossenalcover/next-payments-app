@@ -309,7 +309,7 @@ const SecondStep = ({ data, onFreeOrderConfirmed }: SecondStepProps) => {
             return null
         }
 
-        let total = selectedEvents.reduce((part, x) => part + x.event.price * Math.max(x.quantity, 1), 0);
+        let total = selectedEvents.reduce((part, x) => part + (x.event.price ?? 0) * Math.max(x.quantity, 1), 0);
 
         return (
             <div className="animate-fade-in border-t border-slate-200 bg-slate-50/80 p-6 sm:px-8">
@@ -347,9 +347,11 @@ const SecondStep = ({ data, onFreeOrderConfirmed }: SecondStepProps) => {
                 <ul className="space-y-3">
                     {eventItems.map((x, idx) =>
                         <li key={x.event.code}
-                            className={`rounded-xl ring-1 transition-all ${x.selected
-                                ? "bg-brand-50/60 ring-2 ring-brand-500"
-                                : "bg-white ring-slate-200 hover:ring-slate-300"} ${x.event.selectable ? "" : "opacity-60"}`}>
+                            className={`rounded-xl ring-1 transition-all ${!x.event.selectable
+                                ? "bg-slate-50 ring-slate-200"
+                                : x.selected
+                                    ? "bg-brand-50/60 ring-2 ring-brand-500"
+                                    : "bg-white ring-slate-200 hover:ring-slate-300"}`}>
                             <EventLine
                                 item={x}
                                 idx={idx}
@@ -445,6 +447,10 @@ const EventLine = ({ idx, item, setEventItem: setEvent }: EventProps) => {
     const { event, selected, quantity } = item;
     const options = Array.from(Array(item.event.maxQuantity + 1), (_, x) => ({ key: x.toString(), value: x }));
 
+    // El servidor marca com a no seleccionables els esdeveniments sense l'autorització del curs,
+    // i tampoc n'envia el preu. Es mostren, però, perquè la família sàpiga que existeixen.
+    const blocked = !event.selectable;
+
     const onSelectQuantity = (q: string) => {
         const quantity = parseInt(q);
         item.selected = quantity > 0;
@@ -459,22 +465,24 @@ const EventLine = ({ idx, item, setEventItem: setEvent }: EventProps) => {
         setEvent(idx, item);
     }
 
-    return (
-        // Tot el recuadre és l'etiqueta del checkbox: clicar a qualsevol lloc el marca/desmarca.
-        <label
-            htmlFor={`event_${event.code}`}
-            className={`flex w-full select-none items-center justify-between gap-3 p-3 sm:gap-4 sm:p-4 ${event.selectable ? "cursor-pointer" : "cursor-not-allowed"}`}>
+    const content = (
+        <>
             <div className="flex min-w-0 flex-1 items-center">
-                <input id={`event_${event.code}`}
-                    aria-describedby="helper-checkbox-text"
-                    type="checkbox"
-                    disabled={!event.selectable}
-                    className="h-5 w-5 shrink-0 cursor-pointer rounded disabled:cursor-not-allowed"
-                    checked={selected}
-                    onChange={(e) => onSelectEvent(e.target.checked)}
-                />
+                {blocked ?
+                    // Cap casella: no hi ha res a marcar. El cadenat ocupa el mateix espai.
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor" className="h-5 w-5 shrink-0 text-amber-600">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                    </svg> :
+                    <input id={`event_${event.code}`}
+                        aria-describedby="helper-checkbox-text"
+                        type="checkbox"
+                        className="h-5 w-5 shrink-0 cursor-pointer rounded"
+                        checked={selected}
+                        onChange={(e) => onSelectEvent(e.target.checked)}
+                    />
+                }
                 <div className="ml-3 min-w-0 flex-1">
-                    <div className="break-words font-medium text-slate-900">
+                    <div className={`break-words font-medium ${blocked ? "text-slate-600" : "text-slate-900"}`}>
                         {event.name}
                     </div>
                     <div className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-slate-500">
@@ -485,7 +493,7 @@ const EventLine = ({ idx, item, setEventItem: setEvent }: EventProps) => {
                             {displayDate(event.date)}
                         </span>
                         {
-                            event.displayQuantitySelector ?
+                            event.displayQuantitySelector && event.price !== undefined ?
                                 <span>Preu individual: {displayPrice(event.price, event.currencySymbol)}</span>
                                 : null
                         }
@@ -493,23 +501,50 @@ const EventLine = ({ idx, item, setEventItem: setEvent }: EventProps) => {
                 </div>
             </div>
             <div className="flex shrink-0 items-center gap-3">
-                {
-                    event.displayQuantitySelector ?
-                        <SelectorComponent
-                            id={`"quantity_"${event.code}`}
-                            name={`"quantity_"${event.code}`}
-                            className="form-input w-auto cursor-pointer py-1.5 pl-3 pr-8"
-                            selector={{ selected: quantity.toString(), options }}
-                            onSelect={onSelectQuantity} /> : null
+                {blocked ?
+                    // El preu s'amaga: el seu lloc l'ocupa el motiu pel qual no es pot pagar.
+                    <p className="max-w-[8.5rem] text-right text-xs font-semibold leading-snug text-amber-800 sm:max-w-[14rem] sm:text-sm">
+                        {event.missingAuthorization ?? "No es pot pagar"}
+                    </p> :
+                    <>
+                        {
+                            event.displayQuantitySelector ?
+                                <SelectorComponent
+                                    id={`"quantity_"${event.code}`}
+                                    name={`"quantity_"${event.code}`}
+                                    className="form-input w-auto cursor-pointer py-1.5 pl-3 pr-8"
+                                    selector={{ selected: quantity.toString(), options }}
+                                    onSelect={onSelectQuantity} /> : null
+                        }
+                        <div className={`${event.displayQuantitySelector ? 'hidden sm:block' : ''} min-w-[4rem] text-right font-semibold text-slate-900 tabular-nums`}>
+                            {
+                                event.displayQuantitySelector ?
+                                    <>{displayPrice((event.price ?? 0) * quantity, event.currencySymbol)}</> :
+                                    <>{displayPrice(event.price ?? 0, event.currencySymbol)}</>
+                            }
+                        </div>
+                    </>
                 }
-                <div className={`${event.displayQuantitySelector ? 'hidden sm:block' : ''} min-w-[4rem] text-right font-semibold text-slate-900 tabular-nums`}>
-                    {
-                        event.displayQuantitySelector ?
-                            <>{displayPrice(event.price * quantity, event.currencySymbol)}</> :
-                            <>{displayPrice(event.price, event.currencySymbol)}</>
-                    }
-                </div>
             </div>
+        </>
+    );
+
+    if (blocked) {
+        return (
+            <div
+                aria-disabled={true}
+                className="flex w-full select-none items-center justify-between gap-3 p-3 sm:gap-4 sm:p-4">
+                {content}
+            </div>
+        );
+    }
+
+    return (
+        // Tot el recuadre és l'etiqueta del checkbox: clicar a qualsevol lloc el marca/desmarca.
+        <label
+            htmlFor={`event_${event.code}`}
+            className="flex w-full cursor-pointer select-none items-center justify-between gap-3 p-3 sm:gap-4 sm:p-4">
+            {content}
         </label>
     );
 }

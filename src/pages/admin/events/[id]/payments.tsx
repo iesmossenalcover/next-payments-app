@@ -1,14 +1,15 @@
 import { Container } from "@/components/layout/SideBar";
-import { EventPayment, EventPaymentsEventDataVm, EventPaymentsVm, getEventPayments, setPayment } from "@/lib/apis/payments";
+import { EventPayment, EventPaymentsEventDataVm, EventPaymentsVm, getEventPayments, setAllAuthorizedPaid, setPayment } from "@/lib/apis/payments";
 import Head from "next/head";
 import Link from "next/link";
 import { Table } from "@/components/table";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { displayDate, displayTime } from "@/lib/utils";
+import { displayDate, displayTime, plainErrors } from "@/lib/utils";
 import { SelectorComponent, SelectorOption } from "@/components/Selector";
 import { useApiRequest } from "@/lib/hooks/useApiRequest";
 import { PageHeader, PageMain } from "@/components/layout/PageHeader";
+import { EventTypeBadge, MissingAuthorizationBadge, missingAuthorizationText } from "@/components/events/EventTypeInfo";
 
 
 const tableHeaders = {
@@ -91,8 +92,11 @@ const EventPaymentsComp = () => {
             <li key={x.id} className="flex flex-wrap items-center justify-between gap-3 px-5 py-3 transition-colors hover:bg-slate-50">
                 <div className="min-w-0">
                     <p className="font-medium text-slate-900">
-                        {x.fullName}
+                        <span className={x.paid && !x.authorized ? "text-slate-400 line-through" : ""}>{x.fullName}</span>
                         {x.paid && event.quantitySelector ? <span className="badge badge-gray ml-2">x{x.quantity}</span> : null}
+                        {/* Als no pagats el motiu ja surt al costat del botó, així que aquí només cal
+                            per als que ja estaven pagats quan es va revocar l'autorització. */}
+                        {!x.authorized && x.paid && <span className="ml-2"><MissingAuthorizationBadge type={event.type} /></span>}
                     </p>
                     <p className="mt-0.5 flex flex-wrap items-center gap-x-2 text-sm text-slate-500">
                         <span>{x.group}</span>
@@ -138,6 +142,8 @@ const EventPaymentsComp = () => {
     );
 
     const unpaidCount = data.summary.totalCount - data.summary.totalPaidCount;
+    // Candidats al pagament massiu. El servidor torna a filtrar: això només és per al text del botó.
+    const pendingAuthorized = data.unPaidEvents.filter(x => x.authorized).length;
     const paidPercent = data.summary.totalCount > 0 ? Math.round(data.summary.totalPaidCount * 100 / data.summary.totalCount) : 0;
 
     return (
@@ -192,6 +198,10 @@ const EventPaymentsComp = () => {
                                 <dt className="text-slate-500">És matrícula</dt>
                                 <dd className="mt-1">{yesNo(event.isEnrollment)}</dd>
                             </div>
+                            <div>
+                                <dt className="text-slate-500">Tipus</dt>
+                                <dd className="mt-1"><EventTypeBadge type={event.type} /></dd>
+                            </div>
                         </dl>
 
                         <div className="mt-5 border-t border-slate-100 pt-4">
@@ -223,6 +233,10 @@ const EventPaymentsComp = () => {
                             <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-100">
                                 <div className="h-full rounded-full bg-emerald-500 transition-all" style={{ width: `${paidPercent}%` }} />
                             </div>
+                            {data.summary.notAuthorizedCount > 0 &&
+                                <p className="mt-3 text-sm text-amber-800">
+                                    Sense autorització: {data.summary.notAuthorizedCount} ({data.summary.notAuthorizedPaidCount} pagats)
+                                </p>}
                         </div>
                     </div>
                 </div>
@@ -248,11 +262,17 @@ const EventPaymentsComp = () => {
                         </ul>
                     </section>
                     <section className="card overflow-hidden">
-                        <h3 className="flex items-center gap-2 border-b border-slate-200 px-5 py-4 font-semibold text-slate-900">
-                            <span className="h-2 w-2 rounded-full bg-red-500" />
-                            No Pagats
-                            <span className="badge badge-red">{unpaidCount}</span>
-                        </h3>
+                        <div className="flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-slate-200 px-5 py-4">
+                            <h3 className="flex items-center gap-2 font-semibold text-slate-900">
+                                <span className="h-2 w-2 rounded-full bg-red-500" />
+                                No Pagats
+                                <span className="badge badge-red">{unpaidCount}</span>
+                            </h3>
+                            <SetAllAuthorizedPaid
+                                eventCode={event.code}
+                                count={pendingAuthorized}
+                                setPaidCallback={loadEventsPayments} />
+                        </div>
                         <ul className="divide-y divide-slate-100">
                             {unPaidEvents}
                         </ul>
@@ -263,6 +283,42 @@ const EventPaymentsComp = () => {
     );
 }
 
+interface SetAllAuthorizedPaidProps {
+    eventCode: string,
+    count: number,
+    setPaidCallback: () => void,
+}
+
+// Pagament massiu dels pendents que tenen l'autorització del curs. Qui no la té no s'hi inclou:
+// el servidor els exclou i aquí no s'ofereix cap manera de forçar-ho.
+const SetAllAuthorizedPaid = ({ eventCode, count, setPaidCallback }: SetAllAuthorizedPaidProps) => {
+    const { isLoading, errors, executeRequest } = useApiRequest(setAllAuthorizedPaid);
+
+    if (count === 0) return null;
+
+    const setAllPaid = async () => {
+        const ok = confirm(`Marcar com a pagats els ${count} alumnes pendents que tenen l'autoritzacio? Els que no la tenen es quedaran sense pagar.`);
+        if (!ok) return;
+
+        if (await executeRequest(eventCode)) {
+            setPaidCallback();
+        }
+    }
+
+    return (
+        <div className="ml-auto text-right">
+            <button
+                disabled={isLoading}
+                onClick={setAllPaid}
+                className="btn btn-success btn-sm">
+                {isLoading ? "Marcant..." : `Marcar pagats els ${count} autoritzats`}
+            </button>
+            {errors && errors.size > 0 ?
+                <p className="mt-1 text-xs text-red-600">{plainErrors(errors)}</p> : null}
+        </div>
+    )
+}
+
 interface SetPaidProps {
     event: EventPaymentsEventDataVm,
     payment: EventPayment,
@@ -271,7 +327,7 @@ interface SetPaidProps {
 }
 
 const SetPaid = ({ event, payment, options, setPaidCallback }: SetPaidProps) => {
-    const { isLoading, executeRequest } = useApiRequest(setPayment);
+    const { isLoading, errors, executeRequest } = useApiRequest(setPayment);
     const [quantity, setQuantity] = useState(Math.max(1, payment.quantity));
 
     const setPaid = async (id: number, v: boolean, di: string, n: string) => {
@@ -283,29 +339,44 @@ const SetPaid = ({ event, payment, options, setPaidCallback }: SetPaidProps) => 
             del = confirm(`Desmarcar de pagats l'alumne ${n} amb DNI: ${di} ?`);
         }
         if (del) {
+            // Si falla, el motiu que torna el servidor es mostra sota el botó.
             const ok = await executeRequest(id, v, quantity);
             if (ok) {
                 setPaidCallback();
-            } else {
-                alert("No s'ha pogut actualitzar")
             }
         }
     }
 
+    const serverError = errors && errors.size > 0 ?
+        <p className="mt-1 text-right text-xs text-red-600">{plainErrors(errors)}</p> : null;
+
     if (payment.paid) {
+        // Desmarcar sempre es permet, encara que falti l'autorització: el pagament ja s'ha fet.
         return (
-            <button
-                disabled={isLoading}
-                onClick={() => setPaid(payment.id, false, payment.documentId, payment.fullName)}
-                className="btn btn-ghost btn-sm text-red-600 hover:bg-red-50 hover:text-red-700">
-                Desmarcar pagat
-            </button>
+            <div>
+                <button
+                    disabled={isLoading}
+                    onClick={() => setPaid(payment.id, false, payment.documentId, payment.fullName)}
+                    className="btn btn-ghost btn-sm text-red-600 hover:bg-red-50 hover:text-red-700">
+                    Desmarcar pagat
+                </button>
+                {serverError}
+            </div>
         )
-
     }
-    else {
 
+    // Sense l'autorització del curs el servidor rebutja el pagament, així que no s'ofereix el botó.
+    // El motiu es manté visible (badge al costat del nom i aquest text).
+    if (!payment.authorized) {
         return (
+            <p className="max-w-[14rem] text-right text-xs font-medium leading-snug text-amber-800">
+                No es pot marcar com a pagat: {missingAuthorizationText(event.type).toLowerCase()}
+            </p>
+        )
+    }
+
+    return (
+        <div>
             <div className="flex items-center gap-2">
                 {event.quantitySelector ?
                     <SelectorComponent
@@ -323,8 +394,9 @@ const SetPaid = ({ event, payment, options, setPaidCallback }: SetPaidProps) => 
                     Marcar pagat
                 </button>
             </div>
-        )
-    }
+            {serverError}
+        </div>
+    )
 }
 
 export default function EventPaymentsPage() {

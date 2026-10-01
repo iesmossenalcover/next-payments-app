@@ -81,18 +81,20 @@ export interface PersonActiveEventsVm {
         enrolled: boolean,
         enrollmentSubjectsInfo?: string,
         groupDescription?: string,
-    }
+    },
 }
 
 export interface PersonActiveEvent {
     code: string,
     name: string,
     date: string,
-    price: number,
+    // Només ve informat si l'esdeveniment es pot pagar: sense autorització el servidor no envia el preu.
+    price?: number,
     displayQuantitySelector: boolean,
     maxQuantity: number,
     currencySymbol: string,
     selectable: boolean,
+    missingAuthorization?: string,
 }
 
 export interface SelectedEvent {
@@ -183,6 +185,8 @@ export interface Person {
     enrolled: boolean,
     schoolAlert?: string,
     subjectsInfo?: string,
+    walkingAuthorization: boolean,
+    transportAuthorization: boolean,
 }
 
 export interface BatchUploadSummary {
@@ -203,7 +207,8 @@ export interface EventRow {
     unpublishDate: string,
     isActive: boolean,
     enrollment: boolean,
-    amipa: boolean
+    amipa: boolean,
+    type: EventType,
 }
 
 export interface GroupRow {
@@ -229,6 +234,13 @@ export interface AppConfig {
 }
 
 
+export enum EventType {
+    Other = 0,
+    Walking = 1,
+    Transport = 2,
+    Trip = 3,
+}
+
 export interface Event {
     id: number,
     code: string,
@@ -243,6 +255,7 @@ export interface Event {
     unpublishDate?: string,
     enrollment: boolean,
     amipa: boolean,
+    type?: EventType,
     calendarEventId?: string,
 }
 
@@ -283,6 +296,7 @@ export interface PaymentsEvent {
     isActive: boolean,
     isEnrollment: boolean,
     isAmpia: boolean,
+    type: EventType,
     quantitySelector: boolean,
     maxQuantity?: number
 }
@@ -304,6 +318,15 @@ export interface PaymentSummary {
     totalPaid: number
     amipaPaid: number
     noAmipaPaid: number
+    notAuthorizedCount: number
+    notAuthorizedPaidCount: number
+}
+
+export interface SetEventPeoplePaidVm {
+    // Marcats com a pagats.
+    paid: number,
+    // Deixats com estaven perquè els falta l'autorització del curs.
+    skippedNotAuthorized: number,
 }
 
 export interface EventPayment {
@@ -316,7 +339,7 @@ export interface EventPayment {
     paid: boolean,
     quantity: number,
     datePaid?: Date,
-
+    authorized: boolean,
 }
 
 export interface EventSummaryVm {
@@ -327,6 +350,7 @@ export interface EventSummaryVm {
     date: string,
     publishDate: string,
     unpublishDate?: string,
+    type: EventType,
     groups: SelectorOption[]
     events: EventSummary[]
 }
@@ -340,6 +364,7 @@ export interface EventSummary {
     paid: boolean,
     quantity?: number,
     schoolAlert?: string,
+    authorized: boolean,
 }
 
 export enum JobType {

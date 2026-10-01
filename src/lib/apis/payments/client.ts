@@ -1,4 +1,4 @@
-import { BatchUploadSummary, Identity, PersonActiveEventsVm, Person, PersonRow, Response, SigninResponse, CreateOrderResponse, EventRow, Event, GetOrderInfo, EventPeople, EventPaymentsVm, AdminInfo, AppConfig, EventSummaryVm, SyncPersonResponse, UpdatePasswordResponse, GroupRow, Group, Course, CreateOrderCommand, StartJobResponse, GetJobsResponse, JobType, GetLogResponse, OuGroupRelationRow, OuGroupRelationPage, OuGroupRelation, PersonPaymentsVm } from "./models"
+import { BatchUploadSummary, Identity, PersonActiveEventsVm, Person, PersonRow, Response, SigninResponse, CreateOrderResponse, EventRow, Event, GetOrderInfo, EventPeople, EventPaymentsVm, SetEventPeoplePaidVm, AdminInfo, AppConfig, EventSummaryVm, SyncPersonResponse, UpdatePasswordResponse, GroupRow, Group, Course, CreateOrderCommand, StartJobResponse, GetJobsResponse, JobType, GetLogResponse, OuGroupRelationRow, OuGroupRelationPage, OuGroupRelation, PersonPaymentsVm } from "./models"
 import { deleteJson, get, postJson, putJson, toFile } from "./baseclient"
 import { Selector } from "@/components/Selector"
 import { ApiResult } from "@/lib/hooks/useApiRequest"
@@ -533,6 +533,16 @@ export const getAdminInfo = async () => {
 export const setAppConfig = async (config: AppConfig) => {
     const response = await putJson(`${API_BASE_URL}/api/config`, config);
     const data = await response.json() as Response<number>;
+    if (data.errors) {
+        data.errors = new Map(Object.entries(data.errors));
+    }
+    return data;
+}
+
+// Marca com a pagats tots els pendents autoritzats. El servidor decideix qui ho està.
+export const setAllAuthorizedPaid = async (eventCode: string) => {
+    const response = await postJson(`${API_BASE_URL}/api/events/${eventCode}/payments`);
+    const data = await response.json() as Response<SetEventPeoplePaidVm>;
     if (data.errors) {
         data.errors = new Map(Object.entries(data.errors));
     }
