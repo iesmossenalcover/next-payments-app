@@ -257,6 +257,7 @@ export interface Event {
     amipa: boolean,
     type?: EventType,
     calendarEventId?: string,
+    location?: string,
 }
 
 

@@ -73,6 +73,20 @@ const EventFields = ({ event, errors, setEvent }: EventComponentProps) => {
                 <div>
                     <label
                         className="form-label"
+                        htmlFor="location">Ubicació (URL de Google Maps)</label>
+                    <input
+                        className="form-input"
+                        id="location" name="location"
+                        type="url"
+                        placeholder="https://maps.app.goo.gl/..."
+                        value={event.location ?? ""}
+                        onChange={(e) => setEvent({ ...event, location: e.target.value === "" ? undefined : e.target.value })} />
+                    {displayErrors("location")}
+                </div>
+
+                <div>
+                    <label
+                        className="form-label"
                         htmlFor="type">Tipus</label>
                     <select
                         className="form-input"
