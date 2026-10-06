@@ -86,6 +86,10 @@ const EventPaymentsComp = () => {
 
     const event = data.event;
     const options = Array.from(Array(event.maxQuantity ?? 0), (_, x) => ({ key: (x + 1).toString(), value: x + 1 }));
+    // Límit de places: només limita els pagaments manuals. El servidor torna a comprovar-ho.
+    // S'ha de declarar abans de displayEvents, que el fa servir.
+    const freePlaces = event.maxCapacity != null ? Math.max(0, event.maxCapacity - data.summary.paidPlaces) : null;
+    const isFull = freePlaces === 0;
 
     const displayEvents = (events: EventPayment[]) => {
         return events.map(x => (
@@ -108,7 +112,7 @@ const EventPaymentsComp = () => {
                         </>}
                     </p>
                 </div>
-                <SetPaid event={event} payment={x} options={options} setPaidCallback={loadEventsPayments} />
+                <SetPaid event={event} payment={x} options={options} freePlaces={freePlaces} setPaidCallback={loadEventsPayments} />
             </li>
         ))
     }
@@ -237,6 +241,10 @@ const EventPaymentsComp = () => {
                                 <p className="mt-3 text-sm text-amber-800">
                                     Sense autorització: {data.summary.notAuthorizedCount} ({data.summary.notAuthorizedPaidCount} pagats)
                                 </p>}
+                            {event.maxCapacity != null &&
+                                <p className={`mt-3 text-sm ${isFull ? "font-semibold text-red-700" : "text-slate-600"}`}>
+                                    Places: {data.summary.paidPlaces} / {event.maxCapacity} {isFull ? "(ple)" : `(${freePlaces} lliures)`}
+                                </p>}
                         </div>
                     </div>
                 </div>
@@ -271,6 +279,7 @@ const EventPaymentsComp = () => {
                             <SetAllAuthorizedPaid
                                 eventCode={event.code}
                                 count={pendingAuthorized}
+                                freePlaces={freePlaces}
                                 setPaidCallback={loadEventsPayments} />
                         </div>
                         <ul className="divide-y divide-slate-100">
@@ -286,15 +295,25 @@ const EventPaymentsComp = () => {
 interface SetAllAuthorizedPaidProps {
     eventCode: string,
     count: number,
+    freePlaces: number | null,
     setPaidCallback: () => void,
 }
 
 // Pagament massiu dels pendents que tenen l'autorització del curs. Qui no la té no s'hi inclou:
 // el servidor els exclou i aquí no s'ofereix cap manera de forçar-ho.
-const SetAllAuthorizedPaid = ({ eventCode, count, setPaidCallback }: SetAllAuthorizedPaidProps) => {
+const SetAllAuthorizedPaid = ({ eventCode, count, freePlaces, setPaidCallback }: SetAllAuthorizedPaidProps) => {
     const { isLoading, errors, executeRequest } = useApiRequest(setAllAuthorizedPaid);
 
     if (count === 0) return null;
+
+    // O caben tots o no se'n marca cap: el servidor no tria qui es queda fora.
+    if (freePlaces !== null && count > freePlaces) {
+        return (
+            <p className="ml-auto max-w-[16rem] text-right text-xs font-medium leading-snug text-amber-800">
+                No hi ha places per marcar-los tots ({freePlaces} lliures): marca&apos;ls un a un o augmenta les places.
+            </p>
+        )
+    }
 
     const setAllPaid = async () => {
         const ok = confirm(`Marcar com a pagats els ${count} alumnes pendents que tenen l'autoritzacio? Els que no la tenen es quedaran sense pagar.`);
@@ -323,12 +342,17 @@ interface SetPaidProps {
     event: EventPaymentsEventDataVm,
     payment: EventPayment,
     options: SelectorOption[],
+    freePlaces: number | null,
     setPaidCallback: () => void,
 }
 
-const SetPaid = ({ event, payment, options, setPaidCallback }: SetPaidProps) => {
+const SetPaid = ({ event, payment, options, freePlaces, setPaidCallback }: SetPaidProps) => {
     const { isLoading, errors, executeRequest } = useApiRequest(setPayment);
     const [quantity, setQuantity] = useState(Math.max(1, payment.quantity));
+    // Cada unitat ocupa una plaça: no s'ofereixen més unitats de les places lliures.
+    const isFull = freePlaces === 0;
+    const availableOptions = freePlaces === null ? options : options.filter(x => Number(x.value) <= freePlaces);
+    const selectedQuantity = freePlaces === null ? quantity : Math.max(1, Math.min(quantity, freePlaces));
 
     const setPaid = async (id: number, v: boolean, di: string, n: string) => {
         let del = null;
@@ -340,7 +364,7 @@ const SetPaid = ({ event, payment, options, setPaidCallback }: SetPaidProps) => 
         }
         if (del) {
             // Si falla, el motiu que torna el servidor es mostra sota el botó.
-            const ok = await executeRequest(id, v, quantity);
+            const ok = await executeRequest(id, v, selectedQuantity);
             if (ok) {
                 setPaidCallback();
             }
@@ -375,6 +399,15 @@ const SetPaid = ({ event, payment, options, setPaidCallback }: SetPaidProps) => 
         )
     }
 
+    // Desmarcar allibera una plaça; marcar-ne una de nova no es permet si ja és ple.
+    if (isFull) {
+        return (
+            <p className="max-w-[14rem] text-right text-xs font-medium leading-snug text-red-700">
+                Esdeveniment ple ({event.maxCapacity} places). Augmenta les places per afegir-ne més.
+            </p>
+        )
+    }
+
     return (
         <div>
             <div className="flex items-center gap-2">
@@ -384,7 +417,7 @@ const SetPaid = ({ event, payment, options, setPaidCallback }: SetPaidProps) => 
                         name={`set_${payment.id}`}
                         className="form-input w-auto py-1 pl-2.5 pr-8 text-xs"
                         onSelect={(x) => setQuantity(parseInt(x))}
-                        selector={{ selected: `${quantity}`, options }}
+                        selector={{ selected: `${selectedQuantity}`, options: availableOptions }}
                     />
                     : null}
                 <button

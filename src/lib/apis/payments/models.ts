@@ -258,6 +258,7 @@ export interface Event {
     type?: EventType,
     calendarEventId?: string,
     location?: string,
+    maxCapacity?: number,
 }
 
 
@@ -299,7 +300,8 @@ export interface PaymentsEvent {
     isAmpia: boolean,
     type: EventType,
     quantitySelector: boolean,
-    maxQuantity?: number
+    maxQuantity?: number,
+    maxCapacity?: number
 }
 
 export interface EventPaymentsVm {
@@ -321,6 +323,8 @@ export interface PaymentSummary {
     noAmipaPaid: number
     notAuthorizedCount: number
     notAuthorizedPaidCount: number
+    // Places ocupades: suma de les quantitats pagades.
+    paidPlaces: number
 }
 
 export interface SetEventPeoplePaidVm {

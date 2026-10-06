@@ -192,6 +192,23 @@ const EventFields = ({ event, errors, setEvent }: EventComponentProps) => {
                         onChange={(e) => setEvent({ ...event, maxQuantity: parseFloat(e.target.value) })} />
                     {displayErrors("maxQuantity")}
                 </div>
+
+                <div>
+                    <label
+                        className="form-label"
+                        htmlFor="maxCapacity">Places màximes</label>
+                    <input
+                        className="form-input sm:max-w-[12rem]"
+                        type="number"
+                        step="1"
+                        min="1"
+                        placeholder="Sense límit"
+                        id="maxCapacity" name="maxCapacity"
+                        value={event.maxCapacity ?? ""}
+                        onChange={(e) => setEvent({ ...event, maxCapacity: e.target.value === "" ? undefined : parseInt(e.target.value) })} />
+                    <p className="mt-1.5 text-sm text-slate-500">Buit = sense límit. Només limita els pagaments marcats manualment des d&apos;administració; els pagaments online no es limiten.</p>
+                    {displayErrors("maxCapacity")}
+                </div>
             </section>
 
             <section className="space-y-5 border-t border-slate-200 pt-8">
