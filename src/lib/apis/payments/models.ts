@@ -190,7 +190,6 @@ export interface Person {
 }
 
 export interface BatchUploadSummary {
-    groupsCreated: number,
     peopleCreated: number,
     peopleUpdated: number,
 }

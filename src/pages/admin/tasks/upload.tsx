@@ -18,15 +18,11 @@ const BatchUpload = () => {
 
     return (
         <PageMain narrow>
-            <PageHeader title="Carregar persones" subtitle="Importa alumnes i grups des d'un fitxer" back={{ href: "/admin/people", text: "Persones" }} />
+            <PageHeader title="Carregar persones" subtitle="Importa alumnes des d'un fitxer" back={{ href: "/admin/people", text: "Persones" }} />
             {data ?
                 <div className="space-y-4">
                     <SuccessAlert text="Càrrega realitzada correctament" />
-                    <div className="grid gap-4 sm:grid-cols-3">
-                        <div className="card p-5">
-                            <p className="text-sm text-slate-500">Grups creats</p>
-                            <p className="mt-1 text-2xl font-bold text-slate-900 tabular-nums">{data.groupsCreated}</p>
-                        </div>
+                    <div className="grid gap-4 sm:grid-cols-2">
                         <div className="card p-5">
                             <p className="text-sm text-slate-500">Persones creades</p>
                             <p className="mt-1 text-2xl font-bold text-slate-900 tabular-nums">{data.peopleCreated}</p>
@@ -49,7 +45,8 @@ const BatchUpload = () => {
                             type="file" id="formFile" />
                         <p className="mt-2 text-sm text-slate-500">
                             Amipa, Matriculat, AutoritzacioAPeu i AutoritzacioTransport: <strong>Sí</strong> o <strong>No</strong>. Si es deixa buida, es manté el valor actual.
-                            AlertaEscolar: si es deixa buida, es manté l&apos;actual.
+                            Expedient, Llinatge2, TelContacte, Correu, Assignatures i AlertaEscolar: si es deixen buides, es manté el valor actual.
+                            Els grups han d&apos;existir prèviament; si algun no existeix, no es carregarà el fitxer.
                         </p>
 
                         {errors ? <div className="mt-4">
