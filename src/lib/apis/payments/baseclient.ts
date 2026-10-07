@@ -66,7 +66,7 @@ export const apiFetch = (
             .then(response => {
                 switch (response.status) {
                     case 401:
-                        window.location.replace(`${location.protocol + '//' + location.host}${SIGNIN_PAGE}?redirectTo=${window.location.pathname}`)
+                        window.location.replace(`${location.protocol + '//' + location.host}${SIGNIN_PAGE}?redirectTo=${encodeURIComponent(window.location.pathname + window.location.search + window.location.hash)}`)
                         break;
                     case 403:
                         window.location.replace(`${location.protocol + '//' + location.host}${UNAUTHORIZED_ERROR_PAGE}`)
