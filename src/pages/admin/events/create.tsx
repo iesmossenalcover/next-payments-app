@@ -1,6 +1,6 @@
 import { DangerAlert, SuccessAlert } from "@/components/Alerts";
 import { createEvent } from "@/lib/apis/payments/client";
-import { Event, EventType } from "@/lib/apis/payments/models";
+import { Event } from "@/lib/apis/payments/models";
 import { useEffect, useState } from "react";
 import EventFields from "@/components/events/EventFields";
 import { Container } from "@/components/layout/SideBar";
@@ -8,6 +8,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { PageHeader, PageMain } from "@/components/layout/PageHeader";
 import { useApiRequest } from "@/lib/hooks/useApiRequest";
+import { clearPrefillHash, parseEventPrefill } from "@/lib/eventPrefill";
 
 const defaultEvent: Event = {
     id: 0,
@@ -25,76 +26,6 @@ const defaultEvent: Event = {
 };
 
 
-const PREFILL_HASH_KEY = "data";
-
-const str = (v: unknown) => typeof v === "string" ? v : undefined;
-const num = (v: unknown) => {
-    const n = typeof v === "string" && v.trim() !== "" ? Number(v) : v;
-    return typeof n === "number" && Number.isFinite(n) ? n : undefined;
-};
-const bool = (v: unknown) => typeof v === "boolean" ? v : undefined;
-const isoDate = (v: unknown) => {
-    if (typeof v !== "string" || v.trim() === "") return undefined;
-    const d = new Date(v);
-    return isNaN(d.getTime()) ? undefined : d.toISOString();
-};
-const eventType = (v: unknown) => {
-    const n = num(v);
-    return n !== undefined && EventType[n] !== undefined ? n as EventType : undefined;
-};
-
-// Una cel·la de Google Sheets amb diverses línies genera salts de línia literals dins dels strings,
-// cosa que el JSON no permet: s'escapen els caràcters de control que hi ha dins de cometes.
-const escapeControlCharsInStrings = (json: string) => {
-    let out = "";
-    let inString = false;
-    for (let i = 0; i < json.length; i++) {
-        const c = json[i];
-        if (inString) {
-            if (c === "\\") { out += c + (json[++i] ?? ""); continue; }
-            if (c === "\"") inString = false;
-            else if (c === "\n") { out += "\\n"; continue; }
-            else if (c === "\r") { out += "\\r"; continue; }
-            else if (c === "\t") { out += "\\t"; continue; }
-            else if (c < " ") { out += "\\u" + c.charCodeAt(0).toString(16).padStart(4, "0"); continue; }
-        } else if (c === "\"") {
-            inString = true;
-        }
-        out += c;
-    }
-    return out;
-};
-
-// Llegeix un esdeveniment codificat a la URL (#data=<json>), p. ex. des d'un enllaç de Google Sheets.
-// Només omple el formulari: l'esdeveniment no es crea fins que l'administrador el revisa i el desa.
-const parsePrefill = (hash: string): Event | undefined => {
-    const raw = new URLSearchParams(hash.replace(/^#/, "")).get(PREFILL_HASH_KEY);
-    if (raw === null) return undefined;
-
-    const data = JSON.parse(escapeControlCharsInStrings(raw));
-    if (typeof data !== "object" || data === null || Array.isArray(data)) throw new Error("not an object");
-
-    const type = eventType(data.type);
-    const isOther = type === undefined || type === EventType.Other;
-    return {
-        ...defaultEvent,
-        name: str(data.name) ?? defaultEvent.name,
-        description: str(data.description) ?? defaultEvent.description,
-        location: str(data.location)?.trim() || undefined,
-        type,
-        date: isoDate(data.date) ?? defaultEvent.date,
-        endDate: isoDate(data.endDate),
-        price: num(data.price) ?? defaultEvent.price,
-        amipaPrice: num(data.amipaPrice) ?? defaultEvent.amipaPrice,
-        maxQuantity: num(data.maxQuantity) ?? defaultEvent.maxQuantity,
-        maxCapacity: num(data.maxCapacity),
-        publishDate: isoDate(data.publishDate) ?? defaultEvent.publishDate,
-        unpublishDate: isoDate(data.unpublishDate),
-        enrollment: isOther && (bool(data.enrollment) ?? false),
-        amipa: isOther && (bool(data.amipa) ?? false),
-    };
-};
-
 const Create = () => {
     const [event, setEvent] = useState(defaultEvent);
     const [created, setCreated] = useState(false);
@@ -106,7 +37,7 @@ const Create = () => {
     useEffect(() => {
         const applyPrefill = () => {
             try {
-                const prefill = parsePrefill(window.location.hash);
+                const prefill = parseEventPrefill(window.location.hash, defaultEvent);
                 if (!prefill) return;
                 setEvent(prefill);
                 setPrefillError(false);
@@ -114,8 +45,7 @@ const Create = () => {
                 setPrefillError(true);
             }
             setFormKey(k => k + 1);
-            // Es treu de la URL perquè recarregar la pàgina no torni a sobreescriure el formulari.
-            history.replaceState(history.state, "", window.location.pathname + window.location.search);
+            clearPrefillHash();
         };
 
         applyPrefill();

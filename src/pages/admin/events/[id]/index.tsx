@@ -1,7 +1,7 @@
-import { SuccessAlert } from "@/components/Alerts";
+import { DangerAlert, SuccessAlert } from "@/components/Alerts";
 import { deleteEventGoogleWorkspace, getEventById, syncEventGoogleWorkspace, updateEvent } from "@/lib/apis/payments/client";
 import { Event, hasRole, Roles } from "@/lib/apis/payments/models";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import EventFields from "@/components/events/EventFields";
 import { Container } from "@/components/layout/SideBar";
@@ -10,6 +10,7 @@ import Link from "next/link";
 import { PageHeader, PageMain } from "@/components/layout/PageHeader";
 import { useRouter } from "next/router";
 import useUser from "@/lib/hooks/useUser";
+import { clearPrefillHash, parseEventPrefill } from "@/lib/eventPrefill";
 
 const SyncEvent = ({ event }: { event: Event }) => {
     const [syncing, setSyncing] = useState(false)
@@ -105,8 +106,36 @@ const Update = () => {
     const [event, setEvent] = useState<Event | undefined>(undefined)
     // Snapshot of the last saved event, used to detect unsaved changes
     const [savedEvent, setSavedEvent] = useState<string | undefined>(undefined)
+    // Els camps de data guarden el seu propi estat: cal tornar a muntar el formulari quan s'omple des de la URL.
+    const [formKey, setFormKey] = useState(0)
+    const [prefillError, setPrefillError] = useState(false)
+    const eventRef = useRef(event)
+    eventRef.current = event
 
     useEffect(() => setMounted(true), [])
+
+    // Aplica els canvis codificats a la URL (#data=<json>) sobre l'esdeveniment carregat.
+    // No es desa res fins que l'administrador revisa el formulari i prem "Guardar Canvis".
+    const applyPrefill = useCallback((base: Event) => {
+        try {
+            const prefill = parseEventPrefill(window.location.hash, base);
+            if (!prefill) return;
+            setEvent(prefill);
+            setPrefillError(false);
+        } catch {
+            setPrefillError(true);
+        }
+        setFormKey(k => k + 1);
+        clearPrefillHash();
+    }, [])
+
+    useEffect(() => {
+        const onHashChange = () => {
+            if (eventRef.current) applyPrefill(eventRef.current);
+        };
+        window.addEventListener("hashchange", onHashChange);
+        return () => window.removeEventListener("hashchange", onHashChange);
+    }, [applyPrefill])
 
     useEffect(() => {
         if (!id) return;
@@ -117,8 +146,9 @@ const Update = () => {
                 }
                 setEvent(x.data)
                 setSavedEvent(JSON.stringify(x.data))
+                applyPrefill(x.data)
             });
-    }, [id])
+    }, [id, applyPrefill])
 
 
     const onSubmit = async (e: Event) => {
@@ -175,7 +205,13 @@ const Update = () => {
                         ) : null}
 
                         <form className="card p-6 sm:p-8" action="#" method="post" onSubmit={onFormSubmit} autoComplete="off">
+                            {prefillError &&
+                                <div className="mb-6">
+                                    <DangerAlert title="No s'han pogut carregar les dades de l'enllaç" text="El JSON de l'enllaç no és vàlid. Edita el formulari manualment." />
+                                </div>
+                            }
                             <EventFields
+                                key={formKey}
                                 errors={errors}
                                 event={event}
                                 setEvent={setEvent} />
