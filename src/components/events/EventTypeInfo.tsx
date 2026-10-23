@@ -17,6 +17,11 @@ export const eventTypeOptions: { value: EventType, label: string, help: string }
         help: "Els viatges tenen una autorització específica que es gestiona fora d'aquesta aplicació. No es marcarà cap alumne.",
     },
     {
+        value: EventType.Workshop,
+        label: "Taller",
+        help: "No requereix autorització. No es marcarà cap alumne.",
+    },
+    {
         value: EventType.Other,
         label: "Altres",
         help: "No requereix autorització. No es marcarà cap alumne.",
@@ -27,6 +32,7 @@ const shortLabels: Record<EventType, string> = {
     [EventType.Walking]: "A peu",
     [EventType.Transport]: "Transport",
     [EventType.Trip]: "Viatge",
+    [EventType.Workshop]: "Taller",
     [EventType.Other]: "Altres",
 };
 

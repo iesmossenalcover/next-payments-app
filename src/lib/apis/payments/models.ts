@@ -238,6 +238,7 @@ export enum EventType {
     Walking = 1,
     Transport = 2,
     Trip = 3,
+    Workshop = 4,
 }
 
 export interface Event {
