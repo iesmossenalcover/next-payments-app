@@ -258,6 +258,7 @@ export interface Event {
     calendarEventId?: string,
     location?: string,
     maxCapacity?: number,
+    notifyExtracurricular: boolean,
 }
 
 

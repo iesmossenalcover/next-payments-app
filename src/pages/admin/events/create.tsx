@@ -23,6 +23,7 @@ const defaultEvent: Event = {
     unpublishDate: undefined,
     enrollment: false,
     amipa: false,
+    notifyExtracurricular: true,
 };
 
 

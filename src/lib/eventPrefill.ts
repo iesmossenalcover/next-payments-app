@@ -81,6 +81,7 @@ export const parseEventPrefill = (hash: string, base: Event): Event | undefined 
         // Els events de matrícula i d'AFA només tenen sentit amb el tipus "Altres".
         enrollment: isOther && required("enrollment", bool, base.enrollment),
         amipa: isOther && required("amipa", bool, base.amipa),
+        notifyExtracurricular: required("notifyExtracurricular", bool, base.notifyExtracurricular),
     };
 };
 

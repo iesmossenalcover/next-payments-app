@@ -245,6 +245,15 @@ const EventFields = ({ event, errors, setEvent }: EventComponentProps) => {
                     </div>
                 </div>
 
+                <Toggle
+                    name="notifyExtracurricular"
+                    id="notifyExtracurricular"
+                    className="text-slate-700"
+                    text="Avisar a extraescolars quan s'obri i es tanqui el pagament?"
+                    onToggled={val => setEvent({ ...event, notifyExtracurricular: val })}
+                    value={event.notifyExtracurricular}
+                />
+
                 {isOther &&
                     <div className="space-y-4 rounded-lg bg-slate-50 p-4 ring-1 ring-inset ring-slate-200">
                         <Toggle
