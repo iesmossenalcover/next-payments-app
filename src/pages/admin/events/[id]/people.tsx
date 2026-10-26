@@ -76,7 +76,11 @@ const PeopleToEvent = () => {
             </Link>
             <div className="flex flex-wrap items-center justify-between gap-4">
                 <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1">
-                    <h1 className="text-2xl font-bold tracking-tight text-slate-900">{event?.name}</h1>
+                    <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+                        {event
+                            ? <Link href={`/admin/events/${event.id}`} title="Editar esdeveniment" className="transition-colors hover:text-brand-600 hover:underline">{event.name}</Link>
+                            : null}
+                    </h1>
                     <span className="badge badge-gray font-mono">{event?.code}</span>
                     {event && <span className="text-sm text-slate-500">{displayDate(event.date)}</span>}
                 </div>

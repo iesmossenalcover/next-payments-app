@@ -34,7 +34,7 @@ const PersonRow = ({ person, checked, onToggle }: { person: EventPerson, checked
 }
 
 const Group = ({ group, query, selected, open, onOpenChange, onToggle, onSetMany }: EventPeopleGroupProps) => {
-    const { name, people } = group;
+    const { name, description, people } = group;
 
     const visible = useMemo(
         () => query ? people.filter(x => matchesPerson(x, query)) : people,
@@ -76,6 +76,9 @@ const Group = ({ group, query, selected, open, onOpenChange, onToggle, onSetMany
                         <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
                     </svg>
                     <h3 className="ml-2 font-semibold text-slate-900">{name}</h3>
+                    {description &&
+                        <span className="ml-2 text-sm text-slate-500">{description}</span>
+                    }
                     <span className={`badge ml-3 tabular-nums ${countClass}`}>
                         {selectedCount}/{people.length}
                     </span>

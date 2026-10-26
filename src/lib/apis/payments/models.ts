@@ -275,6 +275,7 @@ export interface EventPerson {
 export interface EventPeopleGroup {
     id: number,
     name: string,
+    description?: string,
     people: EventPerson[]
 }
 
