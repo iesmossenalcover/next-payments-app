@@ -161,7 +161,7 @@ const EventPaymentsComp = () => {
             </Head>
             <PageMain>
                 <PageHeader
-                    title={event.name}
+                    title={<Link href={`/admin/events/${event.id}`} title="Editar esdeveniment" className="transition-colors hover:text-brand-600 hover:underline">{event.name}</Link>}
                     subtitle={<span className="inline-flex items-center gap-2"><span className="badge badge-gray font-mono">{event.code}</span>{displayDate(event.date)}</span>}
                     back={{ href: "/admin/events", text: "Esdeveniments" }}
                     actions={
