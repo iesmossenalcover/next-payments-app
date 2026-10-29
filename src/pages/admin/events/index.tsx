@@ -1,5 +1,5 @@
 import { Container } from "@/components/layout/SideBar";
-import { Table } from "@/components/table";
+import { Pagination, SortAccessors, Table, useSort, useTableView } from "@/components/table";
 import { getEventsView } from "@/lib/apis/payments";
 import Head from "next/head";
 import { PageHeader, PageMain } from "@/components/layout/PageHeader";
@@ -7,12 +7,13 @@ import { Spinner } from "@/components/Loading";
 import Link from "next/link";
 import { deleteEvent, exportSummaryRequest, sendDailyEventsEmail } from '@/lib/apis/payments/client'
 import { EventType, hasRole, Roles } from "@/lib/apis/payments/models";
-import { EventTypeBadge } from "@/components/events/EventTypeInfo";
+import { EventTypeBadge, eventTypeOptions } from "@/components/events/EventTypeInfo";
 import useUser from "@/lib/hooks/useUser";
-import { displayDate, displayDateTime, plainErrors } from "@/lib/utils";
+import useDebounce from "@/lib/hooks/useDebounce";
+import { displayDate, displayDateTime, normalize, plainErrors } from "@/lib/utils";
 import { useApiRequest, useStartApiRequest } from "@/lib/hooks/useApiRequest";
 import Toggle from "@/components/Toggle";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 const tableHeaders = {
     id: "Id",
@@ -28,60 +29,134 @@ const tableHeaders = {
     actions: "Accions",
 };
 
+// Les dates es guarden tal com arriben de l'API (ISO) per poder-les ordenar; es formaten als renderers.
 interface TableRow {
     id: number,
     code: string,
     name: string,
     type?: EventType,
     date: string,
-    price: string,
-    amipaPrice: string,
+    price: number,
+    amipaPrice: number,
     from: string,
-    to: string,
-    active: string,
+    to?: string,
+    active: boolean,
     actions: "",
+};
+
+const visibleFields: (keyof TableRow)[] = [
+    "code",
+    "name",
+    "type",
+    "date",
+    "price",
+    "amipaPrice",
+    "from",
+    "to",
+    "active",
+    "actions"
+];
+
+const sortableFields: (keyof TableRow)[] = ["code", "name", "type", "date", "price", "amipaPrice", "from", "to", "active"];
+
+const PAGE_SIZE = 50;
+
+const timestamp = (date?: string) => date ? new Date(date).getTime() : undefined;
+
+const typeLabel = (type?: EventType) => eventTypeOptions.find(x => x.value === type)?.label;
+
+const sortAccessors: SortAccessors<TableRow> = {
+    type: x => typeLabel(x.type),
+    date: x => timestamp(x.date),
+    from: x => timestamp(x.from),
+    to: x => timestamp(x.to),
+    active: x => x.active ? 0 : 1,
 };
 
 const Events = () => {
     const [showAll, setShowAll] = useState(false);
     const { data: events, isLoading, executeRequest } = useApiRequest(getEventsView);
 
+    const [codeFilter, setCodeFilter] = useState("");
+    const [nameFilter, setNameFilter] = useState("");
+    const [typeFilter, setTypeFilter] = useState("");
+    const { sort, toggleSort } = useSort<TableRow>();
+
+    const code = normalize(useDebounce(codeFilter, 200));
+    const name = normalize(useDebounce(nameFilter, 200));
+    const hasFilters = codeFilter !== "" || nameFilter !== "" || typeFilter !== "";
+
     useEffect(() => {
         executeRequest(showAll);
     }, [showAll])
 
-    const mapToRow = (): TableRow[] => {
+    const rows = useMemo((): TableRow[] => {
         if (!events) return [];
 
-        return events.map(x => {
-            const date = new Date(x.date);
-            const from = new Date(x.publishDate);
-            const to = new Date(x.unpublishDate);
-            const active = x.isActive ? "Si" : "No";
-            return {
-                id: x.id,
-                code: x.code,
-                name: x.name,
-                type: x.type,
-                date: displayDate(date),
-                price: `${x.price} €`,
-                amipaPrice: `${x.amipaPrice} €`,
-                from: displayDateTime(from),
-                to: x.unpublishDate ? displayDateTime(to) : '-',
-                active: active,
-                actions: ""
-            };
-        });
+        return events.map(x => ({
+            id: x.id,
+            code: x.code,
+            name: x.name,
+            type: x.type,
+            date: x.date,
+            price: x.price,
+            amipaPrice: x.amipaPrice,
+            from: x.publishDate,
+            to: x.unpublishDate || undefined,
+            active: x.isActive,
+            actions: ""
+        }));
+    }, [events]);
+
+    const filter = useCallback((x: TableRow) =>
+        (!code || normalize(x.code).includes(code))
+        && (!name || normalize(x.name).includes(name))
+        && (typeFilter === "" || x.type === Number(typeFilter)),
+        [code, name, typeFilter]);
+
+    const view = useTableView(rows, { filter, sort, sortAccessors, pageSize: PAGE_SIZE });
+    const tableRef = useRef<HTMLDivElement>(null);
+
+    // En canviar de pàgina des del peu, es torna a l'inici de la taula.
+    const onPageChange = (page: number) => {
+        view.setPage(page);
+        if (tableRef.current && tableRef.current.getBoundingClientRect().top < 0) {
+            tableRef.current.scrollIntoView({ block: "start" });
+        }
     }
 
-    const customRenderer = {
+    const clearFilters = () => {
+        setCodeFilter("");
+        setNameFilter("");
+        setTypeFilter("");
+    }
+
+    const onDeleteEvent = useCallback(async (item: TableRow) => {
+        const del = confirm(`Eliminar esdeveniment codi: ${item.code}, nom: ${item.name} ?`);
+        if (del) {
+            const response = await deleteEvent(item.id);
+            if (response.errors) {
+                alert("No s'ha pogut eliminar.")
+            }
+            else {
+                executeRequest(showAll);
+            }
+        }
+    }, [executeRequest, showAll]);
+
+    const customRenderer = useMemo(() => ({
         code: (item: TableRow) => <span className="badge badge-gray font-mono">{item.code}</span>,
         name: (item: TableRow) => <span className="block min-w-[12rem] whitespace-normal font-medium text-slate-900">{item.name}</span>,
         type: (item: TableRow) => <EventTypeBadge type={item.type} />,
+        date: (item: TableRow) => displayDate(item.date),
+        price: (item: TableRow) => `${item.price} €`,
+        amipaPrice: (item: TableRow) => `${item.amipaPrice} €`,
+        from: (item: TableRow) => displayDateTime(item.from),
+        to: (item: TableRow) => item.to ? displayDateTime(item.to) : '-',
         active: (item: TableRow) => (
-            <span className={`badge ${item.active === "Si" ? "badge-green" : "badge-gray"}`}>
-                {item.active === "Si" && <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />}
-                {item.active}
+            <span className={`badge ${item.active ? "badge-green" : "badge-gray"}`}>
+                {item.active && <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />}
+                {item.active ? "Si" : "No"}
             </span>
         ),
         actions: (item: TableRow) => {
@@ -114,44 +189,42 @@ const Events = () => {
                 </div>
             );
         },
-    }
-
-    const onDeleteEvent = async (item: TableRow) => {
-        const del = confirm(`Eliminar esdeveniment codi: ${item.code}, nom: ${item.name} ?`);
-        if (del) {
-            const response = await deleteEvent(item.id);
-            if (response.errors) {
-                alert("No s'ha pogut eliminar.")
-            }
-            else {
-                executeRequest(showAll);
-            }
-        }
-    }
+    }), [onDeleteEvent]);
 
     const listEvents = () => {
         return (
-            <div className='card overflow-x-auto'>
+            <div ref={tableRef} className='card overflow-x-auto'>
                 <Table
                     headers={tableHeaders}
-                    items={mapToRow()}
+                    items={view.items}
                     renderers={customRenderer}
                     tableClass='data-table'
-                    visibleFields={[
-                        "code",
-                        "name",
-                        "type",
-                        "date",
-                        "price",
-                        "amipaPrice",
-                        "from",
-                        "to",
-                        "active",
-                        "actions"
-                    ]}
+                    visibleFields={visibleFields}
+                    sortableFields={sortableFields}
+                    sort={sort}
+                    onSort={toggleSort}
                 />
+                {view.total === 0 && (
+                    <div className="flex flex-col items-center gap-3 py-12 text-sm text-slate-500">
+                        {hasFilters ? "Cap esdeveniment coincideix amb els filtres." : "No hi ha esdeveniments."}
+                        {hasFilters && <button className="btn btn-secondary" onClick={clearFilters}>Netejar filtres</button>}
+                    </div>
+                )}
+                <Pagination
+                    className="border-t border-slate-100 px-4 py-3"
+                    page={view.page}
+                    pageCount={view.pageCount}
+                    pageSize={view.pageSize}
+                    total={view.total}
+                    onPageChange={onPageChange} />
             </div>
         )
+    }
+
+    const countText = () => {
+        if (!events) return "";
+        const total = `${events.length} ${events.length === 1 ? "esdeveniment" : "esdeveniments"}`;
+        return view.total === events.length ? total : `${view.total} de ${total}`;
     }
 
     return (
@@ -178,10 +251,34 @@ const Events = () => {
                         </Link>
                     </>} />
 
+                <div className="mb-4 grid gap-3 sm:grid-cols-[10rem_minmax(0,1fr)_12rem_auto]">
+                    <input
+                        type="search"
+                        aria-label="Filtrar per codi"
+                        placeholder="Codi"
+                        className="form-input font-mono"
+                        value={codeFilter}
+                        onChange={e => setCodeFilter(e.currentTarget.value)} />
+                    <input
+                        type="search"
+                        aria-label="Filtrar per nom"
+                        placeholder="Cerca per nom"
+                        className="form-input"
+                        value={nameFilter}
+                        onChange={e => setNameFilter(e.currentTarget.value)} />
+                    <select
+                        aria-label="Filtrar per tipus"
+                        className="form-input"
+                        value={typeFilter}
+                        onChange={e => setTypeFilter(e.currentTarget.value)}>
+                        <option value="">Tots els tipus</option>
+                        {eventTypeOptions.map(x => <option key={x.value} value={x.value}>{x.label}</option>)}
+                    </select>
+                    {hasFilters && <button className="btn btn-secondary" onClick={clearFilters}>Netejar</button>}
+                </div>
+
                 <div className="mb-4 flex items-center justify-between gap-4">
-                    <p className="text-sm text-slate-500">
-                        {events ? `${events.length} ${events.length === 1 ? "esdeveniment" : "esdeveniments"}` : ""}
-                    </p>
+                    <p className="text-sm text-slate-500">{countText()}</p>
                     <Toggle
                         id="showAll"
                         name="showAll"

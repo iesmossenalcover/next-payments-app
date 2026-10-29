@@ -1,3 +1,6 @@
+import { memo, useMemo } from "react";
+import { SortState } from "./useTableView";
+
 type PrimitiveType = string | number;
 
 interface BaseTableItem {
@@ -12,20 +15,50 @@ interface TableHeaderProps<T extends BaseTableItem> {
     visibleFields: (keyof T)[];
     headerClass: string;
     headerCellClass: string;
+    sortableFields?: (keyof T)[];
+    sort?: SortState<T>;
+    onSort?: (key: keyof T) => void;
 }
 
-function TableHeader<T extends BaseTableItem>({ headers, headerClass, headerCellClass, visibleFields }: TableHeaderProps<T>) {
+function TableHeader<T extends BaseTableItem>({ headers, headerClass, headerCellClass, visibleFields, sortableFields, sort, onSort }: TableHeaderProps<T>) {
     return (
         <thead className={headerClass}>
             <tr>
 
-                {visibleFields.map(key => (
-                    <th key={key as string} className={headerCellClass}>{headers[key as keyof T]}</th>
-                ))}
+                {visibleFields.map(key => {
+                    const label = headers[key as keyof T];
+
+                    if (!onSort || !sortableFields?.includes(key)) {
+                        return <th key={key as string} className={headerCellClass}>{label}</th>;
+                    }
+
+                    const dir = sort?.key === key ? sort.dir : undefined;
+
+                    return (
+                        <th
+                            key={key as string}
+                            className={headerCellClass}
+                            aria-sort={dir === "asc" ? "ascending" : dir === "desc" ? "descending" : "none"}>
+                            <button type="button" className="sort-button" onClick={() => onSort(key)}>
+                                {label}
+                                <SortIcon dir={dir} />
+                            </button>
+                        </th>
+                    );
+                })}
             </tr>
         </thead>
     );
 }
+
+const SortIcon = ({ dir }: { dir?: "asc" | "desc" }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"
+        className={`h-3.5 w-3.5 ${dir ? "text-slate-700" : "text-slate-300"}`}>
+        {dir === "asc" && <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />}
+        {dir === "desc" && <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />}
+        {!dir && <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />}
+    </svg>
+);
 
 interface TableRowProps<T extends BaseTableItem> {
     item: T;
@@ -35,7 +68,7 @@ interface TableRowProps<T extends BaseTableItem> {
     cellClass: string;
 };
 
-function TableRow<T extends BaseTableItem>({ item, renderers, rowClass, cellClass, visibleFields }: TableRowProps<T>) {
+function TableRowComponent<T extends BaseTableItem>({ item, renderers, rowClass, cellClass, visibleFields }: TableRowProps<T>) {
 
     return (
         <tr className={rowClass}>
@@ -56,6 +89,10 @@ function TableRow<T extends BaseTableItem>({ item, renderers, rowClass, cellClas
         </tr>
     );
 }
+
+// Només es tornen a pintar les files que canvien. Perquè funcioni, item, renderers
+// i visibleFields han de ser estables entre renders (constants de mòdul o useMemo).
+const TableRow = memo(TableRowComponent) as typeof TableRowComponent;
 
 interface TableBodyProps<T extends BaseTableItem> {
     items: T[];
@@ -89,6 +126,10 @@ interface TableProps<T extends BaseTableItem> {
     headerClass?: string;
     headerCellClass?: string;
     visibleFields?: (keyof T)[];
+    // Ordenació controlada: la pàgina guarda l'estat (useSort) i ordena els items (useTableView).
+    sortableFields?: (keyof T)[];
+    sort?: SortState<T>;
+    onSort?: (key: keyof T) => void;
 };
 
 export function Table<T extends BaseTableItem>({
@@ -101,22 +142,25 @@ export function Table<T extends BaseTableItem>({
     cellClass = "",
     headerClass = "",
     headerCellClass = "",
-    visibleFields = Object.keys(headers) as (keyof T)[]
+    visibleFields,
+    sortableFields,
+    sort,
+    onSort,
 }: TableProps<T>) {
+    const fields = useMemo(
+        () => visibleFields ?? Object.keys(headers) as (keyof T)[],
+        [visibleFields, headers]);
 
     return (
         <table className={tableClass}>
-            <TableHeader headers={headers} headerClass={headerClass} headerCellClass={headerCellClass} visibleFields={visibleFields} />
-            <TableBody items={items} renderers={renderers} bodyClass={bodyClass} cellClass={cellClass} rowClass={rowClass}  visibleFields={visibleFields} />
+            <TableHeader headers={headers} headerClass={headerClass} headerCellClass={headerCellClass} visibleFields={fields}
+                sortableFields={sortableFields} sort={sort} onSort={onSort} />
+            <TableBody items={items} renderers={renderers} bodyClass={bodyClass} cellClass={cellClass} rowClass={rowClass} visibleFields={fields} />
         </table>
     );
 
 }
 
-
-function objectKeys<T extends {}>(obj: T) {
-    return Object.keys(obj).map((objKey) => objKey as keyof T);
-}
 
 function isPrimitive(value: any): value is PrimitiveType {
     return (

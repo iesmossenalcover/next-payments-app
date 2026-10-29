@@ -7,9 +7,9 @@ import { DangerAlert } from "@/components/Alerts";
 import { Spinner } from "@/components/Loading";
 import EventPeopleGroup from "@/components/events/EventPeopleGroup";
 import PasteSelector from "@/components/events/PasteSelector";
-import useEventPeople, { matchesPerson, normalize, SaveResult } from "@/lib/hooks/useEventPeople";
+import useEventPeople, { matchesPerson, SaveResult } from "@/lib/hooks/useEventPeople";
 import useDebounce from "@/lib/hooks/useDebounce";
-import { displayDate } from "@/lib/utils";
+import { displayDate, normalize } from "@/lib/utils";
 
 const PeopleToEvent = () => {
     const router = useRouter();

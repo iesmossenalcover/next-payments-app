@@ -9,6 +9,10 @@ export const displayDateTime = (date: Date | string, includeSeconds: boolean = f
 // Un import de 0 no es mostra com "0 €": per a qui ho llegeix és una inscripció gratuïta.
 export const displayPrice = (amount: number, currency: string) => amount === 0 ? "Gratuït" : `${amount} ${currency}`;
 
+// Sense accents ni majúscules, per poder cercar "muñoz" escrivint "munoz".
+export const normalize = (text: string): string =>
+    text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+
 export const twoDigit = (n: number) => n < 10 ? '0' + n : '' + n;
 export const toInputDateTime = (d: Date): string => `${d.getFullYear()}-${twoDigit(d.getMonth() + 1)}-${twoDigit(d.getDate())}T${twoDigit(d.getHours())}:${twoDigit(d.getMinutes())}`;
 export const toInputDate = (d: Date): string => `${d.getFullYear()}-${twoDigit(d.getMonth() + 1)}-${twoDigit(d.getDate())}`;

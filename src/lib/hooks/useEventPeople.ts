@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import { EventPeople, EventPerson, ResponseCode } from "@/lib/apis/payments/models";
 import { getEventPeople, setEventPeople } from "@/lib/apis/payments/client";
+import { normalize } from "@/lib/utils";
 
 /*
     Estat de la pantalla "persones d'un esdeveniment".
@@ -37,10 +38,6 @@ const errorMessage = (errors: Map<string, string[]> | undefined, fallback: strin
     const messages = Array.from(errors.values()).reduce<string[]>((acc, x) => acc.concat(x), []);
     return messages.length > 0 ? messages.join(" ") : fallback;
 }
-
-// Sense accents ni majúscules, per poder cercar "muñoz" escrivint "munoz".
-export const normalize = (text: string): string =>
-    text.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
 
 // Cerca per nom, expedient acadèmic o document d'identitat.
 export const matchesPerson = (person: EventPerson, query: string): boolean => {

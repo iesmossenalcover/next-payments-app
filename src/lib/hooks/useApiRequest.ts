@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export type ApiResult<T> = {
   data?: T;
@@ -27,7 +27,8 @@ export const useApiRequest = <T, U extends any[]>(
   const [errors, setErrors] = useState<Map<string, string[]> | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const executeRequest = async (...args: U) => {
+  // Estable entre renders (apiCall sol ser una funció de mòdul) per poder-la usar en useMemo/useCallback.
+  const executeRequest = useCallback(async (...args: U) => {
     setIsLoading(true);
     setErrors(undefined);
 
@@ -53,7 +54,7 @@ export const useApiRequest = <T, U extends any[]>(
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [apiCall]);
 
   return { data, errors, isLoading, executeRequest, setData };
 };
