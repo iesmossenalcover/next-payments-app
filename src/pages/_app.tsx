@@ -10,7 +10,7 @@ export default function App({ Component, pageProps }: AppProps) {
       {/* Variable global perquè també arribi als portals (createPortal a document.body). */}
       <style jsx global>{`
         :root {
-          --font-sans: ${font.style.fontFamily};
+          --font-inter: ${font.style.fontFamily};
         }
       `}</style>
       <Component {...pageProps} />

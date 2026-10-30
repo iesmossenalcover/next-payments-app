@@ -30,7 +30,7 @@ const PasteSelector = ({ onApply }: PasteSelectorProps) => {
     return (
         <div className="card mb-6 overflow-hidden">
             <button
-                className="flex w-full items-center px-4 py-3 text-left text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-500"
+                className="flex w-full items-center px-4 py-3 text-left text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-500"
                 onClick={() => setOpen(!open)}>
                 <svg
                     xmlns="http://www.w3.org/2000/svg"

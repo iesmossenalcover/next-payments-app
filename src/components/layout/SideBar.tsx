@@ -110,7 +110,7 @@ export const SideBar = ({ identity }: SideBarPropos) => {
     <nav className="fixed inset-y-0 left-0 z-50 print:hidden">
       <div className="group/sidebar flex h-full w-16 flex-col overflow-hidden bg-slate-900 transition-[width,box-shadow] duration-200 ease-out hover:w-60 hover:shadow-2xl">
         <div className="flex h-16 min-w-max items-center gap-3 px-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-brand-400 to-brand-600 text-white shadow-lg shadow-brand-900/40">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-brand-400 to-brand-600 text-white shadow-lg shadow-brand-900/40">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor" className="h-5 w-5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z" />
             </svg>
@@ -145,7 +145,7 @@ export const SideBar = ({ identity }: SideBarPropos) => {
             type="button"
             title="Tancar sessió"
             onClick={onSignout}
-            className={`${itemClass(false)} w-full min-w-max hover:!bg-red-500/10 hover:!text-red-300`}
+            className={`${itemClass(false)} w-full min-w-max hover:bg-red-500/10! hover:text-red-300!`}
           >
             <NavIcon paths={["M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"]} />
             <span className={labelClass}>Tancar sessió</span>

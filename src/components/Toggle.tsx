@@ -40,7 +40,7 @@ const Toggle = ({ id, name, text, onToggled, value, className }: ToggleProps) =>
                         after:w-5
                         after:rounded-full
                         after:bg-white
-                        after:shadow
+                        after:shadow-sm
                         after:transition-transform
                         after:content-['']
                         peer-checked:after:translate-x-5">

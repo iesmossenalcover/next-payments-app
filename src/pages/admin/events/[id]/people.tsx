@@ -67,7 +67,7 @@ const PeopleToEvent = () => {
     }
 
     const renderToolbar = () => (
-        <div className="sticky top-0 z-10 -mx-4 border-b border-slate-200 bg-slate-50/90 px-4 pb-4 pt-6 backdrop-blur sm:-mx-6 sm:px-6 lg:-mx-10 lg:px-10">
+        <div className="sticky top-0 z-10 -mx-4 border-b border-slate-200 bg-slate-50/90 px-4 pb-4 pt-6 backdrop-blur-sm sm:-mx-6 sm:px-6 lg:-mx-10 lg:px-10">
             <Link href="/admin/events" className="mb-2 inline-flex items-center gap-1 text-sm font-medium text-slate-500 transition-colors hover:text-slate-900">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="h-4 w-4">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
@@ -86,7 +86,7 @@ const PeopleToEvent = () => {
                 </div>
                 <button
                     disabled={saving || !isDirty}
-                    className="btn btn-primary min-w-[8rem]"
+                    className="btn btn-primary min-w-32"
                     onClick={onSave}>
                     {saving && <Spinner className="h-4 w-4 text-white" />}
                     {saving ? "Guardant..." : "Guardar"}

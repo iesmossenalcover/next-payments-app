@@ -88,7 +88,7 @@ const EventSummaries = () => {
                     <SelectorComponent
                         id='course'
                         name='course'
-                        className="form-input w-auto min-w-[12rem]"
+                        className="form-input w-auto min-w-48"
                         onSelect={val => setSelectedGroup(parseInt(val))}
                         selector={{ selected: `${selectedGroup}`, options: [{ key: "0", value: "Tots" }, ...data.groups] }} />
 

@@ -48,7 +48,7 @@ export const Pagination = ({ page, pageCount, pageSize, total, onPageChange, cla
                         key={x}
                         type="button"
                         aria-current={x === page ? "page" : undefined}
-                        className={`btn btn-sm min-w-[2.25rem] ${x === page ? "btn-primary" : "btn-ghost"}`}
+                        className={`btn btn-sm min-w-9 ${x === page ? "btn-primary" : "btn-ghost"}`}
                         onClick={() => onPageChange(x)}>
                         {x + 1}
                     </button>

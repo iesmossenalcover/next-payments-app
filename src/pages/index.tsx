@@ -55,7 +55,7 @@ const Steps = ({ current }: { current: number }) => {
                 const active = n === current;
                 return (
                     <li key={x} className="flex items-center gap-2">
-                        <span className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-semibold ${active || done ? "bg-white text-brand-700 shadow" : "bg-white/20 text-white"}`}>
+                        <span className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-semibold ${active || done ? "bg-white text-brand-700 shadow-sm" : "bg-white/20 text-white"}`}>
                             {done ?
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="h-3.5 w-3.5">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
@@ -476,13 +476,13 @@ const EventLine = ({ idx, item, setEventItem: setEvent }: EventProps) => {
                     <input id={`event_${event.code}`}
                         aria-describedby="helper-checkbox-text"
                         type="checkbox"
-                        className="h-5 w-5 shrink-0 cursor-pointer rounded"
+                        className="h-5 w-5 shrink-0 cursor-pointer rounded-sm"
                         checked={selected}
                         onChange={(e) => onSelectEvent(e.target.checked)}
                     />
                 }
                 <div className="ml-3 min-w-0 flex-1">
-                    <div className={`break-words font-medium ${blocked ? "text-slate-600" : "text-slate-900"}`}>
+                    <div className={`wrap-break-word font-medium ${blocked ? "text-slate-600" : "text-slate-900"}`}>
                         {event.name}
                     </div>
                     <div className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-slate-500">
@@ -503,7 +503,7 @@ const EventLine = ({ idx, item, setEventItem: setEvent }: EventProps) => {
             <div className="flex shrink-0 items-center gap-3">
                 {blocked ?
                     // El preu s'amaga: el seu lloc l'ocupa el motiu pel qual no es pot pagar.
-                    <p className="max-w-[8.5rem] text-right text-xs font-semibold leading-snug text-amber-800 sm:max-w-[14rem] sm:text-sm">
+                    <p className="max-w-34 text-right text-xs font-semibold leading-snug text-amber-800 sm:max-w-56 sm:text-sm">
                         {event.missingAuthorization ?? "No es pot pagar"}
                     </p> :
                     <>
@@ -516,7 +516,7 @@ const EventLine = ({ idx, item, setEventItem: setEvent }: EventProps) => {
                                     selector={{ selected: quantity.toString(), options }}
                                     onSelect={onSelectQuantity} /> : null
                         }
-                        <div className={`${event.displayQuantitySelector ? 'hidden sm:block' : ''} min-w-[4rem] text-right font-semibold text-slate-900 tabular-nums`}>
+                        <div className={`${event.displayQuantitySelector ? 'hidden sm:block' : ''} min-w-16 text-right font-semibold text-slate-900 tabular-nums`}>
                             {
                                 event.displayQuantitySelector ?
                                     <>{displayPrice((event.price ?? 0) * quantity, event.currencySymbol)}</> :

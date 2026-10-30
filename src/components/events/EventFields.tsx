@@ -182,7 +182,7 @@ const EventFields = ({ event, errors, setEvent }: EventComponentProps) => {
                         className="form-label"
                         htmlFor="maxQuantity">Quantitat màxima que pot adquirir una persona</label>
                     <input
-                        className="form-input sm:max-w-[12rem]"
+                        className="form-input sm:max-w-48"
                         type="number"
                         step="1"
                         min="1"
@@ -197,7 +197,7 @@ const EventFields = ({ event, errors, setEvent }: EventComponentProps) => {
                         className="form-label"
                         htmlFor="maxCapacity">Places màximes</label>
                     <input
-                        className="form-input sm:max-w-[12rem]"
+                        className="form-input sm:max-w-48"
                         type="number"
                         step="1"
                         min="1"

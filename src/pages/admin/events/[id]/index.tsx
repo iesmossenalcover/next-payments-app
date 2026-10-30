@@ -198,7 +198,7 @@ const Update = () => {
                 <div>
                     <div>
                         {updated && mounted ? createPortal(
-                            <div className="fixed right-4 top-4 z-[100] w-full max-w-sm">
+                            <div className="fixed right-4 top-4 z-100 w-full max-w-sm">
                                 <SuccessAlert text="Event editat correctament." />
                             </div>,
                             document.body

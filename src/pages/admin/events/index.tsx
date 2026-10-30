@@ -146,7 +146,7 @@ const Events = () => {
 
     const customRenderer = useMemo(() => ({
         code: (item: TableRow) => <span className="badge badge-gray font-mono">{item.code}</span>,
-        name: (item: TableRow) => <span className="block min-w-[12rem] whitespace-normal font-medium text-slate-900">{item.name}</span>,
+        name: (item: TableRow) => <span className="block min-w-48 whitespace-normal font-medium text-slate-900">{item.name}</span>,
         type: (item: TableRow) => <EventTypeBadge type={item.type} />,
         date: (item: TableRow) => displayDate(item.date),
         price: (item: TableRow) => `${item.price} €`,

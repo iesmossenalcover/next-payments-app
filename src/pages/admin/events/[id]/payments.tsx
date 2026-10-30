@@ -393,7 +393,7 @@ const SetPaid = ({ event, payment, options, freePlaces, setPaidCallback }: SetPa
     // El motiu es manté visible (badge al costat del nom i aquest text).
     if (!payment.authorized) {
         return (
-            <p className="max-w-[14rem] text-right text-xs font-medium leading-snug text-amber-800">
+            <p className="max-w-56 text-right text-xs font-medium leading-snug text-amber-800">
                 No es pot marcar com a pagat: {missingAuthorizationText(event.type).toLowerCase()}
             </p>
         )
@@ -402,7 +402,7 @@ const SetPaid = ({ event, payment, options, freePlaces, setPaidCallback }: SetPa
     // Desmarcar allibera una plaça; marcar-ne una de nova no es permet si ja és ple.
     if (isFull) {
         return (
-            <p className="max-w-[14rem] text-right text-xs font-medium leading-snug text-red-700">
+            <p className="max-w-56 text-right text-xs font-medium leading-snug text-red-700">
                 Esdeveniment ple ({event.maxCapacity} places). Augmenta les places per afegir-ne més.
             </p>
         )

@@ -186,7 +186,7 @@ const Update = () => {
 const TemporaryPassword = ({ password }: { password: string }) => (
     <div className="mt-3 flex items-center justify-between gap-3 rounded-lg bg-amber-50 px-4 py-3 text-sm ring-1 ring-inset ring-amber-200">
         <span className="text-amber-900">La contrasenya temporal és:</span>
-        <code className="rounded bg-white px-2 py-1 font-mono font-semibold text-slate-900 ring-1 ring-amber-200">{password}</code>
+        <code className="rounded-sm bg-white px-2 py-1 font-mono font-semibold text-slate-900 ring-1 ring-amber-200">{password}</code>
     </div>
 )
 

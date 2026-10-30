@@ -25,7 +25,7 @@ const PersonRow = ({ person, checked, onToggle }: { person: EventPerson, checked
                     type="checkbox"
                     checked={checked}
                     onChange={e => onToggle(person.id, e.target.checked)}
-                    className="h-4 w-4 rounded" />
+                    className="h-4 w-4 rounded-sm" />
                 <span className={`ml-3 text-sm ${checked ? "font-medium text-slate-900" : "text-slate-700"}`}>{person.fullName}</span>
             </span>
             <span className="text-xs text-slate-400 tabular-nums">{reference}</span>
@@ -64,7 +64,7 @@ const Group = ({ group, query, selected, open, onOpenChange, onToggle, onSetMany
         <div className="card mb-3 overflow-hidden">
             <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-3">
                 <button
-                    className="flex items-center rounded text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+                    className="flex items-center rounded-sm text-left focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500"
                     onClick={() => onOpenChange(!expanded)}>
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
