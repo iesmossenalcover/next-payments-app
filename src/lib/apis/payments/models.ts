@@ -208,6 +208,7 @@ export interface EventRow {
     enrollment: boolean,
     amipa: boolean,
     type: EventType,
+    calendarEventId?: string,
 }
 
 export interface GroupRow {

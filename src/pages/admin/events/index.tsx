@@ -10,7 +10,7 @@ import { EventType, hasRole, Roles } from "@/lib/apis/payments/models";
 import { EventTypeBadge, eventTypeOptions } from "@/components/events/EventTypeInfo";
 import useUser from "@/lib/hooks/useUser";
 import useDebounce from "@/lib/hooks/useDebounce";
-import { displayDate, displayDateTime, normalize, plainErrors } from "@/lib/utils";
+import { displayDate, displayTime, normalize, plainErrors } from "@/lib/utils";
 import { useApiRequest, useStartApiRequest } from "@/lib/hooks/useApiRequest";
 import Toggle from "@/components/Toggle";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -26,6 +26,7 @@ const tableHeaders = {
     from: "Publicació",
     to: "Expiració",
     active: "Actiu",
+    calendar: "Calendari",
     actions: "Accions",
 };
 
@@ -41,6 +42,7 @@ interface TableRow {
     from: string,
     to?: string,
     active: boolean,
+    calendar: boolean,
     actions: "",
 };
 
@@ -54,10 +56,11 @@ const visibleFields: (keyof TableRow)[] = [
     "from",
     "to",
     "active",
+    "calendar",
     "actions"
 ];
 
-const sortableFields: (keyof TableRow)[] = ["code", "name", "type", "date", "price", "amipaPrice", "from", "to", "active"];
+const sortableFields: (keyof TableRow)[] = ["code", "name", "type", "date", "price", "amipaPrice", "from", "to", "active", "calendar"];
 
 const PAGE_SIZE = 50;
 
@@ -71,7 +74,23 @@ const sortAccessors: SortAccessors<TableRow> = {
     from: x => timestamp(x.from),
     to: x => timestamp(x.to),
     active: x => x.active ? 0 : 1,
+    calendar: x => x.calendar ? 0 : 1,
 };
+
+const YesNoBadge = ({ value }: { value: boolean }) => (
+    <span className={`badge ${value ? "badge-green" : "badge-gray"}`}>
+        {value && <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />}
+        {value ? "Si" : "No"}
+    </span>
+);
+
+// Data i hora en dues línies perquè la columna ocupi menys.
+const DateTimeCell = ({ date }: { date: string }) => (
+    <>
+        <span className="block">{displayDate(date)}</span>
+        <span className="block text-xs text-slate-500">{displayTime(date)}</span>
+    </>
+);
 
 const Events = () => {
     const [showAll, setShowAll] = useState(false);
@@ -104,6 +123,7 @@ const Events = () => {
             from: x.publishDate,
             to: x.unpublishDate || undefined,
             active: x.isActive,
+            calendar: !!x.calendarEventId,
             actions: ""
         }));
     }, [events]);
@@ -146,19 +166,15 @@ const Events = () => {
 
     const customRenderer = useMemo(() => ({
         code: (item: TableRow) => <span className="badge badge-gray font-mono">{item.code}</span>,
-        name: (item: TableRow) => <span className="block min-w-48 whitespace-normal font-medium text-slate-900">{item.name}</span>,
+        name: (item: TableRow) => <span className="block min-w-48 whitespace-normal break-words font-medium text-slate-900">{item.name}</span>,
         type: (item: TableRow) => <EventTypeBadge type={item.type} />,
         date: (item: TableRow) => displayDate(item.date),
         price: (item: TableRow) => `${item.price} €`,
         amipaPrice: (item: TableRow) => `${item.amipaPrice} €`,
-        from: (item: TableRow) => displayDateTime(item.from),
-        to: (item: TableRow) => item.to ? displayDateTime(item.to) : '-',
-        active: (item: TableRow) => (
-            <span className={`badge ${item.active ? "badge-green" : "badge-gray"}`}>
-                {item.active && <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />}
-                {item.active ? "Si" : "No"}
-            </span>
-        ),
+        from: (item: TableRow) => <DateTimeCell date={item.from} />,
+        to: (item: TableRow) => item.to ? <DateTimeCell date={item.to} /> : '-',
+        active: (item: TableRow) => <YesNoBadge value={item.active} />,
+        calendar: (item: TableRow) => <YesNoBadge value={item.calendar} />,
         actions: (item: TableRow) => {
             return (
                 <div className="flex justify-end gap-1">
@@ -194,11 +210,13 @@ const Events = () => {
     const listEvents = () => {
         return (
             <div ref={tableRef} className='card overflow-x-auto'>
+                {/* La columna del nom (la segona) s'emporta tot l'espai sobrant i la resta s'ajusta al contingut.
+                    El padding es redueix en pantalles més petites per evitar l'scroll horitzontal. */}
                 <Table
                     headers={tableHeaders}
                     items={view.items}
                     renderers={customRenderer}
-                    tableClass='data-table'
+                    tableClass='data-table [&_td]:px-2 [&_th]:px-2 min-[1360px]:[&_td]:px-3 min-[1360px]:[&_th]:px-3 min-[1440px]:[&_td]:px-4 min-[1440px]:[&_th]:px-4 [&_th:nth-child(2)]:w-full'
                     visibleFields={visibleFields}
                     sortableFields={sortableFields}
                     sort={sort}
