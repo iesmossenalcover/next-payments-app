@@ -6,20 +6,53 @@ import Toggle from "../Toggle";
 import { useStartApiRequest } from "@/lib/hooks/useApiRequest";
 import { displayKeyErrors } from "@/lib/utils";
 
+export type PersonKind = "student" | "other";
+
+const personKinds: { value: PersonKind, text: string }[] = [
+    { value: "student", text: "Alumne" },
+    { value: "other", text: "Altres" },
+];
+
 interface PersonComponentProps {
     errors?: Map<string, string[]>
     person: Person,
     setPerson: Dispatch<Person>
+    // Només s'informa en crear: el tipus no es guarda a la persona.
+    kind?: PersonKind,
+    onKindChange?: (kind: PersonKind) => void
 }
 
-const PersonFields = ({ person, errors, setPerson }: PersonComponentProps) => {
+const PersonFields = ({ person, errors, setPerson, kind, onKindChange }: PersonComponentProps) => {
     const { data: groups } = useStartApiRequest(getGroupsSelector);
 
     if (groups)
         groups.selected = person.groupId ? person.groupId.toString() : "";
 
+    const kindSelector = onKindChange ?
+        <fieldset>
+            <legend className="form-label">Tipus de persona</legend>
+            <div className="flex flex-wrap gap-x-8 gap-y-2">
+                {personKinds.map(x =>
+                    <label key={x.value} className="inline-flex items-center gap-2 text-sm text-slate-700">
+                        <input
+                            type="radio"
+                            name="personKind"
+                            value={x.value}
+                            checked={kind === x.value}
+                            onChange={() => onKindChange(x.value)} />
+                        {x.text}
+                    </label>
+                )}
+            </div>
+        </fieldset>
+        : null;
+
+    if (onKindChange && !kind) return kindSelector;
+
     return (
         <div className="space-y-5">
+            {kindSelector}
+
             <div>
                 <label
                     className="form-label"
@@ -74,7 +107,7 @@ const PersonFields = ({ person, errors, setPerson }: PersonComponentProps) => {
                     {displayKeyErrors("documentId", errors)}
                 </div>
 
-                <div>
+                {kind !== "other" ? <div>
                     <label
                         className="form-label"
                         htmlFor="academicRecordNumber">Número expedient acadèmic</label>
@@ -84,9 +117,9 @@ const PersonFields = ({ person, errors, setPerson }: PersonComponentProps) => {
                         name="academicRecordNumber"
                         type="number"
                         value={person.academicRecordNumber ?? ""}
-                        onChange={(e) => setPerson({ ...person, academicRecordNumber: parseInt(e.target.value) })} />
+                        onChange={(e) => setPerson({ ...person, academicRecordNumber: e.target.value ? parseInt(e.target.value) : undefined })} />
                     {displayKeyErrors("academicRecordNumber", errors)}
-                </div>
+                </div> : null}
             </div>
 
             {groups ?

@@ -1,7 +1,7 @@
 import { SuccessAlert } from "@/components/Alerts";
 import { createPerson } from "@/lib/apis/payments/client";
 import { Person } from "@/lib/apis/payments/models";
-import PersonFields from "@/components/people/PersonFields";
+import PersonFields, { PersonKind } from "@/components/people/PersonFields";
 import Head from "next/head";
 import { PageHeader, PageMain } from "@/components/layout/PageHeader";
 import { Container } from "@/components/layout/SideBar";
@@ -23,15 +23,33 @@ const defaultPerson: Person = {
 
 const Create = () => {
     const [person, setPerson] = useState(defaultPerson);
+    const [kind, setKind] = useState<PersonKind | undefined>(undefined);
+    const [validationErrors, setValidationErrors] = useState<Map<string, string[]> | undefined>(undefined);
     const { data, errors, isLoading, executeRequest } = useApiRequest(createPerson);
 
     const submit = async (p: Person) => {
         await executeRequest(p);
     }
 
+    const onKindChange = (value: PersonKind) => {
+        setKind(value);
+        setValidationErrors(undefined);
+        if (value === "other") setPerson({ ...person, academicRecordNumber: undefined });
+    }
+
+    const validate = () => {
+        const result = new Map<string, string[]>();
+        if (kind === "student" && !(person.academicRecordNumber && person.academicRecordNumber > 0))
+            result.set("academicRecordNumber", ["El número d'expedient és obligatori per a l'alumnat."]);
+        return result.size > 0 ? result : undefined;
+    }
+
     const onFormSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (!person) return;
+        const invalid = validate();
+        setValidationErrors(invalid);
+        if (invalid) return;
         submit(person);
     }
 
@@ -57,16 +75,18 @@ const Create = () => {
                                 </SuccessAlert> :
                                 <form action="#" method="post" onSubmit={onFormSubmit} autoComplete="off">
                                     <PersonFields
-                                        errors={errors}
+                                        errors={validationErrors ?? errors}
                                         person={person}
-                                        setPerson={setPerson} />
-                                    <div>
+                                        setPerson={setPerson}
+                                        kind={kind}
+                                        onKindChange={onKindChange} />
+                                    {kind ? <div>
                                         <input
                                             disabled={formDisabled()}
                                             className="btn btn-primary mt-8 w-full"
                                             value="Afegir persona"
                                             type="submit" />
-                                    </div>
+                                    </div> : null}
                                 </form>
                         }
                     </div>

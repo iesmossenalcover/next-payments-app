@@ -17,6 +17,7 @@ const Update = () => {
     const { id } = router.query
 
     const [showUpdated, setShowUpdated] = useState(false);
+    const [showMissingRecord, setShowMissingRecord] = useState(false);
     const { data: person, setData: setPerson, isLoading: isPersonLoading, executeRequest: getPersonRequest } = useApiRequest(getPersonById);
     const { data: syncPersonResponse, errors: syncErrors, isLoading: isSyncLoading, executeRequest: syncPersonRequest } = useApiRequest(syncPersonGoogleWorkspace);
     const { errors: updateErrors, isLoading: isUpdateLoading, executeRequest: updatePersonRequest } = useApiRequest(updatePerson);
@@ -51,8 +52,21 @@ const Update = () => {
 
     const generateEmail = async () => {
         if (!person) return;
+        setShowMissingRecord(false);
         const ok = await syncPersonRequest(person.id);
         if (ok) getPersonRequest(person.id);
+    }
+
+    const onGenerateEmailClick = () => {
+        if (!person) return;
+        // Sense expedient el correu no porta número: cal confirmar que no és alumne.
+        if (!person.academicRecordNumber && !person.email) setShowMissingRecord(true);
+        else generateEmail();
+    }
+
+    const addAcademicRecord = () => {
+        setShowMissingRecord(false);
+        document.getElementById("academicRecordNumber")?.focus();
     }
 
     const updatePassowrd = () => {
@@ -123,7 +137,7 @@ const Update = () => {
                                         title="Generar Email"
                                         type="button"
                                         className='btn-icon shrink-0'
-                                        onClick={generateEmail}>
+                                        onClick={onGenerateEmailClick}>
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-5 w-5">
                                             <path strokeLinecap="round" d="M16.5 12a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zm0 0c0 1.657 1.007 3 2.25 3S21 13.657 21 12a9 9 0 10-2.636 6.364M16.5 12V8.25" />
                                         </svg>
@@ -160,6 +174,17 @@ const Update = () => {
                                     <p className="mt-3 rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-900 ring-1 ring-inset ring-amber-200">
                                         Hi ha canvis pendents. Guarda els canvis per poder sincronitzar amb Google Workspace.
                                     </p>
+                                ) : null}
+
+                                {showMissingRecord && !hasPendingChanges ? (
+                                    <div className="mt-3 rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-900 ring-1 ring-inset ring-amber-200" role="alert">
+                                        <p className="font-semibold">Aquesta persona no té número d&apos;expedient.</p>
+                                        <p className="mt-1">El correu es generarà només amb nom i llinatge. Si és alumne, primer cal introduir l&apos;expedient.</p>
+                                        <div className="mt-3 flex flex-wrap gap-2">
+                                            <button type="button" className="btn btn-primary btn-sm" onClick={addAcademicRecord}>És alumne: introduir expedient</button>
+                                            <button type="button" className="btn btn-secondary btn-sm" disabled={formDisabled()} onClick={generateEmail}>No és alumne: generar correu</button>
+                                        </div>
+                                    </div>
                                 ) : null}
 
                                 {syncPersonResponse && syncPersonResponse.password ? <TemporaryPassword password={syncPersonResponse.password} /> : null}
