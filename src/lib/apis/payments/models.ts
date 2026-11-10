@@ -70,7 +70,9 @@ export interface PersonRow {
     groupId?: number,
     groupName?: string,
     amipa?: boolean,
-    academicRecordNumber?: number
+    academicRecordNumber?: number,
+    walkingAuthorization?: boolean,
+    transportAuthorization?: boolean
 }
 
 export interface PersonActiveEventsVm {

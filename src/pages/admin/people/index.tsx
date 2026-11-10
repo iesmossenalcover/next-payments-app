@@ -22,6 +22,8 @@ const tableHeaders = {
   academicRecordNumber: "Número expedient",
   group: "Grup",
   amipa: "AFA",
+  walkingAuthorization: "A peu",
+  transportAuthorization: "Amb transport",
   actions: "Accions",
 };
 
@@ -33,6 +35,8 @@ interface TableRow {
   academicRecordNumber: string;
   group: string;
   amipa: string;
+  walkingAuthorization: string;
+  transportAuthorization: string;
   actions: string;
 }
 
@@ -54,7 +58,7 @@ const People = () => {
         ? x.academicRecordNumber.toString()
         : "-";
       const group = x.groupName ? x.groupName : "-";
-      const amipa = x.amipa === undefined ? "-" : x.amipa ? "Si" : "No";
+      const amipa = yesNo(x.amipa);
       return {
         id: x.id,
         documentId: x.documentId,
@@ -63,6 +67,8 @@ const People = () => {
         academicRecordNumber: academicRecordNumber,
         group,
         amipa,
+        walkingAuthorization: yesNo(x.walkingAuthorization),
+        transportAuthorization: yesNo(x.transportAuthorization),
         actions: "",
       };
     });
@@ -111,17 +117,9 @@ const People = () => {
         </span>
       );
     },
-    amipa: (item: TableRow) => {
-      if (item.amipa === "-") return <span className="text-slate-300">—</span>;
-      const isYes = item.amipa === "Si";
-      return (
-        <span
-          className={`badge ${isYes ? "badge-green" : "badge-gray"}`}
-        >
-          {item.amipa}
-        </span>
-      );
-    },
+    amipa: (item: TableRow) => <YesNoBadge value={item.amipa} />,
+    walkingAuthorization: (item: TableRow) => <YesNoBadge value={item.walkingAuthorization} />,
+    transportAuthorization: (item: TableRow) => <YesNoBadge value={item.transportAuthorization} />,
     actions: (item: TableRow) => {
       return (
         <div className="flex justify-end gap-1">
@@ -267,6 +265,8 @@ const People = () => {
                 "academicRecordNumber",
                 "group",
                 "amipa",
+                "walkingAuthorization",
+                "transportAuthorization",
                 "actions",
               ]}
             />
@@ -362,6 +362,18 @@ const ExportPeople = () => {
       )}
       Exportar persones
     </button>
+  );
+};
+
+// Sense curs actiu el servidor no envia el valor (undefined o null).
+const yesNo = (value?: boolean | null) => value == null ? "-" : value ? "Si" : "No";
+
+const YesNoBadge = ({ value }: { value: string }) => {
+  if (value === "-") return <span className="text-slate-300">—</span>;
+  return (
+    <span className={`badge ${value === "Si" ? "badge-green" : "badge-gray"}`}>
+      {value}
+    </span>
   );
 };
 
