@@ -447,3 +447,82 @@ export interface PersonPayment {
     manualPayment: boolean
     paidDate?: string
 }
+// Event requests (sol·licituds d'esdeveniments)
+export enum EventRequestStatus {
+    PendingReview = 0,
+    PendingCorrection = 1,
+    PendingCreation = 2,
+    Created = 3,
+    Deleted = 4,
+}
+
+export enum EventRequestAction {
+    Submit = 0,
+    Approve = 1,
+    RequestCorrection = 2,
+    Edit = 3,
+    Resubmit = 4,
+    CreateEvent = 5,
+    EventDeleted = 6,
+    Reject = 7,
+    Delete = 8,
+}
+
+export enum EventRequestRecipientType {
+    Person = 0,
+    Group = 1,
+}
+
+export interface EventRequestRecipient {
+    type: EventRequestRecipientType,
+    referenceId: number,
+    name?: string,
+}
+
+// Dades del formulari. De moment només els camps mínims.
+export interface EventRequestData {
+    title: string,
+    description: string,
+    startDate: string,
+    endDate?: string,
+    price: number,
+    paymentDeadline?: string,
+    recipients: EventRequestRecipient[],
+}
+
+export interface EventRequestSummary {
+    id: number,
+    title: string,
+    status: EventRequestStatus,
+    requesterUserId: number,
+    requesterName: string,
+    requesterEmail: string,
+    startDate: string,
+    createdAt: string,
+    updatedAt: string,
+    eventId?: number,
+}
+
+export interface EventRequestTransition {
+    from?: EventRequestStatus,
+    to: EventRequestStatus,
+    action: EventRequestAction,
+    actorUserId?: number,
+    actorName?: string,
+    automatic: boolean,
+    reason?: string,
+    date: string,
+}
+
+export interface EventRequest extends EventRequestData {
+    id: number,
+    status: EventRequestStatus,
+    requesterUserId: number,
+    requesterName: string,
+    requesterEmail: string,
+    eventId?: number,
+    eventCode?: string,
+    createdAt: string,
+    updatedAt: string,
+    transitions: EventRequestTransition[],
+}

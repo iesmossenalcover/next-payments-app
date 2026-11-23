@@ -1,4 +1,4 @@
-import { BatchUploadSummary, Identity, PersonActiveEventsVm, Person, PersonRow, Response, SigninResponse, CreateOrderResponse, EventRow, Event, GetOrderInfo, EventPeople, EventPaymentsVm, SetEventPeoplePaidVm, AdminInfo, AppConfig, EventSummaryVm, SyncPersonResponse, UpdatePasswordResponse, GroupRow, Group, Course, CreateOrderCommand, StartJobResponse, GetJobsResponse, JobType, GetLogResponse, OuGroupRelationRow, OuGroupRelationPage, OuGroupRelation, PersonPaymentsVm } from "./models"
+import { BatchUploadSummary, Identity, PersonActiveEventsVm, Person, PersonRow, Response, SigninResponse, CreateOrderResponse, EventRow, Event, GetOrderInfo, EventPeople, EventPaymentsVm, SetEventPeoplePaidVm, AdminInfo, AppConfig, EventSummaryVm, SyncPersonResponse, UpdatePasswordResponse, GroupRow, Group, Course, CreateOrderCommand, StartJobResponse, GetJobsResponse, JobType, GetLogResponse, OuGroupRelationRow, OuGroupRelationPage, OuGroupRelation, PersonPaymentsVm, EventRequest, EventRequestData, EventRequestStatus, EventRequestSummary } from "./models"
 import { deleteJson, get, postJson, putJson, toFile } from "./baseclient"
 import { Selector } from "@/components/Selector"
 import { ApiResult } from "@/lib/hooks/useApiRequest"
@@ -557,3 +557,54 @@ export const setPayment = async (id: number, paid: boolean, quantity?: number) =
     }
     return data;
 }
+// Event requests (sol·licituds d'esdeveniments)
+const withErrorsMap = async <T,>(response: globalThis.Response): Promise<Response<T>> => {
+    const data = await response.json() as Response<T>;
+    if (data.errors) {
+        data.errors = new Map(Object.entries(data.errors));
+    }
+    return data;
+}
+
+// Professor: només les seves
+export const getMyEventRequests = async (): Promise<EventRequestSummary[]> => {
+    const response = await get(`${API_BASE_URL}/api/event-requests/mine`);
+    return response.ok ? await response.json() as EventRequestSummary[] : [];
+}
+
+export const getMyEventRequest = async (id: number): Promise<Response<EventRequest>> =>
+    withErrorsMap<EventRequest>(await get(`${API_BASE_URL}/api/event-requests/mine/${id}`));
+
+export const submitEventRequest = async (data: EventRequestData): Promise<Response<number>> =>
+    withErrorsMap<number>(await postJson(`${API_BASE_URL}/api/event-requests`, data));
+
+export const resubmitEventRequest = async (id: number, data: EventRequestData): Promise<Response<number>> =>
+    withErrorsMap<number>(await putJson(`${API_BASE_URL}/api/event-requests/mine/${id}`, data));
+
+// Admin
+export const getEventRequests = async (status?: EventRequestStatus): Promise<EventRequestSummary[]> => {
+    const query = status === undefined ? "" : `?status=${status}`;
+    const response = await get(`${API_BASE_URL}/api/event-requests${query}`);
+    return response.ok ? await response.json() as EventRequestSummary[] : [];
+}
+
+export const getEventRequest = async (id: number): Promise<Response<EventRequest>> =>
+    withErrorsMap<EventRequest>(await get(`${API_BASE_URL}/api/event-requests/${id}`));
+
+export const editEventRequest = async (id: number, data: EventRequestData): Promise<Response<number>> =>
+    withErrorsMap<number>(await putJson(`${API_BASE_URL}/api/event-requests/${id}`, data));
+
+export const approveEventRequest = async (id: number): Promise<Response<number>> =>
+    withErrorsMap<number>(await postJson(`${API_BASE_URL}/api/event-requests/${id}/approve`));
+
+export const requestEventRequestCorrection = async (id: number, reason: string): Promise<Response<number>> =>
+    withErrorsMap<number>(await postJson(`${API_BASE_URL}/api/event-requests/${id}/request-correction`, { reason }));
+
+export const rejectEventRequest = async (id: number, reason: string): Promise<Response<number>> =>
+    withErrorsMap<number>(await postJson(`${API_BASE_URL}/api/event-requests/${id}/reject`, { reason }));
+
+export const deleteEventRequest = async (id: number): Promise<Response<number>> =>
+    withErrorsMap<number>(await postJson(`${API_BASE_URL}/api/event-requests/${id}/delete`));
+
+export const createEventFromRequest = async (id: number, event: Event): Promise<Response<string>> =>
+    withErrorsMap<string>(await postJson(`${API_BASE_URL}/api/event-requests/${id}/create-event`, event));
