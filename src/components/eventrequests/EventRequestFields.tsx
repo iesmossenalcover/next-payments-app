@@ -1,7 +1,7 @@
-import { DateTime } from "@/components/form";
+import { CalendarDateTime } from "@/components/form";
 import { getGroupsSelector } from "@/lib/apis/payments/client";
 import { EventRequestData, EventRequestRecipientType } from "@/lib/apis/payments/models";
-import { normalize, toInputDateTime } from "@/lib/utils";
+import { normalize } from "@/lib/utils";
 import { Dispatch, useEffect, useMemo, useState } from "react";
 
 interface EventRequestFieldsProps {
@@ -74,24 +74,26 @@ const EventRequestFields = ({ data, errors, setData }: EventRequestFieldsProps) 
                 <div className="grid gap-5 sm:grid-cols-2">
                     <div>
                         <label className="form-label" htmlFor="startDate">Data d&apos;inici</label>
-                        <DateTime
-                            className="form-input"
-                            id="startDate" name="startDate"
-                            type="datetime-local"
+                        <CalendarDateTime
+                            id="startDate"
                             required={true}
-                            initialValue={data.startDate ? toInputDateTime(new Date(data.startDate)) : ""}
-                            onDateChanged={(d) => setData({ ...data, startDate: d && !isNaN(d.getTime()) ? d.toISOString() : "" })} />
+                            value={data.startDate || undefined}
+                            rangeStart={data.startDate}
+                            rangeEnd={data.endDate}
+                            onChange={(iso) => setData({ ...data, startDate: iso ?? "" })} />
                         {displayErrors("startDate")}
                     </div>
                     <div>
                         <label className="form-label" htmlFor="endDate">Data de finalització</label>
-                        <DateTime
-                            className="form-input"
-                            id="endDate" name="endDate"
-                            type="datetime-local"
-                            required={false}
-                            initialValue={data.endDate ? toInputDateTime(new Date(data.endDate)) : ""}
-                            onDateChanged={(d) => setData({ ...data, endDate: d && !isNaN(d.getTime()) ? d.toISOString() : undefined })} />
+                        <CalendarDateTime
+                            id="endDate"
+                            align="right"
+                            defaultTime="17:00"
+                            placeholder="Opcional"
+                            value={data.endDate}
+                            rangeStart={data.startDate}
+                            rangeEnd={data.endDate}
+                            onChange={(iso) => setData({ ...data, endDate: iso })} />
                         {displayErrors("endDate")}
                     </div>
                 </div>
@@ -111,13 +113,15 @@ const EventRequestFields = ({ data, errors, setData }: EventRequestFieldsProps) 
                     </div>
                     <div>
                         <label className="form-label" htmlFor="paymentDeadline">Data límit de pagament</label>
-                        <DateTime
-                            className="form-input"
-                            id="paymentDeadline" name="paymentDeadline"
-                            type="datetime-local"
-                            required={false}
-                            initialValue={data.paymentDeadline ? toInputDateTime(new Date(data.paymentDeadline)) : ""}
-                            onDateChanged={(d) => setData({ ...data, paymentDeadline: d && !isNaN(d.getTime()) ? d.toISOString() : undefined })} />
+                        <CalendarDateTime
+                            id="paymentDeadline"
+                            align="right"
+                            defaultTime="23:59"
+                            placeholder="Opcional"
+                            value={data.paymentDeadline}
+                            rangeStart={data.startDate}
+                            rangeEnd={data.endDate}
+                            onChange={(iso) => setData({ ...data, paymentDeadline: iso })} />
                         {displayErrors("paymentDeadline")}
                     </div>
                 </div>

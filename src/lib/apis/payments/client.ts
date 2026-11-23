@@ -1,4 +1,4 @@
-import { BatchUploadSummary, Identity, PersonActiveEventsVm, Person, PersonRow, Response, SigninResponse, CreateOrderResponse, EventRow, Event, GetOrderInfo, EventPeople, EventPaymentsVm, SetEventPeoplePaidVm, AdminInfo, AppConfig, EventSummaryVm, SyncPersonResponse, UpdatePasswordResponse, GroupRow, Group, Course, CreateOrderCommand, StartJobResponse, GetJobsResponse, JobType, GetLogResponse, OuGroupRelationRow, OuGroupRelationPage, OuGroupRelation, PersonPaymentsVm, EventRequest, EventRequestData, EventRequestStatus, EventRequestSummary } from "./models"
+import { BatchUploadSummary, Identity, PersonActiveEventsVm, Person, PersonRow, Response, SigninResponse, CreateOrderResponse, EventRow, Event, GetOrderInfo, EventPeople, EventPaymentsVm, SetEventPeoplePaidVm, AdminInfo, AppConfig, EventSummaryVm, SyncPersonResponse, UpdatePasswordResponse, GroupRow, Group, Course, CreateOrderCommand, StartJobResponse, GetJobsResponse, JobType, GetLogResponse, OuGroupRelationRow, OuGroupRelationPage, OuGroupRelation, PersonPaymentsVm, EventRequest, EventRequestData, EventRequestStatus, EventRequestSummary, CalendarItem } from "./models"
 import { deleteJson, get, postJson, putJson, toFile } from "./baseclient"
 import { Selector } from "@/components/Selector"
 import { ApiResult } from "@/lib/hooks/useApiRequest"
@@ -609,3 +609,10 @@ export const deleteEventRequest = async (id: number): Promise<Response<number>> 
 
 export const createEventFromRequest = async (id: number, event: Event): Promise<Response<string>> =>
     withErrorsMap<string>(await postJson(`${API_BASE_URL}/api/event-requests/${id}/create-event`, event));
+
+// Esdeveniments i sol·licituds en curs entre dues dates (per al calendari del formulari).
+export const getEventCalendar = async (from: Date, to: Date): Promise<CalendarItem[]> => {
+    const query = `from=${encodeURIComponent(from.toISOString())}&to=${encodeURIComponent(to.toISOString())}`;
+    const response = await get(`${API_BASE_URL}/api/event-requests/calendar?${query}`);
+    return response.ok ? await response.json() as CalendarItem[] : [];
+}

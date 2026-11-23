@@ -531,3 +531,19 @@ export interface EventRequest extends EventRequestData {
     updatedAt: string,
     transitions: EventRequestTransition[],
 }
+
+// Calendari d'esdeveniments i sol·licituds en curs
+export enum CalendarItemKind {
+    Event = 0,
+    Request = 1,
+}
+
+export interface CalendarItem {
+    kind: CalendarItemKind,
+    id: number,
+    title: string,
+    start: string,
+    end?: string,
+    status?: EventRequestStatus,
+    eventCode?: string,
+}
