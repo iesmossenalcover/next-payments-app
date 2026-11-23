@@ -152,6 +152,14 @@
   @apply bg-brand-50 text-brand-700 ring-brand-600/20;
 }
 
+@utility badge-purple {
+  @apply bg-violet-50 text-violet-700 ring-violet-600/20;
+}
+
+@utility badge-coral {
+  @apply bg-orange-50 text-orange-700 ring-orange-600/20;
+}
+
 @utility data-table {
   /* Taules de dades (component Table) */
   @apply w-full min-w-full text-sm;
