@@ -8,7 +8,10 @@ const nextConfig = {
     CLIENT_ID_GOOGLE: process.env.CLIENT_ID_GOOGLE,
     SCHOOL_NAME: process.env.SCHOOL_NAME,
     SCHOOL_WEBSITE: process.env.SCHOOL_WEBSITE,
-  }
+  },
+  experimental: {
+    agentUpgrade: 'security',
+  },
 }
 
 module.exports = nextConfig
