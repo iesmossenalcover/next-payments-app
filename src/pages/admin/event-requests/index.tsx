@@ -5,7 +5,7 @@ import { EventRequestStatusBadge } from "@/components/eventrequests/EventRequest
 import { getMyEventRequests } from "@/lib/apis/payments/client";
 import { EventRequestStatus } from "@/lib/apis/payments/models";
 import { useStartApiRequest } from "@/lib/hooks/useApiRequest";
-import { displayDate } from "@/lib/utils";
+import { displayDate, displayDateTime } from "@/lib/utils";
 import Head from "next/head";
 import Link from "next/link";
 
@@ -51,6 +51,8 @@ const MyEventRequests = () => {
                                             <Link className="link font-medium" href={`/admin/event-requests/${x.id}`}>{x.title}</Link>
                                             {x.status === EventRequestStatus.PendingCorrection &&
                                                 <span className="block text-xs text-orange-700">Has de corregir-la</span>}
+                                            {x.status === EventRequestStatus.PendingCreation && x.changesDeadline && new Date(x.changesDeadline) > new Date() &&
+                                                <span className="block text-xs text-slate-500">Aprovada: pots fer canvis fins al {displayDateTime(x.changesDeadline)}</span>}
                                         </td>
                                         <td>{displayDate(x.startDate)}</td>
                                         <td><EventRequestStatusBadge status={x.status} /></td>

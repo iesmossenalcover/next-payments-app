@@ -1,4 +1,4 @@
-import { EventRequest, EventRequestRecipientType } from "@/lib/apis/payments/models";
+import { EventRequest, EventRequestRecipientType, EventRequestStatus } from "@/lib/apis/payments/models";
 import { displayDateTime, displayPrice } from "@/lib/utils";
 import Link from "next/link";
 import { actionLabel, EventRequestStatusBadge, statusLabel } from "./EventRequestStatus";
@@ -22,6 +22,8 @@ export const EventRequestDetails = ({ request }: { request: EventRequest }) => {
                 <Row label="Esdeveniment">
                     <Link className="link font-mono" href={`/admin/events/${request.eventCode}/summary`}>{request.eventCode}</Link>
                 </Row>}
+            {request.status === EventRequestStatus.PendingCreation && request.changesDeadline &&
+                <Row label="Canvis del professor fins al">{displayDateTime(request.changesDeadline)}</Row>}
             <Row label="Sol·licitada per">{request.requesterName} <span className="text-slate-500">({request.requesterEmail})</span></Row>
             <Row label="Títol"><span className="font-medium">{request.title}</span></Row>
             <Row label="Descripció"><span className="whitespace-pre-line">{request.description || "-"}</span></Row>

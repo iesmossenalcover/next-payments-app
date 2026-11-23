@@ -578,7 +578,8 @@ export const getMyEventRequest = async (id: number): Promise<Response<EventReque
 export const submitEventRequest = async (data: EventRequestData): Promise<Response<number>> =>
     withErrorsMap<number>(await postJson(`${API_BASE_URL}/api/event-requests`, data));
 
-export const resubmitEventRequest = async (id: number, data: EventRequestData): Promise<Response<number>> =>
+// Corregir (en correcció) o fer canvis a una aprovada dins del termini. En tots dos casos torna a revisió.
+export const editMyEventRequest = async (id: number, data: EventRequestData): Promise<Response<number>> =>
     withErrorsMap<number>(await putJson(`${API_BASE_URL}/api/event-requests/mine/${id}`, data));
 
 // Admin
@@ -594,8 +595,8 @@ export const getEventRequest = async (id: number): Promise<Response<EventRequest
 export const editEventRequest = async (id: number, data: EventRequestData): Promise<Response<number>> =>
     withErrorsMap<number>(await putJson(`${API_BASE_URL}/api/event-requests/${id}`, data));
 
-export const approveEventRequest = async (id: number): Promise<Response<number>> =>
-    withErrorsMap<number>(await postJson(`${API_BASE_URL}/api/event-requests/${id}/approve`));
+export const approveEventRequest = async (id: number, changesDeadline: string): Promise<Response<number>> =>
+    withErrorsMap<number>(await postJson(`${API_BASE_URL}/api/event-requests/${id}/approve`, { changesDeadline }));
 
 export const requestEventRequestCorrection = async (id: number, reason: string): Promise<Response<number>> =>
     withErrorsMap<number>(await postJson(`${API_BASE_URL}/api/event-requests/${id}/request-correction`, { reason }));

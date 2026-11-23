@@ -10,14 +10,24 @@ import {
     getEventRequest, rejectEventRequest, requestEventRequestCorrection
 } from "@/lib/apis/payments/client";
 import { Event, EventRequest, EventRequestData, EventRequestStatus, Response } from "@/lib/apis/payments/models";
-import { plainErrors } from "@/lib/utils";
+import { DateTime } from "@/components/form";
+import { plainErrors, toInputDateTime } from "@/lib/utils";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 
 // Què està fent l'admin a la pàgina: res (veure), editar, escriure un motiu o crear l'esdeveniment.
-type Mode = "view" | "edit" | "correction" | "reject" | "create";
+type Mode = "view" | "approve" | "edit" | "correction" | "reject" | "create";
+
+// Termini de canvis proposat en aprovar: d'aquí a 3 dies, a les 23:59.
+const DEFAULT_CHANGES_DAYS = 3;
+const defaultChangesDeadline = () => {
+    const d = new Date();
+    d.setDate(d.getDate() + DEFAULT_CHANGES_DAYS);
+    d.setHours(23, 59, 0, 0);
+    return d.toISOString();
+};
 
 // Esdeveniment precarregat amb les dades de la sol·licitud. La resta de camps els completa l'admin.
 const eventFromRequest = (r: EventRequest): Event => ({
@@ -50,6 +60,7 @@ const ReviewEventRequest = () => {
 
     const [data, setData] = useState<EventRequestData>();
     const [reason, setReason] = useState("");
+    const [changesDeadline, setChangesDeadline] = useState(defaultChangesDeadline);
     const [event, setEvent] = useState<Event>();
 
     // resetForms = false per no perdre el que l'admin ha escrit quan una acció torna errors.
@@ -77,6 +88,7 @@ const ReviewEventRequest = () => {
         setErrors(undefined);
         setMessage(undefined);
         setReason("");
+        setChangesDeadline(defaultChangesDeadline());
     }
 
     // Executa una acció: si va bé, recarrega la sol·licitud i torna al mode de veure.
@@ -107,7 +119,10 @@ const ReviewEventRequest = () => {
     const canCreate = s === EventRequestStatus.PendingCreation;
     const canRejectOrDelete = s === EventRequestStatus.PendingReview || s === EventRequestStatus.PendingCorrection || s === EventRequestStatus.PendingCreation;
 
-    const onApprove = () => run(() => approveEventRequest(id), "Sol·licitud aprovada. Ja es pot crear l'esdeveniment.");
+    const onSubmitApprove = (e: React.SyntheticEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        run(() => approveEventRequest(id, changesDeadline), "Sol·licitud aprovada. S'ha avisat el professor del termini per fer canvis.");
+    }
 
     const onDelete = () => {
         if (!confirm("Eliminar la sol·licitud? Desapareixerà per a tothom i s'avisarà el professor.")) return;
@@ -153,6 +168,29 @@ const ReviewEventRequest = () => {
                         <div className="mt-8 flex gap-3">
                             <input disabled={busy} className="btn btn-primary flex-1" value="Desar canvis" type="submit" />
                             {actionButton("Cancel·lar", () => { setData(toRequestData(request)); changeMode("view"); })}
+                        </div>
+                    </form>
+                );
+            case "approve":
+                return (
+                    <form className="card p-6 sm:p-8" action="#" method="post" onSubmit={onSubmitApprove}>
+                        <h3 className="section-title mb-1">Aprovar la sol·licitud</h3>
+                        <p className="form-hint mb-4">
+                            El professor rebrà un correu i podrà fer canvis fins a la data indicada (si en fa, tornarà a revisió).
+                            Pots crear l&apos;esdeveniment en qualsevol moment, també abans d&apos;aquesta data.
+                        </p>
+                        <label className="form-label" htmlFor="changesDeadline">Canvis del professor fins al</label>
+                        <DateTime
+                            className="form-input sm:max-w-64"
+                            id="changesDeadline" name="changesDeadline"
+                            type="datetime-local"
+                            required={true}
+                            initialValue={toInputDateTime(new Date(changesDeadline))}
+                            onDateChanged={d => setChangesDeadline(d && !isNaN(d.getTime()) ? d.toISOString() : "")} />
+                        {errors?.has("changesDeadline") && <p className="form-error">{(errors.get("changesDeadline") as string[]).join(", ")}</p>}
+                        <div className="mt-6 flex gap-3">
+                            <input disabled={busy || changesDeadline === ""} className="btn btn-primary flex-1" value="Aprovar" type="submit" />
+                            {actionButton("Cancel·lar", () => changeMode("view"))}
                         </div>
                     </form>
                 );
@@ -214,7 +252,7 @@ const ReviewEventRequest = () => {
                     subtitle={`Sol·licitada per ${request.requesterName}`}
                     back={{ href: "/admin/event-requests/review", text: "Revisar sol·licituds" }}
                     actions={mode === "view" && <>
-                        {canApprove && actionButton("Aprovar", onApprove, "btn-primary")}
+                        {canApprove && actionButton("Aprovar", () => changeMode("approve"), "btn-primary")}
                         {canCreate && actionButton("Crear esdeveniment", () => changeMode("create"), "btn-success")}
                         {canEdit && actionButton("Editar", () => changeMode("edit"))}
                         {canRequestCorrection && actionButton("Demanar correcció", () => changeMode("correction"))}

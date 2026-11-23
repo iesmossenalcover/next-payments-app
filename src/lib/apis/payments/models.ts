@@ -501,6 +501,8 @@ export interface EventRequestSummary {
     createdAt: string,
     updatedAt: string,
     eventId?: number,
+    // Fins quan el professor pot fer canvis a la sol·licitud aprovada.
+    changesDeadline?: string,
 }
 
 export interface EventRequestTransition {
@@ -520,6 +522,9 @@ export interface EventRequest extends EventRequestData {
     requesterUserId: number,
     requesterName: string,
     requesterEmail: string,
+    changesDeadline?: string,
+    // El professor la pot editar ara (en correcció, o aprovada i dins del termini).
+    canRequesterEdit: boolean,
     eventId?: number,
     eventCode?: string,
     createdAt: string,
