@@ -1,10 +1,12 @@
 import { getEventCalendar } from "@/lib/apis/payments/client";
 import { CalendarItem, CalendarItemKind } from "@/lib/apis/payments/models";
 import { twoDigit } from "@/lib/utils";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 
-// Selector de data i hora fet a mà (sense llibreries). Mostra un calendari mensual amb els
+// Selector de data i hora fet a mà (sense llibreries). Obre un modal amb un calendari mensual i els
 // esdeveniments i les sol·licituds en curs de cada dia, per ajudar a triar dates sense solapaments.
+// Al mòbil el modal surt des de baix i ocupa tota l'amplada; a pantalla gran, la llista del dia va al costat.
 
 interface CalendarDateTimeProps {
     id: string,
@@ -17,8 +19,8 @@ interface CalendarDateTimeProps {
     rangeStart?: string,
     rangeEnd?: string,
     placeholder?: string,
-    // En camps de la columna dreta, el calendari s'obre alineat a la dreta perquè no surti de la pantalla.
-    align?: "left" | "right",
+    // Títol del modal (normalment, l'etiqueta del camp).
+    title?: string,
 }
 
 const WEEKDAYS = ["dl", "dt", "dc", "dj", "dv", "ds", "dg"];
@@ -68,13 +70,12 @@ const coversDay = (item: CalendarItem, day: Date) => {
 
 const kindDot = (kind: CalendarItemKind) => kind === CalendarItemKind.Event ? "bg-emerald-500" : "bg-violet-500";
 
-const CalendarDateTime = ({ id, value, onChange, required = false, defaultTime = "09:00", rangeStart, rangeEnd, placeholder = "Tria una data", align = "left" }: CalendarDateTimeProps) => {
+const CalendarDateTime = ({ id, value, onChange, required = false, defaultTime = "09:00", rangeStart, rangeEnd, placeholder = "Tria una data", title = "Tria una data" }: CalendarDateTimeProps) => {
     const selected = parse(value);
     const [open, setOpen] = useState(false);
     const [month, setMonth] = useState(() => selected ?? parse(rangeStart) ?? new Date());
     const [focusDay, setFocusDay] = useState<Date | undefined>(selected);
     const [loaded, setLoaded] = useState<{ key: string, items: CalendarItem[] }>();
-    const containerRef = useRef<HTMLDivElement>(null);
 
     const days = useMemo(() => monthGrid(month), [month]);
     const gridKey = dayKey(days[0]);
@@ -89,17 +90,15 @@ const CalendarDateTime = ({ id, value, onChange, required = false, defaultTime =
         return () => { cancelled = true; };
     }, [open, days, gridKey]);
 
-    // Es tanca en clicar fora o amb Escape.
+    // Amb el modal obert: es tanca amb Escape i la pàgina del darrere no fa scroll.
     useEffect(() => {
         if (!open) return;
-        const onMouseDown = (e: MouseEvent) => {
-            if (containerRef.current && !containerRef.current.contains(e.target as Node)) setOpen(false);
-        };
         const onKeyDown = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
-        document.addEventListener("mousedown", onMouseDown);
+        const previousOverflow = document.body.style.overflow;
+        document.body.style.overflow = "hidden";
         document.addEventListener("keydown", onKeyDown);
         return () => {
-            document.removeEventListener("mousedown", onMouseDown);
+            document.body.style.overflow = previousOverflow;
             document.removeEventListener("keydown", onKeyDown);
         };
     }, [open]);
@@ -146,8 +145,135 @@ const CalendarDateTime = ({ id, value, onChange, required = false, defaultTime =
     const shownDay = focusDay ?? selected;
     const shownItems = shownDay ? itemsByDay.get(dayKey(shownDay)) ?? [] : [];
 
+    const dayList = (
+        shownDay ?
+            <>
+                <p className="mb-1 text-xs font-medium first-letter:uppercase text-slate-500">{dayFormat.format(shownDay)}</p>
+                {shownItems.length === 0 ?
+                    <p className="text-sm text-slate-400">Cap esdeveniment ni sol·licitud.</p> :
+                    <ul className="min-h-0 flex-1 space-y-1 overflow-y-auto">
+                        {shownItems.map(x => (
+                            <li key={`${x.kind}-${x.id}`} className="flex items-start gap-2 text-sm">
+                                <span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${kindDot(x.kind)}`} />
+                                <span className="min-w-0 flex-1">
+                                    <span className="block truncate text-slate-900">{x.title}</span>
+                                    <span className="block text-xs text-slate-500">
+                                        {x.kind === CalendarItemKind.Event ? "Esdeveniment" : "Sol·licitud"} · {timeFormat.format(new Date(x.start))}
+                                        {x.end && ` – ${sameDay(new Date(x.start), new Date(x.end)) ? timeFormat.format(new Date(x.end)) : valueFormat.format(new Date(x.end))}`}
+                                    </span>
+                                </span>
+                            </li>
+                        ))}
+                    </ul>}
+            </> :
+            <p className="text-sm text-slate-400">Toca o passa per sobre d&apos;un dia per veure què hi ha.</p>
+    );
+
+    const modal = (
+        <div
+            className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/40 sm:items-center sm:p-4"
+            onMouseDown={e => { if (e.target === e.currentTarget) setOpen(false); }}>
+            <div
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby={`${id}-title`}
+                className="flex max-h-[95dvh] w-full flex-col overflow-y-auto rounded-t-2xl bg-white p-4 shadow-xl sm:w-auto sm:rounded-xl">
+                <div className="mb-3 flex items-center justify-between gap-2">
+                    <h2 id={`${id}-title`} className="text-base font-semibold text-slate-900">{title}</h2>
+                    <button type="button" title="Tancar" className="btn-icon" onClick={() => setOpen(false)}>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-5 w-5">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <div className="flex flex-col gap-4 sm:flex-row">
+                    <div className="w-full sm:w-[22rem]">
+                        <div className="mb-2 flex items-center justify-between gap-2">
+                            <button type="button" title="Mes anterior" className="btn-icon" onClick={() => moveMonth(-1)}>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="h-4 w-4">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                                </svg>
+                            </button>
+                            <div className="flex items-center gap-2">
+                                <span className="text-sm font-semibold capitalize text-slate-900">{monthFormat.format(month)}</span>
+                                {!items && <span className="h-3 w-3 animate-spin rounded-full border-2 border-slate-300 border-t-transparent" />}
+                            </div>
+                            <div className="flex items-center gap-1">
+                                <button type="button" className="btn btn-ghost btn-sm" onClick={() => { setMonth(today); setFocusDay(today); }}>Avui</button>
+                                <button type="button" title="Mes següent" className="btn-icon" onClick={() => moveMonth(1)}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="h-4 w-4">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-7 text-center text-xs font-medium uppercase text-slate-400">
+                            {WEEKDAYS.map(x => <div key={x} className="py-1">{x}</div>)}
+                        </div>
+                        <div className="grid grid-cols-7 gap-0.5" onMouseLeave={() => setFocusDay(selected)}>
+                            {days.map(day => {
+                                const key = dayKey(day);
+                                const dayItems = itemsByDay.get(key) ?? [];
+                                const isSelected = selected && sameDay(day, selected);
+                                const inRange = range && day >= range.start && day <= range.end;
+                                const outside = day.getMonth() !== month.getMonth();
+                                return (
+                                    <button
+                                        key={key}
+                                        type="button"
+                                        title={dayItems.map(x => x.title).join("\n") || undefined}
+                                        onMouseEnter={() => setFocusDay(day)}
+                                        onFocus={() => setFocusDay(day)}
+                                        onClick={() => selectDay(day)}
+                                        className={`flex h-11 flex-col items-center justify-start rounded-md pt-1 text-sm transition-colors
+                                            ${isSelected ? "bg-brand-600 font-semibold text-white" : inRange ? "bg-brand-50 text-brand-900" : "hover:bg-slate-100"}
+                                            ${outside && !isSelected ? "text-slate-300" : ""}
+                                            ${sameDay(day, today) && !isSelected ? "ring-1 ring-inset ring-brand-400" : ""}`}>
+                                        {day.getDate()}
+                                        {dayItems.length > 0 &&
+                                            <span className="mt-0.5 flex items-center gap-0.5">
+                                                {dayItems.slice(0, 3).map((x, idx) => <span key={idx} className={`h-1.5 w-1.5 rounded-full ${isSelected ? "bg-white" : kindDot(x.kind)}`} />)}
+                                                {dayItems.length > 3 && <span className={`text-[0.6rem] leading-none ${isSelected ? "text-white" : "text-slate-500"}`}>+{dayItems.length - 3}</span>}
+                                            </span>}
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+                    {/* Alçada fixa: al mòbil, h-36; al costat, la de la graella (el contingut és absolut i no l'eixampla).
+                        Així el modal no canvia de mida segons el dia que es mira. */}
+                    <div className="relative h-36 border-t border-slate-100 pt-3 sm:h-auto sm:w-64 sm:border-l sm:border-t-0 sm:pt-0">
+                        <div className="flex h-full flex-col sm:absolute sm:inset-0 sm:pl-4">
+                            {dayList}
+                        </div>
+                    </div>
+                </div>
+
+                <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-3">
+                    <div className="flex items-center gap-3 text-xs text-slate-500">
+                        <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-emerald-500" />Esdeveniment</span>
+                        <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-violet-500" />Sol·licitud</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <input
+                            type="time"
+                            aria-label="Hora"
+                            className="form-input w-28 py-1"
+                            disabled={!selected}
+                            value={selected ? toTime(selected) : ""}
+                            onChange={e => changeTime(e.target.value)} />
+                        <button type="button" className="btn btn-primary btn-sm" onClick={() => setOpen(false)}>Fet</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+
     return (
-        <div ref={containerRef} className="relative">
+        <>
             <div className="flex gap-2">
                 <button
                     type="button"
@@ -155,7 +281,7 @@ const CalendarDateTime = ({ id, value, onChange, required = false, defaultTime =
                     aria-haspopup="dialog"
                     aria-expanded={open}
                     className={`form-input text-left ${selected ? "" : "text-slate-400"}`}
-                    onClick={() => open ? setOpen(false) : openCalendar()}>
+                    onClick={openCalendar}>
                     {selected ? valueFormat.format(selected) : placeholder}
                 </button>
                 {selected && !required &&
@@ -165,105 +291,9 @@ const CalendarDateTime = ({ id, value, onChange, required = false, defaultTime =
                         </svg>
                     </button>}
             </div>
-
-            {open &&
-                <div role="dialog" aria-label="Calendari" className={`card absolute left-0 z-40 ${align === "right" ? "sm:left-auto sm:right-0" : ""} mt-2 w-[22rem] max-w-[calc(100vw-2rem)] p-3 shadow-lg`}>
-                    <div className="mb-2 flex items-center justify-between gap-2">
-                        <button type="button" title="Mes anterior" className="btn-icon" onClick={() => moveMonth(-1)}>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="h-4 w-4">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-                            </svg>
-                        </button>
-                        <div className="flex items-center gap-2">
-                            <span className="text-sm font-semibold capitalize text-slate-900">{monthFormat.format(month)}</span>
-                            {!items && <span className="h-3 w-3 animate-spin rounded-full border-2 border-slate-300 border-t-transparent" />}
-                        </div>
-                        <div className="flex items-center gap-1">
-                            <button type="button" className="btn btn-ghost btn-sm" onClick={() => { setMonth(today); setFocusDay(today); }}>Avui</button>
-                            <button type="button" title="Mes següent" className="btn-icon" onClick={() => moveMonth(1)}>
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="h-4 w-4">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-7 text-center text-xs font-medium uppercase text-slate-400">
-                        {WEEKDAYS.map(x => <div key={x} className="py-1">{x}</div>)}
-                    </div>
-                    <div className="grid grid-cols-7 gap-0.5" onMouseLeave={() => setFocusDay(selected)}>
-                        {days.map(day => {
-                            const key = dayKey(day);
-                            const dayItems = itemsByDay.get(key) ?? [];
-                            const isSelected = selected && sameDay(day, selected);
-                            const inRange = range && day >= range.start && day <= range.end;
-                            const outside = day.getMonth() !== month.getMonth();
-                            return (
-                                <button
-                                    key={key}
-                                    type="button"
-                                    title={dayItems.map(x => x.title).join("\n") || undefined}
-                                    onMouseEnter={() => setFocusDay(day)}
-                                    onFocus={() => setFocusDay(day)}
-                                    onClick={() => selectDay(day)}
-                                    className={`flex h-11 flex-col items-center justify-start rounded-md pt-1 text-sm transition-colors
-                                        ${isSelected ? "bg-brand-600 font-semibold text-white" : inRange ? "bg-brand-50 text-brand-900" : "hover:bg-slate-100"}
-                                        ${outside && !isSelected ? "text-slate-300" : ""}
-                                        ${sameDay(day, today) && !isSelected ? "ring-1 ring-inset ring-brand-400" : ""}`}>
-                                    {day.getDate()}
-                                    {dayItems.length > 0 &&
-                                        <span className="mt-0.5 flex items-center gap-0.5">
-                                            {dayItems.slice(0, 3).map((x, idx) => <span key={idx} className={`h-1.5 w-1.5 rounded-full ${isSelected ? "bg-white" : kindDot(x.kind)}`} />)}
-                                            {dayItems.length > 3 && <span className={`text-[0.6rem] leading-none ${isSelected ? "text-white" : "text-slate-500"}`}>+{dayItems.length - 3}</span>}
-                                        </span>}
-                                </button>
-                            );
-                        })}
-                    </div>
-
-                    {/* Alçada fixa: el calendari no canvia de mida segons el dia que es mira. */}
-                    <div className="mt-3 flex h-36 flex-col border-t border-slate-100 pt-3">
-                        {shownDay ?
-                            <>
-                                <p className="mb-1 text-xs font-medium first-letter:uppercase text-slate-500">{dayFormat.format(shownDay)}</p>
-                                {shownItems.length === 0 ?
-                                    <p className="text-sm text-slate-400">Cap esdeveniment ni sol·licitud.</p> :
-                                    <ul className="min-h-0 flex-1 space-y-1 overflow-y-auto">
-                                        {shownItems.map(x => (
-                                            <li key={`${x.kind}-${x.id}`} className="flex items-start gap-2 text-sm">
-                                                <span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${kindDot(x.kind)}`} />
-                                                <span className="min-w-0 flex-1">
-                                                    <span className="block truncate text-slate-900">{x.title}</span>
-                                                    <span className="block text-xs text-slate-500">
-                                                        {x.kind === CalendarItemKind.Event ? "Esdeveniment" : "Sol·licitud"} · {timeFormat.format(new Date(x.start))}
-                                                        {x.end && ` – ${sameDay(new Date(x.start), new Date(x.end)) ? timeFormat.format(new Date(x.end)) : valueFormat.format(new Date(x.end))}`}
-                                                    </span>
-                                                </span>
-                                            </li>
-                                        ))}
-                                    </ul>}
-                            </> :
-                            <p className="text-sm text-slate-400">Passa per sobre d&apos;un dia per veure què hi ha.</p>}
-                    </div>
-
-                    <div className="mt-3 flex items-center justify-between gap-3 border-t border-slate-100 pt-3">
-                        <div className="flex items-center gap-3 text-xs text-slate-500">
-                            <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-emerald-500" />Esdeveniment</span>
-                            <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-violet-500" />Sol·licitud</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <input
-                                type="time"
-                                aria-label="Hora"
-                                className="form-input w-28 py-1"
-                                disabled={!selected}
-                                value={selected ? toTime(selected) : ""}
-                                onChange={e => changeTime(e.target.value)} />
-                            <button type="button" className="btn btn-primary btn-sm" onClick={() => setOpen(false)}>Fet</button>
-                        </div>
-                    </div>
-                </div>}
-        </div>
+            {/* Al body perquè cap contenidor (overflow, transform…) el retalli. */}
+            {open && createPortal(modal, document.body)}
+        </>
     );
 }
 

@@ -76,6 +76,7 @@ const EventRequestFields = ({ data, errors, setData }: EventRequestFieldsProps) 
                         <label className="form-label" htmlFor="startDate">Data d&apos;inici</label>
                         <CalendarDateTime
                             id="startDate"
+                            title="Data d'inici"
                             required={true}
                             value={data.startDate || undefined}
                             rangeStart={data.startDate}
@@ -87,7 +88,7 @@ const EventRequestFields = ({ data, errors, setData }: EventRequestFieldsProps) 
                         <label className="form-label" htmlFor="endDate">Data de finalització</label>
                         <CalendarDateTime
                             id="endDate"
-                            align="right"
+                            title="Data de finalització"
                             defaultTime="17:00"
                             placeholder="Opcional"
                             value={data.endDate}
@@ -115,7 +116,7 @@ const EventRequestFields = ({ data, errors, setData }: EventRequestFieldsProps) 
                         <label className="form-label" htmlFor="paymentDeadline">Data límit de pagament</label>
                         <CalendarDateTime
                             id="paymentDeadline"
-                            align="right"
+                            title="Data límit de pagament"
                             defaultTime="23:59"
                             placeholder="Opcional"
                             value={data.paymentDeadline}
