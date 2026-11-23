@@ -221,13 +221,14 @@ const CalendarDateTime = ({ id, value, onChange, required = false, defaultTime =
                         })}
                     </div>
 
-                    <div className="mt-3 border-t border-slate-100 pt-3">
+                    {/* Alçada fixa: el calendari no canvia de mida segons el dia que es mira. */}
+                    <div className="mt-3 flex h-36 flex-col border-t border-slate-100 pt-3">
                         {shownDay ?
                             <>
                                 <p className="mb-1 text-xs font-medium first-letter:uppercase text-slate-500">{dayFormat.format(shownDay)}</p>
                                 {shownItems.length === 0 ?
                                     <p className="text-sm text-slate-400">Cap esdeveniment ni sol·licitud.</p> :
-                                    <ul className="max-h-32 space-y-1 overflow-y-auto">
+                                    <ul className="min-h-0 flex-1 space-y-1 overflow-y-auto">
                                         {shownItems.map(x => (
                                             <li key={`${x.kind}-${x.id}`} className="flex items-start gap-2 text-sm">
                                                 <span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${kindDot(x.kind)}`} />
