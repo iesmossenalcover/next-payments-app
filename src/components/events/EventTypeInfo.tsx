@@ -37,8 +37,8 @@ const shortLabels: Record<EventType, string> = {
 };
 
 export const summaryLabels: Record<EventType, { done: string, pending: string }> = {
-    [EventType.Walking]: { done: "Pagat i autoritzat", pending: "No Pagat i/o no autoritzat" },
-    [EventType.Transport]: { done: "Pagat i autoritzat", pending: "No Pagat i/o no autoritzat" },
+    [EventType.Walking]: { done: "Pagat i autoritzat", pending: "No Pagat / no autoritzat" },
+    [EventType.Transport]: { done: "Pagat i autoritzat", pending: "No Pagat / no autoritzat" },
     [EventType.Trip]: { done: "Pagat", pending: "No Pagat" },
     [EventType.Workshop]: { done: "Pagat", pending: "No Pagat" },
     [EventType.Other]: { done: "Pagat", pending: "No Pagat" },
