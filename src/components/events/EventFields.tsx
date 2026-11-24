@@ -162,7 +162,7 @@ const EventFields = ({ event, errors, setEvent }: EventComponentProps) => {
                     <div>
                         <label
                             className="form-label"
-                            htmlFor="amipaPrice">Preu Amipa</label>
+                            htmlFor="amipaPrice">Preu Afa</label>
                         <div className="relative">
                             <input
                                 className="form-input pr-9"

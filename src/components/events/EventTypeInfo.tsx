@@ -36,6 +36,19 @@ const shortLabels: Record<EventType, string> = {
     [EventType.Other]: "Altres",
 };
 
+export const summaryLabels: Record<EventType, { done: string, pending: string }> = {
+    [EventType.Walking]: { done: "Pagat i autoritzat", pending: "No Pagat i/o no autoritzat" },
+    [EventType.Transport]: { done: "Pagat i autoritzat", pending: "No Pagat i/o no autoritzat" },
+    [EventType.Trip]: { done: "Pagat", pending: "No Pagat" },
+    [EventType.Workshop]: { done: "Pagat", pending: "No Pagat" },
+    [EventType.Other]: { done: "Pagat", pending: "No Pagat" },
+};
+
+const defaultSummaryLabels = { done: "Pagat", pending: "No Pagat" };
+
+export const getSummaryLabels = (type?: EventType) =>
+    (type !== undefined && type !== null && summaryLabels[type]) || defaultSummaryLabels;
+
 export const EventTypeBadge = ({ type }: { type?: EventType }) => {
     if (type === undefined || type === null) return null;
     return <span className="badge badge-gray">{shortLabels[type]}</span>;

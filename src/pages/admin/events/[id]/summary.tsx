@@ -5,7 +5,7 @@ import { displayDate, displayDateTime } from "@/lib/utils";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { EventTypeBadge, MissingAuthorizationBadge } from "@/components/events/EventTypeInfo";
+import { EventTypeBadge, MissingAuthorizationBadge, getSummaryLabels } from "@/components/events/EventTypeInfo";
 
 const EventSummaries = () => {
     const router = useRouter()
@@ -34,6 +34,7 @@ const EventSummaries = () => {
     const displayEvents = events();
     const displayPaidEvents = displayEvents.filter(x => x.paid);
     const displayUnpaidEvents = displayEvents.filter(x => !x.paid);
+    const labels = getSummaryLabels(data.type);
 
     return (
 
@@ -106,7 +107,7 @@ const EventSummaries = () => {
                     <section className="card overflow-hidden print:mb-6">
                         <h3 className="flex items-center gap-2 border-b border-slate-200 px-5 py-4 font-semibold text-slate-900">
                             <span className="h-2 w-2 rounded-full bg-emerald-500" />
-                            Pagat
+                            {labels.done}
                             <span className="badge badge-green">{displayPaidEvents.length}</span>
                         </h3>
                         <ul className="divide-y divide-slate-100">
@@ -134,7 +135,7 @@ const EventSummaries = () => {
                     <section className="card overflow-hidden">
                         <h3 className="flex items-center gap-2 border-b border-slate-200 px-5 py-4 font-semibold text-slate-900">
                             <span className="h-2 w-2 rounded-full bg-red-500" />
-                            No Pagat
+                            {labels.pending}
                             <span className="badge badge-red">{displayUnpaidEvents.length}</span>
                         </h3>
                         <ul className="divide-y divide-slate-100">
