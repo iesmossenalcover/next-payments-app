@@ -9,7 +9,7 @@ import { displayDate, displayTime, plainErrors } from "@/lib/utils";
 import { SelectorComponent, SelectorOption } from "@/components/Selector";
 import { useApiRequest } from "@/lib/hooks/useApiRequest";
 import { PageHeader, PageMain } from "@/components/layout/PageHeader";
-import { EventTypeBadge, MissingAuthorizationBadge, getSummaryLabels, missingAuthorizationText } from "@/components/events/EventTypeInfo";
+import { EventTypeBadge, MissingAuthorizationBadge, missingAuthorizationText } from "@/components/events/EventTypeInfo";
 
 
 const tableHeaders = {
@@ -146,7 +146,6 @@ const EventPaymentsComp = () => {
     );
 
     const unpaidCount = data.summary.totalCount - data.summary.totalPaidCount;
-    const labels = getSummaryLabels(event.type);
     // Candidats al pagament massiu. El servidor torna a filtrar: això només és per al text del botó.
     const pendingAuthorized = data.unPaidEvents.filter(x => x.authorized).length;
     const paidPercent = data.summary.totalCount > 0 ? Math.round(data.summary.totalPaidCount * 100 / data.summary.totalCount) : 0;
@@ -263,7 +262,7 @@ const EventPaymentsComp = () => {
                     <section className="card overflow-hidden">
                         <h3 className="flex items-center gap-2 border-b border-slate-200 px-5 py-4 font-semibold text-slate-900">
                             <span className="h-2 w-2 rounded-full bg-emerald-500" />
-                            {labels.done}
+                            Pagat
                             <span className="badge badge-green">{data.summary.totalPaidCount}</span>
                         </h3>
                         <ul className="divide-y divide-slate-100">
@@ -274,7 +273,7 @@ const EventPaymentsComp = () => {
                         <div className="flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-slate-200 px-5 py-4">
                             <h3 className="flex items-center gap-2 font-semibold text-slate-900">
                                 <span className="h-2 w-2 rounded-full bg-red-500" />
-                                {labels.pending}
+                                No Pagat
                                 <span className="badge badge-red">{unpaidCount}</span>
                             </h3>
                             <SetAllAuthorizedPaid
