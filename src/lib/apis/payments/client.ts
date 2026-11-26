@@ -583,8 +583,12 @@ export const editMyEventRequest = async (id: number, data: EventRequestData): Pr
     withErrorsMap<number>(await putJson(`${API_BASE_URL}/api/event-requests/mine/${id}`, data));
 
 // Admin
-export const getEventRequests = async (status?: EventRequestStatus): Promise<EventRequestSummary[]> => {
-    const query = status === undefined ? "" : `?status=${status}`;
+// Sense curs, les del curs actual.
+export const getEventRequests = async (status?: EventRequestStatus, courseId?: number): Promise<EventRequestSummary[]> => {
+    const params = new URLSearchParams();
+    if (status !== undefined) params.set("status", String(status));
+    if (courseId !== undefined) params.set("courseId", String(courseId));
+    const query = params.toString() ? `?${params.toString()}` : "";
     const response = await get(`${API_BASE_URL}/api/event-requests${query}`);
     return response.ok ? await response.json() as EventRequestSummary[] : [];
 }

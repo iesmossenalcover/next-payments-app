@@ -2,7 +2,8 @@ import { Container } from "@/components/layout/SideBar";
 import { PageHeader, PageMain } from "@/components/layout/PageHeader";
 import { Spinner } from "@/components/Loading";
 import { EventRequestStatusBadge, statusOptions } from "@/components/eventrequests/EventRequestStatus";
-import { getEventRequests } from "@/lib/apis/payments/client";
+import { SelectorOption } from "@/components/Selector";
+import { getCoursesSelector, getEventRequests } from "@/lib/apis/payments/client";
 import { EventRequestStatus } from "@/lib/apis/payments/models";
 import { useApiRequest } from "@/lib/hooks/useApiRequest";
 import { displayDate } from "@/lib/utils";
@@ -15,11 +16,20 @@ const ADMIN_TURN = "admin";
 
 const ReviewEventRequests = () => {
     const [statusFilter, setStatusFilter] = useState<string>(ADMIN_TURN);
+    // "" = curs actual (el resol el servidor).
+    const [courseFilter, setCourseFilter] = useState("");
+    const [courses, setCourses] = useState<SelectorOption[]>([]);
     const { data: requests, isLoading, executeRequest } = useApiRequest(getEventRequests);
 
     useEffect(() => {
-        executeRequest(statusFilter === "" || statusFilter === ADMIN_TURN ? undefined : Number(statusFilter) as EventRequestStatus);
-    }, [statusFilter, executeRequest]);
+        getCoursesSelector().then(x => setCourses(x?.options ?? [])).catch(() => setCourses([]));
+    }, []);
+
+    useEffect(() => {
+        executeRequest(
+            statusFilter === "" || statusFilter === ADMIN_TURN ? undefined : Number(statusFilter) as EventRequestStatus,
+            courseFilter === "" ? undefined : Number(courseFilter));
+    }, [statusFilter, courseFilter, executeRequest]);
 
     const visible = (requests ?? []).filter(x => statusFilter !== ADMIN_TURN
         || x.status === EventRequestStatus.PendingReview
@@ -35,7 +45,15 @@ const ReviewEventRequests = () => {
             <PageMain>
                 <PageHeader title="Revisar sol·licituds" subtitle="Sol·licituds d'esdeveniments del professorat" />
 
-                <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+                <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+                    <select
+                        aria-label="Filtrar per curs"
+                        className="form-input sm:max-w-56"
+                        value={courseFilter}
+                        onChange={e => setCourseFilter(e.currentTarget.value)}>
+                        <option value="">Curs actual</option>
+                        {courses.map(x => <option key={x.key} value={x.key}>{x.value}</option>)}
+                    </select>
                     <select
                         aria-label="Filtrar per estat"
                         className="form-input sm:max-w-64"
@@ -45,7 +63,7 @@ const ReviewEventRequests = () => {
                         <option value="">Totes</option>
                         {statusOptions.map(x => <option key={x.value} value={x.value}>{x.label}</option>)}
                     </select>
-                    <p className="text-sm text-slate-500">{visible.length} {visible.length === 1 ? "sol·licitud" : "sol·licituds"}</p>
+                    <p className="text-sm text-slate-500 sm:ml-auto">{visible.length} {visible.length === 1 ? "sol·licitud" : "sol·licituds"}</p>
                 </div>
 
                 {!requests && isLoading ? <div className="flex justify-center py-16"><Spinner /></div> :
