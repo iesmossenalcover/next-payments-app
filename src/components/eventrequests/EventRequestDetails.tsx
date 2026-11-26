@@ -1,4 +1,4 @@
-import { EventRequest, EventRequestRecipientType, EventRequestStatus } from "@/lib/apis/payments/models";
+import { EventRequest, EventRequestRecipient, EventRequestRecipientType, EventRequestStatus } from "@/lib/apis/payments/models";
 import { displayDateTime, displayPrice } from "@/lib/utils";
 import Link from "next/link";
 import { actionLabel, EventRequestStatusBadge, statusLabel } from "./EventRequestStatus";
@@ -14,6 +14,11 @@ const Row = ({ label, children }: { label: string, children: React.ReactNode }) 
 export const EventRequestDetails = ({ request }: { request: EventRequest }) => {
     const groups = request.recipients.filter(x => x.type === EventRequestRecipientType.Group);
     const people = request.recipients.filter(x => x.type === EventRequestRecipientType.Person);
+    // Alumnes triats un a un, agrupats pel seu grup.
+    const byGroup = new Map<number, EventRequestRecipient[]>();
+    people.filter(x => x.groupId !== undefined && x.groupId !== null).forEach(x => byGroup.set(x.groupId!, [...(byGroup.get(x.groupId!) ?? []), x]));
+    const partialGroups = Array.from(byGroup.entries());
+    const ungrouped = people.filter(x => x.groupId === undefined || x.groupId === null);
 
     return (
         <dl className="divide-y divide-slate-100">
@@ -24,6 +29,8 @@ export const EventRequestDetails = ({ request }: { request: EventRequest }) => {
                 </Row>}
             {request.status === EventRequestStatus.PendingCreation && request.changesDeadline &&
                 <Row label="Canvis del professor fins al">{displayDateTime(request.changesDeadline)}</Row>}
+            {request.status === EventRequestStatus.PendingCreation &&
+                <Row label="Google Calendar">{request.syncToCalendar ? "Es sincronitzarà en crear l'esdeveniment" : "No es sincronitzarà"}</Row>}
             <Row label="Sol·licitada per">{request.requesterName} <span className="text-slate-500">({request.requesterEmail})</span></Row>
             <Row label="Títol"><span className="font-medium">{request.title}</span></Row>
             <Row label="Descripció"><span className="whitespace-pre-line">{request.description || "-"}</span></Row>
@@ -31,18 +38,33 @@ export const EventRequestDetails = ({ request }: { request: EventRequest }) => {
             <Row label="Data de finalització">{request.endDate ? displayDateTime(request.endDate) : "-"}</Row>
             <Row label="Preu">{displayPrice(request.price, "€")}</Row>
             <Row label="Data límit de pagament">{request.paymentDeadline ? displayDateTime(request.paymentDeadline) : "-"}</Row>
-            <Row label="Grups">
-                {groups.length === 0 ? "-" :
-                    <div className="flex flex-wrap gap-1">
-                        {groups.map(x => <span key={x.referenceId} className="badge badge-gray">{x.name ?? `#${x.referenceId}`}</span>)}
+            <Row label="Destinataris">
+                {groups.length === 0 && partialGroups.length === 0 && ungrouped.length === 0 ? "-" :
+                    <div className="space-y-2">
+                        {groups.length > 0 &&
+                            <div className="flex flex-wrap gap-1">
+                                {groups.map(x => <span key={x.referenceId} className="badge badge-purple">{x.name ?? `#${x.referenceId}`} · tot el grup</span>)}
+                            </div>}
+                        {partialGroups.map(([groupId, list]) => (
+                            <details key={groupId} className="rounded-lg ring-1 ring-slate-200">
+                                <summary className="flex min-h-11 cursor-pointer items-center gap-2 px-3 py-2">
+                                    <span className="font-medium">{list[0].groupName ?? `#${groupId}`}</span>
+                                    <span className="text-slate-500">· {list.length} {list.length === 1 ? "alumne" : "alumnes"}</span>
+                                </summary>
+                                <ul className="space-y-1 px-3 pb-3">
+                                    {list.map(x => <li key={x.referenceId}>{x.name ?? `#${x.referenceId}`}</li>)}
+                                </ul>
+                            </details>
+                        ))}
+                        {ungrouped.length > 0 &&
+                            <div>
+                                <p className="mb-1 text-slate-500">Alumnes sense grup aquest curs</p>
+                                <div className="flex flex-wrap gap-1">
+                                    {ungrouped.map(x => <span key={x.referenceId} className="badge badge-gray">{x.name ?? `#${x.referenceId}`}</span>)}
+                                </div>
+                            </div>}
                     </div>}
             </Row>
-            {people.length > 0 &&
-                <Row label="Alumnes">
-                    <div className="flex flex-wrap gap-1">
-                        {people.map(x => <span key={x.referenceId} className="badge badge-gray">{x.name ?? `#${x.referenceId}`}</span>)}
-                    </div>
-                </Row>}
         </dl>
     )
 }
@@ -92,5 +114,5 @@ export const toRequestData = (r: EventRequest) => ({
     endDate: r.endDate ?? undefined,
     price: r.price,
     paymentDeadline: r.paymentDeadline ?? undefined,
-    recipients: r.recipients.map(x => ({ type: x.type, referenceId: x.referenceId })),
+    recipients: r.recipients.map(x => ({ type: x.type, referenceId: x.referenceId, name: x.name, groupId: x.groupId, groupName: x.groupName })),
 });

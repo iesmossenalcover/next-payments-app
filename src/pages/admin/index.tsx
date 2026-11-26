@@ -3,9 +3,12 @@ import { PageHeader, PageMain } from "@/components/layout/PageHeader";
 import { Spinner } from "@/components/Loading";
 import Toggle from "@/components/Toggle";
 import { AppConfig, getAdminInfo, setAppConfig } from "@/lib/apis/payments";
+import { hasRole, Roles } from "@/lib/apis/payments/models";
 import { useStartApiRequest } from "@/lib/hooks/useApiRequest";
+import useUser from "@/lib/hooks/useUser";
 import Head from "next/head";
-import { useState } from "react";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
 const Admin = () => {
     const [updatingConfig, setUpdatingConfig] = useState(false);
@@ -173,6 +176,17 @@ const StatCard = ({ title, value, icon, color }: StatCardProps) => {
 }
 
 export default function AdminPage() {
+    const { user, loading } = useUser();
+    const router = useRouter();
+    const isAdmin = hasRole(user?.role, Roles.Admin);
+
+    // El professorat (reader) no pot veure el tauler d'administració: va al calendari.
+    useEffect(() => {
+        if (!loading && user && !isAdmin) router.replace("/admin/calendar");
+    }, [loading, user, isAdmin, router]);
+
+    if (loading || !isAdmin) return null;
+
     return (
         <Container>
             <Admin />

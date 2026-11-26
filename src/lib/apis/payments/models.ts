@@ -454,6 +454,7 @@ export enum EventRequestStatus {
     PendingCreation = 2,
     Created = 3,
     Deleted = 4,
+    Rejected = 5,
 }
 
 export enum EventRequestAction {
@@ -477,6 +478,24 @@ export interface EventRequestRecipient {
     type: EventRequestRecipientType,
     referenceId: number,
     name?: string,
+    // Només per als alumnes: el seu grup al curs de la sol·licitud.
+    groupId?: number,
+    groupName?: string,
+}
+
+// Resultat de crear l'esdeveniment d'una sol·licitud.
+export interface CreateEventFromRequestResult {
+    eventId: number,
+    code: string,
+    // null/undefined si la sol·licitud no s'havia de sincronitzar amb Google Calendar.
+    calendarSynced?: boolean,
+    calendarError?: string,
+}
+
+// Alumne d'un grup (per triar-ne només alguns a la sol·licitud).
+export interface GroupPerson {
+    id: number,
+    name: string,
 }
 
 // Dades del formulari. De moment només els camps mínims.
@@ -525,6 +544,8 @@ export interface EventRequest extends EventRequestData {
     changesDeadline?: string,
     // El professor la pot editar ara (en correcció, o aprovada i dins del termini).
     canRequesterEdit: boolean,
+    // Si en crear l'esdeveniment s'afegirà a Google Calendar (ho tria l'admin en aprovar).
+    syncToCalendar: boolean,
     eventId?: number,
     eventCode?: string,
     createdAt: string,

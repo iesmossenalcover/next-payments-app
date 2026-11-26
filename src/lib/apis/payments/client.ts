@@ -1,4 +1,4 @@
-import { BatchUploadSummary, Identity, PersonActiveEventsVm, Person, PersonRow, Response, SigninResponse, CreateOrderResponse, EventRow, Event, GetOrderInfo, EventPeople, EventPaymentsVm, SetEventPeoplePaidVm, AdminInfo, AppConfig, EventSummaryVm, SyncPersonResponse, UpdatePasswordResponse, GroupRow, Group, Course, CreateOrderCommand, StartJobResponse, GetJobsResponse, JobType, GetLogResponse, OuGroupRelationRow, OuGroupRelationPage, OuGroupRelation, PersonPaymentsVm, EventRequest, EventRequestData, EventRequestStatus, EventRequestSummary, CalendarItem } from "./models"
+import { BatchUploadSummary, Identity, PersonActiveEventsVm, Person, PersonRow, Response, SigninResponse, CreateOrderResponse, EventRow, Event, GetOrderInfo, EventPeople, EventPaymentsVm, SetEventPeoplePaidVm, AdminInfo, AppConfig, EventSummaryVm, SyncPersonResponse, UpdatePasswordResponse, GroupRow, Group, Course, CreateOrderCommand, StartJobResponse, GetJobsResponse, JobType, GetLogResponse, OuGroupRelationRow, OuGroupRelationPage, OuGroupRelation, PersonPaymentsVm, EventRequest, EventRequestData, EventRequestStatus, EventRequestSummary, CalendarItem, GroupPerson, CreateEventFromRequestResult } from "./models"
 import { deleteJson, get, postJson, putJson, toFile } from "./baseclient"
 import { Selector } from "@/components/Selector"
 import { ApiResult } from "@/lib/hooks/useApiRequest"
@@ -595,8 +595,8 @@ export const getEventRequest = async (id: number): Promise<Response<EventRequest
 export const editEventRequest = async (id: number, data: EventRequestData): Promise<Response<number>> =>
     withErrorsMap<number>(await putJson(`${API_BASE_URL}/api/event-requests/${id}`, data));
 
-export const approveEventRequest = async (id: number, changesDeadline: string): Promise<Response<number>> =>
-    withErrorsMap<number>(await postJson(`${API_BASE_URL}/api/event-requests/${id}/approve`, { changesDeadline }));
+export const approveEventRequest = async (id: number, changesDeadline: string, syncToCalendar: boolean): Promise<Response<number>> =>
+    withErrorsMap<number>(await postJson(`${API_BASE_URL}/api/event-requests/${id}/approve`, { changesDeadline, syncToCalendar }));
 
 export const requestEventRequestCorrection = async (id: number, reason: string): Promise<Response<number>> =>
     withErrorsMap<number>(await postJson(`${API_BASE_URL}/api/event-requests/${id}/request-correction`, { reason }));
@@ -607,12 +607,19 @@ export const rejectEventRequest = async (id: number, reason: string): Promise<Re
 export const deleteEventRequest = async (id: number): Promise<Response<number>> =>
     withErrorsMap<number>(await postJson(`${API_BASE_URL}/api/event-requests/${id}/delete`));
 
-export const createEventFromRequest = async (id: number, event: Event): Promise<Response<string>> =>
-    withErrorsMap<string>(await postJson(`${API_BASE_URL}/api/event-requests/${id}/create-event`, event));
+// Si en aprovar es va triar, el servidor també el crea a Google Calendar.
+export const createEventFromRequest = async (id: number, event: Event): Promise<Response<CreateEventFromRequestResult>> =>
+    withErrorsMap<CreateEventFromRequestResult>(await postJson(`${API_BASE_URL}/api/event-requests/${id}/create-event`, event));
 
 // Esdeveniments i sol·licituds en curs entre dues dates (per al calendari del formulari).
 export const getEventCalendar = async (from: Date, to: Date): Promise<CalendarItem[]> => {
     const query = `from=${encodeURIComponent(from.toISOString())}&to=${encodeURIComponent(to.toISOString())}`;
     const response = await get(`${API_BASE_URL}/api/event-requests/calendar?${query}`);
     return response.ok ? await response.json() as CalendarItem[] : [];
+}
+
+// Alumnes d'un grup al curs actual (per triar destinataris a la sol·licitud).
+export const getEventRequestGroupPeople = async (groupId: number): Promise<GroupPerson[]> => {
+    const response = await get(`${API_BASE_URL}/api/event-requests/groups/${groupId}/people`);
+    return response.ok ? await response.json() as GroupPerson[] : [];
 }

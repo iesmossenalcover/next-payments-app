@@ -57,6 +57,9 @@ const ReviewEventRequest = () => {
     const [errors, setErrors] = useState<Map<string, string[]>>();
     const [message, setMessage] = useState<string>();
     const [createdCode, setCreatedCode] = useState<string>();
+    // En aprovar, l'admin ha de triar si l'esdeveniment anirà a Google Calendar (sense valor per defecte).
+    const [syncToCalendar, setSyncToCalendar] = useState<boolean>();
+    const [calendarError, setCalendarError] = useState<{ eventId: number, message: string }>();
 
     const [data, setData] = useState<EventRequestData>();
     const [reason, setReason] = useState("");
@@ -87,13 +90,15 @@ const ReviewEventRequest = () => {
         setMode(m);
         setErrors(undefined);
         setMessage(undefined);
+        setCalendarError(undefined);
         setReason("");
         setChangesDeadline(defaultChangesDeadline());
+        setSyncToCalendar(undefined);
     }
 
     // Executa una acció: si va bé, recarrega la sol·licitud i torna al mode de veure.
     // Si onSuccess retorna true, no es recarrega (p. ex. perquè ja se surt de la pàgina).
-    const run = async <T,>(action: () => Promise<Response<T>>, successMessage: string, onSuccess?: (data: T) => boolean | void) => {
+    const run = async <T,>(action: () => Promise<Response<T>>, successMessage: string | ((data: T) => string), onSuccess?: (data: T) => boolean | void) => {
         setBusy(true);
         const response = await action();
         setBusy(false);
@@ -105,7 +110,7 @@ const ReviewEventRequest = () => {
         }
         if (onSuccess && response.data !== undefined && onSuccess(response.data)) return;
         changeMode("view");
-        setMessage(successMessage);
+        setMessage(typeof successMessage === "function" ? (response.data !== undefined ? successMessage(response.data) : "") : successMessage);
         await load();
     }
 
@@ -117,11 +122,14 @@ const ReviewEventRequest = () => {
     const canEdit = s === EventRequestStatus.PendingReview || s === EventRequestStatus.PendingCreation;
     const canRequestCorrection = s === EventRequestStatus.PendingReview || s === EventRequestStatus.PendingCreation;
     const canCreate = s === EventRequestStatus.PendingCreation;
-    const canRejectOrDelete = s === EventRequestStatus.PendingReview || s === EventRequestStatus.PendingCorrection || s === EventRequestStatus.PendingCreation;
+    const canReject = s === EventRequestStatus.PendingReview || s === EventRequestStatus.PendingCorrection || s === EventRequestStatus.PendingCreation;
+    // Rebutjar no esborra (queda a l'historial); eliminar sí, i també es pot fer amb una de rebutjada.
+    const canDelete = canReject || s === EventRequestStatus.Rejected;
 
     const onSubmitApprove = (e: React.SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault();
-        run(() => approveEventRequest(id, changesDeadline), "Sol·licitud aprovada. S'ha avisat el professor del termini per fer canvis.");
+        if (syncToCalendar === undefined) return;
+        run(() => approveEventRequest(id, changesDeadline, syncToCalendar), "Sol·licitud aprovada. S'ha avisat el professor del termini per fer canvis.");
     }
 
     const onDelete = () => {
@@ -145,9 +153,19 @@ const ReviewEventRequest = () => {
             : "Canvis desats.");
     }
 
-    const onSubmitCreate = (e: React.SyntheticEvent<HTMLFormElement>) => {
+    // Si en aprovar es va triar Google Calendar, el servidor el sincronitza en crear-lo.
+    const onSubmitCreate = async (e: React.SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault();
-        run(() => createEventFromRequest(id, event), "Esdeveniment creat.", code => { setCreatedCode(code); });
+        let failedSync: { eventId: number, message: string } | undefined;
+        await run(
+            () => createEventFromRequest(id, event),
+            r => r.calendarSynced ? "Esdeveniment creat i sincronitzat amb Google Calendar." : "Esdeveniment creat.",
+            r => {
+                setCreatedCode(r.code);
+                if (r.calendarSynced === false) failedSync = { eventId: r.eventId, message: r.calendarError ?? "" };
+            });
+        // Després de run, que en tornar al mode de veure neteja els avisos.
+        if (failedSync) setCalendarError(failedSync);
     }
 
     const actionButton = (text: string, onClick: () => void, className = "btn-secondary") =>
@@ -188,8 +206,28 @@ const ReviewEventRequest = () => {
                             initialValue={toInputDateTime(new Date(changesDeadline))}
                             onDateChanged={d => setChangesDeadline(d && !isNaN(d.getTime()) ? d.toISOString() : "")} />
                         {errors?.has("changesDeadline") && <p className="form-error">{(errors.get("changesDeadline") as string[]).join(", ")}</p>}
+
+                        <fieldset className="mt-6">
+                            <legend className="form-label">Afegir l&apos;esdeveniment a Google Calendar?</legend>
+                            <p className="form-hint mb-2">Es farà automàticament quan es creï l&apos;esdeveniment, al calendari d&apos;extraescolars.</p>
+                            <div className="flex flex-col gap-2 sm:flex-row">
+                                {[{ value: true, label: "Sí, sincronitzar" }, { value: false, label: "No" }].map(o => (
+                                    <label key={String(o.value)} className={`flex min-h-11 flex-1 cursor-pointer items-center gap-3 rounded-lg px-3 py-2 text-sm ring-1 ${syncToCalendar === o.value ? "bg-brand-50 ring-brand-400" : "ring-slate-200 hover:bg-slate-50"}`}>
+                                        <input
+                                            type="radio"
+                                            name="syncToCalendar"
+                                            required={true}
+                                            className="h-4 w-4 accent-brand-600"
+                                            checked={syncToCalendar === o.value}
+                                            onChange={() => setSyncToCalendar(o.value)} />
+                                        {o.label}
+                                    </label>
+                                ))}
+                            </div>
+                        </fieldset>
+
                         <div className="mt-6 flex gap-3">
-                            <input disabled={busy || changesDeadline === ""} className="btn btn-primary flex-1" value="Aprovar" type="submit" />
+                            <input disabled={busy || changesDeadline === "" || syncToCalendar === undefined} className="btn btn-primary flex-1" value="Aprovar" type="submit" />
                             {actionButton("Cancel·lar", () => changeMode("view"))}
                         </div>
                     </form>
@@ -225,7 +263,8 @@ const ReviewEventRequest = () => {
                 return (
                     <form className="card p-6 sm:p-8" action="#" method="post" onSubmit={onSubmitCreate} autoComplete="off">
                         <p className="mb-6 text-sm text-slate-500">
-                            Revisa i completa les dades de l&apos;esdeveniment. En crear-lo s&apos;hi afegiran els alumnes dels grups proposats.
+                            Revisa i completa les dades de l&apos;esdeveniment. En crear-lo s&apos;hi afegiran els alumnes dels grups proposats
+                            {request.syncToCalendar ? " i s'afegirà a Google Calendar." : ". No s'afegirà a Google Calendar."}
                         </p>
                         <EventFields event={event} setEvent={setEvent} errors={errors} />
                         <div className="mt-8 flex gap-3">
@@ -256,8 +295,8 @@ const ReviewEventRequest = () => {
                         {canCreate && actionButton("Crear esdeveniment", () => changeMode("create"), "btn-success")}
                         {canEdit && actionButton("Editar", () => changeMode("edit"))}
                         {canRequestCorrection && actionButton("Demanar correcció", () => changeMode("correction"))}
-                        {canRejectOrDelete && actionButton("Rebutjar", () => changeMode("reject"), "btn-danger")}
-                        {canRejectOrDelete && actionButton("Eliminar", onDelete, "btn-ghost")}
+                        {canReject && actionButton("Rebutjar", () => changeMode("reject"), "btn-danger")}
+                        {canDelete && actionButton("Eliminar", onDelete, "btn-ghost")}
                     </>} />
 
                 <div className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
@@ -268,6 +307,12 @@ const ReviewEventRequest = () => {
                                     <Link className="btn btn-success btn-sm" href={`/admin/events/${createdCode}/people`}>Veure les persones de l&apos;esdeveniment</Link>
                                 </div> : undefined}
                         </SuccessAlert>}
+                        {calendarError &&
+                            <div className="rounded-xl bg-amber-50 p-4 text-sm text-amber-900 ring-1 ring-amber-200">
+                                <p className="font-medium">No s&apos;ha pogut sincronitzar amb Google Calendar</p>
+                                <p className="mt-1">L&apos;esdeveniment s&apos;ha creat igualment. {calendarError.message}</p>
+                                <Link className="btn btn-secondary btn-sm mt-3" href={`/admin/events/${calendarError.eventId}`}>Tornar-ho a provar des de l&apos;esdeveniment</Link>
+                            </div>}
                         {mode === "view" && errorBox}
                         {s === EventRequestStatus.PendingCorrection && mode === "view" &&
                             <p className="rounded-xl bg-orange-50 p-4 text-sm text-orange-900 ring-1 ring-orange-200">

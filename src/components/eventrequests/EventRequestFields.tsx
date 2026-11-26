@@ -1,8 +1,7 @@
 import { CalendarDateTime } from "@/components/form";
-import { getGroupsSelector } from "@/lib/apis/payments/client";
-import { EventRequestData, EventRequestRecipientType } from "@/lib/apis/payments/models";
-import { normalize } from "@/lib/utils";
-import { Dispatch, useEffect, useMemo, useState } from "react";
+import { EventRequestData } from "@/lib/apis/payments/models";
+import { Dispatch } from "react";
+import RecipientsPicker from "./RecipientsPicker";
 
 interface EventRequestFieldsProps {
     errors?: Map<string, string[]>,
@@ -10,40 +9,12 @@ interface EventRequestFieldsProps {
     setData: Dispatch<EventRequestData>,
 }
 
-interface GroupOption {
-    id: number,
-    name: string,
-}
-
 // Formulari de la sol·licitud. De moment només els camps mínims; s'ampliarà més endavant.
 const EventRequestFields = ({ data, errors, setData }: EventRequestFieldsProps) => {
-    const [groups, setGroups] = useState<GroupOption[]>([]);
-    const [groupFilter, setGroupFilter] = useState("");
-
-    useEffect(() => {
-        getGroupsSelector()
-            .then(x => setGroups(x.options.map(o => ({ id: Number(o.key), name: String(o.value) }))))
-            .catch(() => setGroups([]));
-    }, []);
-
     const displayErrors = (key: string) => {
         if (!errors || !errors.has(key)) return null;
         return <>{(errors.get(key) as string[]).map((x, idx) => <p key={idx} className="form-error">{x}</p>)}</>;
     }
-
-    const selectedGroups = useMemo(() => new Set(data.recipients
-        .filter(x => x.type === EventRequestRecipientType.Group)
-        .map(x => x.referenceId)), [data.recipients]);
-
-    const toggleGroup = (id: number) => {
-        const recipients = selectedGroups.has(id)
-            ? data.recipients.filter(x => !(x.type === EventRequestRecipientType.Group && x.referenceId === id))
-            : [...data.recipients, { type: EventRequestRecipientType.Group, referenceId: id }];
-        setData({ ...data, recipients });
-    }
-
-    const filter = normalize(groupFilter);
-    const visibleGroups = groups.filter(x => !filter || normalize(x.name).includes(filter));
 
     return (
         <div className="space-y-8">
@@ -128,32 +99,8 @@ const EventRequestFields = ({ data, errors, setData }: EventRequestFieldsProps) 
                 </div>
             </section>
 
-            <section className="space-y-3">
-                <div className="flex flex-wrap items-end justify-between gap-3">
-                    <div>
-                        <h3 className="section-title">Grups participants</h3>
-                        <p className="form-hint">{selectedGroups.size} {selectedGroups.size === 1 ? "grup seleccionat" : "grups seleccionats"}</p>
-                    </div>
-                    <input
-                        type="search"
-                        aria-label="Filtrar grups"
-                        placeholder="Cerca un grup"
-                        className="form-input sm:max-w-56"
-                        value={groupFilter}
-                        onChange={(e) => setGroupFilter(e.currentTarget.value)} />
-                </div>
-                <div className="grid max-h-64 gap-1 overflow-y-auto rounded-lg p-1 ring-1 ring-slate-200 sm:grid-cols-3">
-                    {visibleGroups.map(g => (
-                        <label key={g.id} className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-slate-50">
-                            <input
-                                type="checkbox"
-                                checked={selectedGroups.has(g.id)}
-                                onChange={() => toggleGroup(g.id)} />
-                            {g.name}
-                        </label>
-                    ))}
-                    {visibleGroups.length === 0 && <p className="col-span-full px-2 py-3 text-sm text-slate-500">No hi ha grups.</p>}
-                </div>
+            <section>
+                <RecipientsPicker recipients={data.recipients} onChange={(recipients) => setData({ ...data, recipients })} />
                 {displayErrors("recipients")}
             </section>
         </div>

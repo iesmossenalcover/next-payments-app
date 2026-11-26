@@ -1,12 +1,10 @@
-import { getEventCalendar } from "@/lib/apis/payments/client";
-import { CalendarItem, CalendarItemKind } from "@/lib/apis/payments/models";
-import { twoDigit } from "@/lib/utils";
+import { CalendarLegend, DayItems, MonthGrid, MonthNav, dayKey, endOfDay, parseDate as parse, startOfDay, toTime, useCalendarItems, valueFormat } from "@/components/calendar/EventCalendar";
 import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 
 // Selector de data i hora fet a mà (sense llibreries). Obre un modal amb un calendari mensual i els
 // esdeveniments i les sol·licituds en curs de cada dia, per ajudar a triar dates sense solapaments.
-// Al mòbil el modal surt des de baix i ocupa tota l'amplada; a pantalla gran, la llista del dia va al costat.
+// Al mòbil el modal ocupa tota la pantalla; a pantalla gran, la llista del dia va al costat.
 
 interface CalendarDateTimeProps {
     id: string,
@@ -23,72 +21,12 @@ interface CalendarDateTimeProps {
     title?: string,
 }
 
-const WEEKDAYS = ["dl", "dt", "dc", "dj", "dv", "ds", "dg"];
-const monthFormat = new Intl.DateTimeFormat("ca", { month: "long", year: "numeric" });
-const dayFormat = new Intl.DateTimeFormat("ca", { weekday: "long", day: "numeric", month: "long" });
-const valueFormat = new Intl.DateTimeFormat("ca", { weekday: "short", day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" });
-const timeFormat = new Intl.DateTimeFormat("ca", { hour: "2-digit", minute: "2-digit" });
-
-const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
-const endOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59, 999);
-const addDays = (d: Date, n: number) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
-const sameDay = (a: Date, b: Date) => a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
-const dayKey = (d: Date) => `${d.getFullYear()}-${twoDigit(d.getMonth() + 1)}-${twoDigit(d.getDate())}`;
-const toTime = (d: Date) => `${twoDigit(d.getHours())}:${twoDigit(d.getMinutes())}`;
-const parse = (iso?: string) => {
-    if (!iso) return undefined;
-    const d = new Date(iso);
-    return isNaN(d.getTime()) ? undefined : d;
-};
-
-// 6 setmanes començant en dilluns: el mes sencer sempre hi cap.
-const monthGrid = (month: Date) => {
-    const first = new Date(month.getFullYear(), month.getMonth(), 1);
-    const offset = (first.getDay() + 6) % 7;
-    const start = addDays(first, -offset);
-    return Array.from({ length: 42 }, (_, i) => addDays(start, i));
-};
-
-// Cada mes es demana un sol cop a l'API i es comparteix entre tots els selectors de la pàgina.
-const cache = new Map<string, Promise<CalendarItem[]>>();
-const loadItems = (from: Date, to: Date) => {
-    const key = `${dayKey(from)}_${dayKey(to)}`;
-    if (!cache.has(key)) {
-        cache.set(key, getEventCalendar(from, to).catch(() => {
-            cache.delete(key);
-            return [];
-        }));
-    }
-    return cache.get(key)!;
-};
-
-const coversDay = (item: CalendarItem, day: Date) => {
-    const start = new Date(item.start);
-    const end = item.end ? new Date(item.end) : start;
-    return start <= endOfDay(day) && end >= startOfDay(day);
-};
-
-const kindDot = (kind: CalendarItemKind) => kind === CalendarItemKind.Event ? "bg-emerald-500" : "bg-violet-500";
-
 const CalendarDateTime = ({ id, value, onChange, required = false, defaultTime = "09:00", rangeStart, rangeEnd, placeholder = "Tria una data", title = "Tria una data" }: CalendarDateTimeProps) => {
     const selected = parse(value);
     const [open, setOpen] = useState(false);
     const [month, setMonth] = useState(() => selected ?? parse(rangeStart) ?? new Date());
     const [focusDay, setFocusDay] = useState<Date | undefined>(selected);
-    const [loaded, setLoaded] = useState<{ key: string, items: CalendarItem[] }>();
-
-    const days = useMemo(() => monthGrid(month), [month]);
-    const gridKey = dayKey(days[0]);
-
-    // Carrega els elements de les 6 setmanes visibles quan el calendari és obert.
-    useEffect(() => {
-        if (!open) return;
-        let cancelled = false;
-        loadItems(days[0], endOfDay(days[days.length - 1])).then(items => {
-            if (!cancelled) setLoaded({ key: gridKey, items });
-        });
-        return () => { cancelled = true; };
-    }, [open, days, gridKey]);
+    const { days, loading, itemsByDay } = useCalendarItems(month, open);
 
     // Amb el modal obert: es tanca amb Escape i la pàgina del darrere no fa scroll.
     useEffect(() => {
@@ -102,17 +40,6 @@ const CalendarDateTime = ({ id, value, onChange, required = false, defaultTime =
             document.removeEventListener("keydown", onKeyDown);
         };
     }, [open]);
-
-    const items = loaded?.key === gridKey ? loaded.items : undefined;
-    const itemsByDay = useMemo(() => {
-        const map = new Map<string, CalendarItem[]>();
-        if (!items) return map;
-        for (const day of days) {
-            const list = items.filter(x => coversDay(x, day));
-            if (list.length) map.set(dayKey(day), list);
-        }
-        return map;
-    }, [items, days]);
 
     const range = useMemo(() => {
         const start = parse(rangeStart);
@@ -145,39 +72,17 @@ const CalendarDateTime = ({ id, value, onChange, required = false, defaultTime =
     const shownDay = focusDay ?? selected;
     const shownItems = shownDay ? itemsByDay.get(dayKey(shownDay)) ?? [] : [];
 
-    const dayList = (
-        shownDay ?
-            <>
-                <p className="mb-1 text-xs font-medium first-letter:uppercase text-slate-500">{dayFormat.format(shownDay)}</p>
-                {shownItems.length === 0 ?
-                    <p className="text-sm text-slate-400">Cap esdeveniment ni sol·licitud.</p> :
-                    <ul className="min-h-0 flex-1 space-y-1 overflow-y-auto">
-                        {shownItems.map(x => (
-                            <li key={`${x.kind}-${x.id}`} className="flex items-start gap-2 text-sm">
-                                <span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${kindDot(x.kind)}`} />
-                                <span className="min-w-0 flex-1">
-                                    <span className="block truncate text-slate-900">{x.title}</span>
-                                    <span className="block text-xs text-slate-500">
-                                        {x.kind === CalendarItemKind.Event ? "Esdeveniment" : "Sol·licitud"} · {timeFormat.format(new Date(x.start))}
-                                        {x.end && ` – ${sameDay(new Date(x.start), new Date(x.end)) ? timeFormat.format(new Date(x.end)) : valueFormat.format(new Date(x.end))}`}
-                                    </span>
-                                </span>
-                            </li>
-                        ))}
-                    </ul>}
-            </> :
-            <p className="text-sm text-slate-400">Toca o passa per sobre d&apos;un dia per veure què hi ha.</p>
-    );
+    const dayList = <DayItems day={shownDay} items={shownItems} emptyHint="Toca o passa per sobre d'un dia per veure què hi ha." />;
 
     const modal = (
         <div
-            className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/40 sm:items-center sm:p-4"
+            className="fixed inset-0 z-50 flex justify-center bg-slate-900/40 sm:items-center sm:p-4"
             onMouseDown={e => { if (e.target === e.currentTarget) setOpen(false); }}>
             <div
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby={`${id}-title`}
-                className="flex max-h-[95dvh] w-full flex-col overflow-y-auto rounded-t-2xl bg-white p-4 shadow-xl sm:w-auto sm:rounded-xl">
+                className="flex h-dvh w-full flex-col overflow-y-auto bg-white p-4 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-xl sm:h-auto sm:max-h-[95dvh] sm:w-auto sm:rounded-xl sm:pb-4">
                 <div className="mb-3 flex items-center justify-between gap-2">
                     <h2 id={`${id}-title`} className="text-base font-semibold text-slate-900">{title}</h2>
                     <button type="button" title="Tancar" className="btn-icon" onClick={() => setOpen(false)}>
@@ -187,76 +92,31 @@ const CalendarDateTime = ({ id, value, onChange, required = false, defaultTime =
                     </button>
                 </div>
 
-                <div className="flex flex-col gap-4 sm:flex-row">
+                <div className="flex min-h-0 flex-1 flex-col gap-4 sm:flex-none sm:flex-row">
                     <div className="w-full sm:w-[22rem]">
-                        <div className="mb-2 flex items-center justify-between gap-2">
-                            <button type="button" title="Mes anterior" className="btn-icon" onClick={() => moveMonth(-1)}>
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="h-4 w-4">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-                                </svg>
-                            </button>
-                            <div className="flex items-center gap-2">
-                                <span className="text-sm font-semibold capitalize text-slate-900">{monthFormat.format(month)}</span>
-                                {!items && <span className="h-3 w-3 animate-spin rounded-full border-2 border-slate-300 border-t-transparent" />}
-                            </div>
-                            <div className="flex items-center gap-1">
-                                <button type="button" className="btn btn-ghost btn-sm" onClick={() => { setMonth(today); setFocusDay(today); }}>Avui</button>
-                                <button type="button" title="Mes següent" className="btn-icon" onClick={() => moveMonth(1)}>
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="h-4 w-4">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-7 text-center text-xs font-medium uppercase text-slate-400">
-                            {WEEKDAYS.map(x => <div key={x} className="py-1">{x}</div>)}
-                        </div>
-                        <div className="grid grid-cols-7 gap-0.5" onMouseLeave={() => setFocusDay(selected)}>
-                            {days.map(day => {
-                                const key = dayKey(day);
-                                const dayItems = itemsByDay.get(key) ?? [];
-                                const isSelected = selected && sameDay(day, selected);
-                                const inRange = range && day >= range.start && day <= range.end;
-                                const outside = day.getMonth() !== month.getMonth();
-                                return (
-                                    <button
-                                        key={key}
-                                        type="button"
-                                        title={dayItems.map(x => x.title).join("\n") || undefined}
-                                        onMouseEnter={() => setFocusDay(day)}
-                                        onFocus={() => setFocusDay(day)}
-                                        onClick={() => selectDay(day)}
-                                        className={`flex h-11 flex-col items-center justify-start rounded-md pt-1 text-sm transition-colors
-                                            ${isSelected ? "bg-brand-600 font-semibold text-white" : inRange ? "bg-brand-50 text-brand-900" : "hover:bg-slate-100"}
-                                            ${outside && !isSelected ? "text-slate-300" : ""}
-                                            ${sameDay(day, today) && !isSelected ? "ring-1 ring-inset ring-brand-400" : ""}`}>
-                                        {day.getDate()}
-                                        {dayItems.length > 0 &&
-                                            <span className="mt-0.5 flex items-center gap-0.5">
-                                                {dayItems.slice(0, 3).map((x, idx) => <span key={idx} className={`h-1.5 w-1.5 rounded-full ${isSelected ? "bg-white" : kindDot(x.kind)}`} />)}
-                                                {dayItems.length > 3 && <span className={`text-[0.6rem] leading-none ${isSelected ? "text-white" : "text-slate-500"}`}>+{dayItems.length - 3}</span>}
-                                            </span>}
-                                    </button>
-                                );
-                            })}
-                        </div>
+                        <MonthNav month={month} loading={loading} onMove={moveMonth} onToday={() => { setMonth(today); setFocusDay(today); }} />
+                        <MonthGrid
+                            month={month}
+                            days={days}
+                            itemsByDay={itemsByDay}
+                            selected={selected}
+                            range={range}
+                            onSelect={selectDay}
+                            onFocusDay={setFocusDay}
+                            onMouseLeave={() => setFocusDay(selected)} />
                     </div>
 
-                    {/* Alçada fixa: al mòbil, h-36; al costat, la de la graella (el contingut és absolut i no l'eixampla).
-                        Així el modal no canvia de mida segons el dia que es mira. */}
-                    <div className="relative h-36 border-t border-slate-100 pt-3 sm:h-auto sm:w-64 sm:border-l sm:border-t-0 sm:pt-0">
-                        <div className="flex h-full flex-col sm:absolute sm:inset-0 sm:pl-4">
+                    {/* Alçada fixa: al mòbil, la resta de la pantalla; al costat, la de la graella (el contingut és absolut
+                        i no l'eixampla). Així el modal no canvia de mida segons el dia que es mira. */}
+                    <div className="relative flex min-h-[9rem] flex-1 flex-col border-t border-slate-100 pt-3 sm:block sm:w-64 sm:flex-none sm:border-l sm:border-t-0 sm:pt-0">
+                        <div className="flex min-h-0 flex-1 flex-col sm:absolute sm:inset-0 sm:pl-4">
                             {dayList}
                         </div>
                     </div>
                 </div>
 
                 <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-3">
-                    <div className="flex items-center gap-3 text-xs text-slate-500">
-                        <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-emerald-500" />Esdeveniment</span>
-                        <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-violet-500" />Sol·licitud</span>
-                    </div>
+                    <CalendarLegend />
                     <div className="flex items-center gap-2">
                         <input
                             type="time"
